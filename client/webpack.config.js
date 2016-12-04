@@ -53,9 +53,10 @@ const common = {
   },
   plugins: [
     new HtmlWebpackPlugin({
+      template: require('html-webpack-template'),
       title: 'WeightyBeer',
-      // appMountId: 'app',
-      // inject: false,
+      appMountId: 'app',
+      inject: false,
     }),
   ],
   postcss: () => [
