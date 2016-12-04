@@ -5,8 +5,6 @@ import {connect} from 'react-redux';
 import Taps from '../components/Taps';
 import {addTap} from '../actions/settings';
 
-/* eslint-disable */
-
 class App extends React.Component {
   render() {
     const {taps, addTap} = this.props;
@@ -24,9 +22,10 @@ class App extends React.Component {
   }
 }
 
-// App.propTypes = {
-//   taps: React.propTypes.array
-// };
+App.propTypes = {
+  addTap: React.PropTypes.function,
+  taps: React.PropTypes.array
+};
 
 export default compose(
   connect(state => ({
@@ -35,4 +34,3 @@ export default compose(
     addTap
   })
 )(App);
-/* eslint-enable */
