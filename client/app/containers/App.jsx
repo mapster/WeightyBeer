@@ -2,36 +2,27 @@ import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 
-import Taps from '../components/Taps';
-import {addTap} from '../actions/taps';
+import Link from '../components/Link';
 
 class App extends React.Component {
   render() {
-    const {taps, addTap} = this.props;
-
-    return (
-      <div>
-        <h1>WeightyBeer settings</h1>
-        <button className="add-tap"
-          onClick={addTap.bind(null, {
-            name: 'New tap'
-          })}>+</button>
-        <h2>Active taps</h2>
-        <Taps taps={taps} />
-      </div>
-    );
+    const {location} = this.props.navigation;
+    switch (location.name) {
+      case 'test':
+        return <div>testing <Link name='root'>go to root</Link></div>;
+      default:
+        return <div>at root: <Link name='test'>go to test</Link></div>;
+    }
   }
 }
 
 App.propTypes = {
-  addTap: React.PropTypes.function,
-  taps: React.PropTypes.array
+  navigation: React.PropTypes.object
 };
 
 export default compose(
   connect(state => ({
-    taps: state.taps.active
+    navigation: state.navigation
   }), {
-    addTap
   })
 )(App);
