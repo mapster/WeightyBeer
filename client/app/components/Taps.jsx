@@ -6,7 +6,7 @@ export default class Taps extends React.Component {
 
     return(
       <div className="taps">{taps.map(tap =>
-          <div>{tap.name}</div>
+          <div key={tap.name}>{tap.name}</div>
       )}</div>
     );
   }

@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux';
-import settings from './settings';
+import taps from './taps';
+import weights from './weights';
 
 export default combineReducers({
-  settings
+  taps, weights
 });

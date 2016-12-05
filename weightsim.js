@@ -1,12 +1,6 @@
 var firebase = require('firebase');
+var config = require('./firebase-config');
 
-var config = {
-  apiKey: "AIzaSyDdIjOY77liPw2GVnO3xs0vLlH-Qs7ut4I",
-  authDomain: "weightybeer.firebaseapp.com",
-  databaseURL: "https://weightybeer.firebaseio.com",
-  storageBucket: "weightybeer.appspot.com",
-  messagingSenderId: "90001092923"
-};
 firebase.initializeApp(config);
 
 var database = firebase.database();

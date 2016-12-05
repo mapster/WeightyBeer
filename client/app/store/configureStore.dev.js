@@ -1,11 +1,13 @@
-import {createStore, compose} from 'redux';
+import {createStore, compose, applyMiddleware} from 'redux';
 import {persistState} from 'redux-devtools';
 import rootReducer from '../reducers';
 import DevTools from '../containers/DevTools';
+import ReduxThunk from 'redux-thunk';
 
 const createStoreWithMiddleware = compose(
+  applyMiddleware(ReduxThunk),
   DevTools.instrument(),
-  persistState(getDebugSessionKey())
+  persistState(getDebugSessionKey()),
 )(createStore);
 
 function getDebugSessionKey() {

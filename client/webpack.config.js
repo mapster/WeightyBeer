@@ -32,9 +32,14 @@ const common = {
         test: /\.jsx?$/,
         loaders: ['babel?cacheDirectory'],
         include: PATHS.app,
-      }
+      },
     ],
     preLoaders: [
+      {
+        test: /\.json$/,
+        loader: 'json',
+        exclude: [/node_modules/, /build/]
+      },
       {
         test: /\.jsx?$/,
         loaders: ['eslint'],

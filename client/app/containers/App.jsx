@@ -3,7 +3,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 
 import Taps from '../components/Taps';
-import {addTap} from '../actions/settings';
+import {addTap} from '../actions/taps';
 
 class App extends React.Component {
   render() {
@@ -11,11 +11,12 @@ class App extends React.Component {
 
     return (
       <div>
-        <h1>App er her!</h1>
+        <h1>WeightyBeer settings</h1>
         <button className="add-tap"
           onClick={addTap.bind(null, {
             name: 'New tap'
           })}>+</button>
+        <h2>Active taps</h2>
         <Taps taps={taps} />
       </div>
     );
@@ -29,7 +30,7 @@ App.propTypes = {
 
 export default compose(
   connect(state => ({
-    taps: state.settings
+    taps: state.taps.active
   }), {
     addTap
   })

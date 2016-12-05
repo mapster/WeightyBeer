@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import Root from './containers/Root';
 import configureStore from './store/configureStore';
 import storage from './libs/storage';
+import {startListeningToWeightHub} from './actions/weights';
 
 const APP_STORAGE = 'weighty_beer'
 
@@ -18,3 +20,7 @@ ReactDOM.render(
   <Root store={store} />,
   document.getElementById('app')
 );
+
+setTimeout(() => {
+  store.dispatch(startListeningToWeightHub());
+});
