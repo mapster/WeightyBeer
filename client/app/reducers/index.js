@@ -2,7 +2,8 @@ import {combineReducers} from 'redux';
 import navigation from './navigation';
 import taps from './taps';
 import weights from './weights';
+import brews from './brews';
 
 export default combineReducers({
-  navigation, taps, weights
+  brews, navigation, taps, weights
 });

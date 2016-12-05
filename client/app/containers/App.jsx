@@ -2,27 +2,43 @@ import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 
-import Link from '../components/Link';
+import ApplicationLayout from '../components/ApplicationLayout';
+import BrewsListContainer from './BrewsListContainer';
 
 class App extends React.Component {
   render() {
-    const {location} = this.props.navigation;
-    switch (location.name) {
-      case 'test':
-        return <div>testing <Link name='root'>go to root</Link></div>;
-      default:
-        return <div>at root: <Link name='test'>go to test</Link></div>;
-    }
+    const {navigation, brews} = this.props;
+
+    return (
+      <ApplicationLayout locationName={navigation.location.name}>
+        {route(navigation.location, brews)}
+      </ApplicationLayout>
+    );
   }
 }
 
 App.propTypes = {
-  navigation: React.PropTypes.object
+  navigation: React.PropTypes.object,
+  brews: React.PropTypes.object,
+};
+
+const route = (location, brews) => {
+  switch (location.name) {
+    case 'home':
+      return <div>home</div>;
+    case 'taps':
+      return <div>taps</div>;
+    case 'brews':
+      return <BrewsListContainer brews={brews} />;
+    default:
+      return <div>Not found</div>;
+  }
 };
 
 export default compose(
   connect(state => ({
-    navigation: state.navigation
+    brews: state.brews,
+    navigation: state.navigation,
   }), {
   })
 )(App);

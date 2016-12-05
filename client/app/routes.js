@@ -1,6 +1,8 @@
 import uniloc from 'uniloc';
 
 export default uniloc({
-  root: 'GET /',
-  test: 'GET /test',
+  home: 'GET /',
+  taps: 'GET /taps',
+  brews: 'GET /brews',
+  weights: 'GET /weights',
 });

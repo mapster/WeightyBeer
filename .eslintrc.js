@@ -15,6 +15,8 @@ module.exports = {
   rules: {
     'no-console': 0,
     'no-underscore-dangle': 1,
-    quotes: [2, "single"]
+    quotes: [2, 'single'],
+    'no-unused-vars': 1,
+    'no-unused-labels': 1,
   }
 };
