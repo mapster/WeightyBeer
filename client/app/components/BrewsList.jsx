@@ -5,9 +5,18 @@ export default class BrewsList extends React.Component {
   render() {
     const {brews} = this.props;
     return (
-      <table>{brews.map((brew) =>
-        <BrewEntry key={brew.brew} brew={brew} />
-      )}</table>
+      <table>
+        <thead>
+          <tr>
+            <th>Brew #</th>
+            <th>Name</th>
+            <th>Style</th>
+          </tr>
+        </thead>
+        <tbody>{brews.map((brew) =>
+            <BrewEntry key={brew.brew} brew={brew} />
+        )}</tbody>
+      </table>
     );
   }
 }
