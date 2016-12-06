@@ -4,13 +4,7 @@
     "react"
   ],
   "plugins": [
+    "react-hot-loader/babel",
     "transform-object-rest-spread"
   ],
-  "env": {
-    "client-start": {
-      "presets": [
-        "react-hmre",
-      ]
-    },
-  },
 }
