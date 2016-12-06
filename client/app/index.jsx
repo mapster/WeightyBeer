@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import Root from './containers/Root';
 import configureStore from './store/configureStore';
@@ -11,6 +12,7 @@ import {startListeningToAppData} from './actions/brews';
 const APP_STORAGE = 'weighty_beer'
 
 const store = configureStore(storage.get(APP_STORAGE) || {});
+injectTapEventPlugin();
 
 store.subscribe(() => {
   if (!storage.get('debug')) {

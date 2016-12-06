@@ -25,9 +25,9 @@ App.propTypes = {
 const route = (location, brews) => {
   switch (location.name) {
     case 'home':
-      return <div>home</div>;
+      return <h1>home</h1>;
     case 'taps':
-      return <div>taps</div>;
+      return <h1>taps</h1>;
     case 'brews':
       return <BrewsListContainer brews={brews} />;
     default:
