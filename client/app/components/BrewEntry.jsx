@@ -1,18 +1,17 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 
-export default class BrewEntry extends React.Component {
-  render() {
-    const {brew, style, name} = this.props.brew;
-    return (
-      <tr>
-        <td>{brew}</td>
-        <td>{name}</td>
-        <td>{style}</td>
-      </tr>
-    );
-  }
-}
+const BrewEntry = ({brew, name, style}) => (
+  <tr>
+    <td>{brew}</td>
+    <td>{name}</td>
+    <td>{style}</td>
+  </tr>
+);
 
 BrewEntry.propTypes = {
-  brew: React.PropTypes.object.isRequired,
+  brew: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  style: PropTypes.string.isRequired,
 }
+
+export default BrewEntry;
