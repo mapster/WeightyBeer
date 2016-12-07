@@ -1,7 +1,9 @@
 import React, {PropTypes} from 'react';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
 import BrewsList from '../components/BrewsList';
 
-export default class BrewsListContainer extends React.Component {
+class BrewsListContainer extends React.Component {
   render() {
     const {data} = this.props.brews;
     return (
@@ -16,3 +18,10 @@ export default class BrewsListContainer extends React.Component {
 BrewsListContainer.propTypes = {
   brews: PropTypes.array.isRequired,
 };
+
+export default compose(
+  connect(state => ({
+    brews: state.brews,
+  }), {
+  })
+)(BrewsListContainer);

@@ -30,7 +30,7 @@ const route = (location, state) => {
     case 'taps':
       return <h1>taps</h1>;
     case 'brews':
-      return <BrewsListContainer brews={state.brews} />;
+      return <BrewsListContainer />;
     case 'brewEdit':
       return <BrewEditContainer brews={state.brews} id={location.options.id} />;
     default:
