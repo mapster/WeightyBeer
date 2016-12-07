@@ -23,6 +23,7 @@ process.env.BABEL_ENV = TARGET;
 
 const common = {
   entry: {
+    hot: 'react-hot-loader/patch',
     app: PATHS.app,
     style: PATHS.style,
   },
