@@ -3,33 +3,36 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 
 import ApplicationLayout from '../components/ApplicationLayout';
+import BrewEditContainer from './BrewEditContainer';
 import BrewsListContainer from './BrewsListContainer';
 
 class App extends React.Component {
   render() {
-    const {navigation, brews} = this.props;
+    const {navigation, state} = this.props;
 
     return (
       <ApplicationLayout locationName={navigation.location.name}>
-        {route(navigation.location, brews)}
+        {route(navigation.location, state)}
       </ApplicationLayout>
     );
   }
 }
 
 App.propTypes = {
-  navigation: React.PropTypes.object,
-  brews: React.PropTypes.object,
+  navigation: React.PropTypes.object.isRequired,
+  state: React.PropTypes.object.isRequired,
 };
 
-const route = (location, brews) => {
+const route = (location, state) => {
   switch (location.name) {
     case 'home':
       return <h1>home</h1>;
     case 'taps':
       return <h1>taps</h1>;
     case 'brews':
-      return <BrewsListContainer brews={brews} />;
+      return <BrewsListContainer brews={state.brews} />;
+    case 'brewEdit':
+      return <BrewEditContainer brews={state.brews} id={location.options.id} />;
     default:
       return <div>Not found</div>;
   }
@@ -37,7 +40,7 @@ const route = (location, brews) => {
 
 export default compose(
   connect(state => ({
-    brews: state.brews,
+    state: state,
     navigation: state.navigation,
   }), {
   })

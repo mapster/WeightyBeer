@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 import BrewsList from '../components/BrewsList';
 
 export default class BrewsListContainer extends React.Component {
@@ -14,5 +14,5 @@ export default class BrewsListContainer extends React.Component {
 }
 
 BrewsListContainer.propTypes = {
-  brews: React.PropTypes.object,
+  brews: PropTypes.object.isRequired,
 };
