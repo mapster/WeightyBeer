@@ -11,6 +11,14 @@ export function addBrew(brew) {
   }
 }
 
+export const EDIT_BREW = 'EDIT_BREW';
+export function editBrew(brew) {
+  return {
+    type: EDIT_BREW,
+    data: brew
+  }
+}
+
 export const RECEIVE_BREWS_DATA = 'RECEIVE_BREWS_DATA';
 export function startListeningToAppData() {
   return (dispatch) => {

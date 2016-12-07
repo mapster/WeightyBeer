@@ -4,16 +4,17 @@ import IconButton from 'material-ui/IconButton';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 import link from '../libs/link';
 
-const BrewEntry = ({brew, name, style}) => (
+const BrewEntry = ({id, brewNo, name, style}) => (
   <GridTile
-    title={'#' + brew + ' ' + name}
+    title={'#' + brewNo + ' ' + name}
     subtitle={style}
-    actionIcon={<IconButton href={link('brewEdit', {id: brew})}><ModeEdit color='white' /></IconButton>}
+    actionIcon={<IconButton href={ link('brewEdit', {id}) }><ModeEdit color='white' /></IconButton>}
   />
 );
 
 BrewEntry.propTypes = {
-  brew: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
+  brewNo: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   style: PropTypes.string.isRequired,
 }
