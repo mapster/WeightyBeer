@@ -5,11 +5,11 @@ import BrewsList from '../components/BrewsList';
 
 class BrewsListContainer extends React.Component {
   render() {
-    const {data} = this.props.brews;
+    const {brews} = this.props;
     return (
       <div>
         <h1>Brews</h1>
-        <BrewsList brews={data} />
+        <BrewsList brews={brews} />
       </div>
     );
   }
@@ -21,7 +21,7 @@ BrewsListContainer.propTypes = {
 
 export default compose(
   connect(state => ({
-    brews: state.brews,
+    brews: state.brews.data,
   }), {
   })
 )(BrewsListContainer);

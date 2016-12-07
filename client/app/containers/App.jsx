@@ -8,11 +8,11 @@ import BrewsListContainer from './BrewsListContainer';
 
 class App extends React.Component {
   render() {
-    const {navigation, state} = this.props;
+    const {navigation} = this.props;
 
     return (
       <ApplicationLayout locationName={navigation.location.name}>
-        {route(navigation.location, state)}
+        {route(navigation.location)}
       </ApplicationLayout>
     );
   }
@@ -20,27 +20,21 @@ class App extends React.Component {
 
 App.propTypes = {
   navigation: React.PropTypes.object.isRequired,
-  state: React.PropTypes.object.isRequired,
 };
 
-const route = (location, state) => {
-  switch (location.name) {
-    case 'home':
-      return <h1>home</h1>;
-    case 'taps':
-      return <h1>taps</h1>;
-    case 'brews':
-      return <BrewsListContainer />;
-    case 'brewEdit':
-      return <BrewEditContainer brews={state.brews} id={location.options.id} />;
-    default:
-      return <div>Not found</div>;
-  }
+const route2 = {
+  home: <h1>home</h1>,
+  taps: <h1>taps</h1>,
+  brews: <BrewsListContainer />,
+  brewEdit: <BrewEditContainer />,
+}
+
+const route = (location) => {
+  return route2[location.name] || <div>Not found</div>;
 };
 
 export default compose(
   connect(state => ({
-    state: state,
     navigation: state.navigation,
   }), {
   })
