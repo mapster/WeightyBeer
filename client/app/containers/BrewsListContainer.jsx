@@ -14,5 +14,5 @@ export default class BrewsListContainer extends React.Component {
 }
 
 BrewsListContainer.propTypes = {
-  brews: PropTypes.object.isRequired,
+  brews: PropTypes.array.isRequired,
 };
