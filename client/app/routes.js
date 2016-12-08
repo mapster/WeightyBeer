@@ -5,5 +5,5 @@ export default uniloc({
   taps: 'GET /taps',
   brews: 'GET /brews',
   brewEdit: 'GET /brews/:id/edit',
-  weights: 'GET /weights',
+  weighthub: 'GET /weights',
 });

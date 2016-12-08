@@ -8,7 +8,11 @@ import {editBrew, saveBrew} from '../actions/brews';
 class BrewEditContainer extends React.Component {
   render() {
     const {edit, brews, id, editBrew, doSave} = this.props;
-    const brew = edit[id] || brews[id];
+
+    let brew = edit[id];
+    if (!brew) {
+      brew = id == 'new' ? {id: 'new'} : brews[id];
+    }
     if (!brew) {
       return <NotFound />;
     }
@@ -18,7 +22,7 @@ class BrewEditContainer extends React.Component {
 }
 
 BrewEditContainer.propTypes = {
-  brews: PropTypes.array.isRequired,
+  brews: PropTypes.object.isRequired,
   edit: PropTypes.object.isRequired,
   editBrew: PropTypes.func.isRequired,
   doSave: PropTypes.func.isRequired,

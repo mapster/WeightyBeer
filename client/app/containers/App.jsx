@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import ApplicationLayout from '../components/ApplicationLayout';
 import BrewEditContainer from './BrewEditContainer';
 import BrewsListContainer from './BrewsListContainer';
+import WeightHubContainer from './WeightHubContainer';
 
 class App extends React.Component {
   render() {
@@ -27,6 +28,7 @@ const route2 = {
   taps: <h1>taps</h1>,
   brews: <BrewsListContainer />,
   brewEdit: <BrewEditContainer />,
+  weighthub: <WeightHubContainer />,
 }
 
 const route = (location) => {

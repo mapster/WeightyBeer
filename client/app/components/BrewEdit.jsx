@@ -12,7 +12,7 @@ const buttonStyle = {
   marginBottom: 20,
 }
 
-function updater(brew, prop, onEdit, doSave) {
+function updater(brew, prop, onEdit) {
   return e => {
     return onEdit(Object.assign({}, brew, {[prop]: e.target.value }));
   };
@@ -20,9 +20,9 @@ function updater(brew, prop, onEdit, doSave) {
 
 const BrewEdit = ({brew = {}, onEdit, doSave}) => (
   <Paper zDepth={1} style={{width: '80%', margin: '0 auto'}}>
-    <TextField style={indent} floatingLabelText='Brew #' name='brewNo' defaultValue={brew.brewNo || ''} /><br />
+    <TextField onChange={updater(brew, 'brewNo', onEdit)} type='number' style={indent} floatingLabelText='Brew #' name='brewNo' defaultValue={brew.brewNo || ''} /><br />
     <TextField onChange={updater(brew, 'name', onEdit)} style={indent} floatingLabelText='Name' name='name' defaultValue={brew.name || ''} /><br />
-    <TextField style={indent} floatingLabelText='Style' name='style' defaultValue={brew.style || ''} /><br />
+    <TextField onChange={updater(brew, 'style', onEdit)} style={indent} floatingLabelText='Style' name='style' defaultValue={brew.style || ''} /><br />
     <RaisedButton onClick={() => doSave(brew)} style={buttonStyle} backgroundColor='green' label='Save' labelColor='white' />
     <RaisedButton style={buttonStyle} backgroundColor='red' label='Cancel' labelColor='white' />
   </Paper>

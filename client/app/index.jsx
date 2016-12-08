@@ -22,10 +22,12 @@ injectTapEventPlugin();
 // });
 
 if (!store.getState().navigation.transitioning) {
-  ReactDOM.render(
-    <AppContainer><Root store={store} /></AppContainer>,
-    document.getElementById('app')
-  );
+  if (!store.getState().navigation.transitioning) {
+    ReactDOM.render(
+      <AppContainer><Root store={store} /></AppContainer>,
+      document.getElementById('app')
+    );
+  }
 }
 
 if (module.hot) {

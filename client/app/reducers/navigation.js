@@ -3,7 +3,7 @@ import * as types from '../actions/navigation';
 
 const initialState = {
   transitioning: false,
-  location: ROUTES.lookup('root'),
+  location: ROUTES.lookup('home'),
 }
 
 export default function navigation(state = initialState, action) {
@@ -15,6 +15,7 @@ export default function navigation(state = initialState, action) {
       };
     case types.NAVIGATION_START:
       return {
+        ...state,
         transitioning: true,
       };
     default:

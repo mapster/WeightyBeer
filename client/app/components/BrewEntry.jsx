@@ -14,7 +14,7 @@ const BrewEntry = ({id, brewNo, name, style}) => (
 
 BrewEntry.propTypes = {
   id: PropTypes.string.isRequired,
-  brewNo: PropTypes.number.isRequired,
+  brewNo: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   name: PropTypes.string.isRequired,
   style: PropTypes.string.isRequired,
 }

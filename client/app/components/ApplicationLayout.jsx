@@ -10,7 +10,7 @@ const pages = [
   {name: 'home', text: 'Home'},
   {name: 'taps', text: 'Taps'},
   {name: 'brews', text: 'Brews'},
-  {name: 'weights', text: 'Weights'},
+  {name: 'weighthub', text: 'Weight Hub'},
 ]
 
 export default class ApplicationLayout extends React.Component {
@@ -19,7 +19,7 @@ export default class ApplicationLayout extends React.Component {
       <MuiThemeProvider muiTheme={muiTheme}>
         <div>
           <nav className='navbar'>{pages.map(p =>
-            <FlatButton key={p.name} label={p.name} href={'#'+ROUTES.generate(p.name)} />
+            <FlatButton key={p.name} label={p.text} href={'#'+ROUTES.generate(p.name)} />
           )}</nav>
           <main className='content'>
             {this.props.children}

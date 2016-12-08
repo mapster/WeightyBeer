@@ -1,7 +1,7 @@
 import * as types from '../actions/brews';
 
 const initialState = {
-  edit: {},
+  edit: { new: null},
   hasReceivedData: false,
   data: {}, // data from firebase
 };
@@ -19,7 +19,7 @@ export default function taps(state = initialState, action) {
         ...state,
         edit: {...state.edit, [action.data.id]: action.data},
       };
-    case types.SAVED_BREW:
+    case types.CLEAR_BREW_CHANGES:
       return {
         ...state,
         edit: {...state.edit, [action.id]: null}
