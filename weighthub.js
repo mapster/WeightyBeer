@@ -5,24 +5,53 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 
-function sensorListener(sensorSnapshot) {
-  var sensor = sensorSnapshot.val();
+function sensorListener(weightRef, sensorSnapshot) {
+  let sensor = sensorSnapshot.val();
   console.log(sensor.id + ": " + sensor.value);
+  weightRef.once('value').then(function (weightSnap) {
+    let weight = weightSnap.val();
+    let one = weight.empty - weight.full;
+    let part = weight.empty - weight.current;
+    console.log(part + " / " + one);
+    weightRef.update({
+      current: sensor.value,
+      percent: part / one
+    });
+  });
 }
 
 function registerSensors(sensorSnapshot) {
   var sensor = sensorSnapshot.val();
   console.log('Registered new sensor: ');
   console.log(sensor);
-  sensorSnapshot.ref.on('value', sensorListener);
+
+  sensorSnapshot.ref.on('value', sensorListener.bind(null, database.ref('weighthub/weights/' + sensor.id)));
 }
 
 function calibrate(calibrate) {
-  if (calibrate.target == 'zero') {
-    var zero = database.ref('sensors/weight/' + calibrate.id + '/value').once('value', function(zero) {
-      console.log('Calibrating ' + calibrate.id + ' zero as: ' + zero);
-      database.ref('weighthub/weights/' + calibrate.id + '/zero').set(zero.val());
-    });
+  let valRef = database.ref('sensors/weight/' + calibrate.id + '/value');
+  let weightRef = database.ref('weighthub/weights/' + calibrate.id);
+  switch (calibrate.target) {
+    case 'zero':
+      valRef.once('value', function(zero) {
+        console.log('Calibrating ' + calibrate.id + ' zero as: ' + zero);
+        weightRef.child('zero').set(zero.val());
+      });
+      break;
+    case 'full':
+      valRef.once('value', function(full) {
+        console.log('Calibrating ' + calibrate.id + ' full as: ' + full);
+        weightRef.child('/full').set(full.val());
+      });
+      break;
+    case 'empty':
+      valRef.once('value', function(empty) {
+        console.log('Calibrating ' + calibrate.id + ' empty as: ' + empty);
+        weightRef.child('/empty').set(empty.val());
+      });
+      break;
+    default:
+      console.log('Unknown calibration target: ' + calibrate.target);
   }
 }
 
