@@ -9,14 +9,14 @@ class BrewsListContainer extends React.Component {
     return (
       <div>
         <h1>Brews</h1>
-        <BrewsList brews={brews} />
+        <BrewsList brews={Object.entries(brews).map(e => e[1])} />
       </div>
     );
   }
 }
 
 BrewsListContainer.propTypes = {
-  brews: PropTypes.array.isRequired,
+  brews: PropTypes.object.isRequired,
 };
 
 export default compose(

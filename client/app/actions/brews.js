@@ -1,4 +1,5 @@
 import database from '../libs/FirebaseApp';
+import uuid4 from 'uuid';
 var brewsRef = database.ref('app/brews');
 
 export const ADD_BREW = 'ADD_BREW';
@@ -17,6 +18,17 @@ export function editBrew(brew) {
     type: EDIT_BREW,
     data: brew
   }
+}
+
+export const SAVED_BREW = 'SAVED_BREW';
+export function saveBrew(brew) {
+  const id = brew.id == 'new' ? uuid4() : brew.id;
+  return (dispatch) => {
+    brewsRef.child(brew.id).set(brew, () => dispatch({
+      type: SAVED_BREW,
+      id,
+    }));
+  };
 }
 
 export const RECEIVE_BREWS_DATA = 'RECEIVE_BREWS_DATA';

@@ -15,11 +15,11 @@ const APP_STORAGE = 'weighty_beer'
 const store = configureStore(storage.get(APP_STORAGE) || {});
 injectTapEventPlugin();
 
-store.subscribe(() => {
-  if (!storage.get('debug')) {
-    storage.set(APP_STORAGE, store.getState());
-  }
-});
+// store.subscribe(() => {
+//   if (!storage.get('debug')) {
+//     storage.set(APP_STORAGE, store.getState());
+//   }
+// });
 
 if (!store.getState().navigation.transitioning) {
   ReactDOM.render(
@@ -45,4 +45,8 @@ setTimeout(() => {
   store.dispatch(startListeningToAppData());
 });
 
-window.addEventListener('hashchange', () => store.dispatch(navigationComplete()), false);
+function onHashChange() {
+  store.dispatch(navigationComplete());
+}
+window.addEventListener('hashchange', onHashChange , false);
+onHashChange();
