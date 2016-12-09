@@ -41,7 +41,7 @@ export function saveBrew(brew) {
 }
 
 export const RECEIVE_BREWS_DATA = 'RECEIVE_BREWS_DATA';
-export function startListeningToAppData() {
+export function startListeningToBrewsData() {
   return (dispatch) => {
     brewsRef.on('value', (snapshot) => {
       dispatch({
