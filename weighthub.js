@@ -6,15 +6,15 @@ firebase.initializeApp(config);
 var database = firebase.database();
 
 function sensorListener(weightRef, sensor) {
-  console.log(sensor.id + ": " + sensor.value);
+  // console.log(sensor.id + ": " + sensor.value);
   weightRef.once('value').then(function (weightSnap) {
     let weight = weightSnap.val();
-    let one = weight.empty - weight.full;
-    let part = weight.empty - weight.current;
-    console.log(part + " / " + one);
+    let one = weight.empty - weight.full || 1;
+    let part = weight.empty - weight.current || 1;
+    // console.log(part + " / " + one);
     weightRef.update({
       current: sensor.value,
-      percent: part / one
+      percent: Math.round((part / one) * 100),
     });
   });
 }
