@@ -5,8 +5,7 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 
-function sensorListener(weightRef, sensorSnapshot) {
-  let sensor = sensorSnapshot.val();
+function sensorListener(weightRef, sensor) {
   console.log(sensor.id + ": " + sensor.value);
   weightRef.once('value').then(function (weightSnap) {
     let weight = weightSnap.val();
@@ -24,8 +23,13 @@ function registerSensors(sensorSnapshot) {
   var sensor = sensorSnapshot.val();
   console.log('Registered new sensor: ');
   console.log(sensor);
+  const weightRef = database.ref('weighthub/weights/' + sensor.id);
 
-  sensorSnapshot.ref.on('value', sensorListener.bind(null, database.ref('weighthub/weights/' + sensor.id)));
+  sensorSnapshot.ref.on('value', (sensorSnapshot) => {
+    const sensor = sensorSnapshot.val();
+    weightRef.child('id').set(sensor.id)
+    return sensorListener(weightRef, sensor);
+  });
 }
 
 function calibrate(calibrate) {
