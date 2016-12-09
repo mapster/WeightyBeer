@@ -6,7 +6,7 @@ const initialState = {
   data: {}, // data from firebase
 };
 
-export default function taps(state = initialState, action) {
+export default function brews(state = initialState, action) {
   switch (action.type) {
     case types.RECEIVE_BREWS_DATA:
       return {

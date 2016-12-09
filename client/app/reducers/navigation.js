@@ -4,7 +4,7 @@ import * as types from '../actions/navigation';
 const initialState = {
   transitioning: false,
   location: ROUTES.lookup('home'),
-}
+};
 
 export default function navigation(state = initialState, action) {
   switch (action.type) {

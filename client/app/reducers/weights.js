@@ -5,9 +5,9 @@ const initialState = {
   data: {}, // data from firebase
 };
 
-export default function taps(state = initialState, action) {
+export default function weights(state = initialState, action) {
   switch (action.type) {
-    case types.RECEIVE_TAPS_DATA:
+    case types.RECEIVE_WEIGHTS_DATA:
       return {
         ...state,
         hasReceivedData: true,

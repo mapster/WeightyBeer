@@ -8,7 +8,7 @@ import configureStore from './store/configureStore';
 import storage from './libs/storage';
 import {navigationComplete} from './actions/navigation';
 import {startListeningToWeightHub} from './actions/weights';
-import {startListeningToAppData} from './actions/brews';
+import {startListeningToBrewsData} from './actions/brews';
 
 const APP_STORAGE = 'weighty_beer'
 
@@ -43,8 +43,8 @@ if (module.hot) {
 }
 
 setTimeout(() => {
+  store.dispatch(startListeningToBrewsData());
   store.dispatch(startListeningToWeightHub());
-  store.dispatch(startListeningToAppData());
 });
 
 function onHashChange() {
