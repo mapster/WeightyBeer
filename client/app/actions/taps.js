@@ -1,5 +1,5 @@
 import database from '../libs/FirebaseApp';
-var tapsRef = database.ref('weighthub/weights');
+var tapsRef = database.ref('weighthub/taps');
 
 export const ADD_TAP = 'ADD_TAP';
 export function addTap(tap) {
@@ -12,7 +12,7 @@ export function addTap(tap) {
 }
 
 export const RECEIVE_TAPS_DATA = 'RECEIVE_TAPS_DATA';
-export function startListeningToWeightHub() {
+export function startListeningToTapsData() {
   return (dispatch) => {
     tapsRef.on('value', (snapshot) => {
       dispatch({

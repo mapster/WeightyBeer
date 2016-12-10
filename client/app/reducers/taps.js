@@ -1,7 +1,6 @@
 import * as types from '../actions/taps';
 
 const initialState = {
-  active: [],
   hasReceivedData: false,
   data: {}, // data from firebase
 };
@@ -12,6 +11,11 @@ export default function taps(state = initialState, action) {
       return  {
         ...state,
         active: [...state.taps, action.tap]
+      };
+    case types.RECEIVE_TAPS_DATA:
+      return {
+        ...state,
+        data: action.data,
       };
     default:
       return state;

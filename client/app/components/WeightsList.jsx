@@ -4,7 +4,7 @@ import {Table, TableHeader,  TableHeaderColumn, TableBody, TableRow } from 'mate
 
 const WeightsList = ({weights, doCalibrate}) => (
   <Table>
-    <TableHeader>
+    <TableHeader displaySelectAll={false}>
       <TableRow>
         <TableHeaderColumn>ID</TableHeaderColumn>
         <TableHeaderColumn>Current</TableHeaderColumn>
