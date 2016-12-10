@@ -30,7 +30,7 @@ database.ref('sensors/weight/' + id).set({
   id: id,
   value: INITIAL_BASE,
 });
-setInterval(generateData, 3000);
+setInterval(generateData, 1000);
 
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
