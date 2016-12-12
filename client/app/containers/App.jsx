@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 
 import ApplicationLayout from '../components/ApplicationLayout';
 import TapsContainer from './TapsContainer';
+import TapEditContainer from './TapEditContainer';
 import BrewEditContainer from './BrewEditContainer';
 import BrewsListContainer from './BrewsListContainer';
 import WeightHubContainer from './WeightHubContainer';
@@ -27,6 +28,7 @@ App.propTypes = {
 const route2 = {
   home: <h1>home</h1>,
   taps: <TapsContainer />,
+  tapEdit: <TapEditContainer />,
   brews: <BrewsListContainer />,
   brewEdit: <BrewEditContainer />,
   weighthub: <WeightHubContainer />,
