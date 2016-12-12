@@ -8,12 +8,12 @@ import link from '../libs/link';
 
 class TapsContainer extends React.Component {
   render() {
-    const {taps} = this.props;
+    const {taps, brews} = this.props;
     return (
       <div>
         <h1>Taps</h1>
         <FloatingActionButton href={ link('tapEdit', {id: 'new'}) }><ContentAdd /></FloatingActionButton>
-        <TapsList taps={Object.entries(taps).map(e => e[1])} />
+        <TapsList taps={Object.entries(taps).map(e => e[1])} brews={brews}/>
       </div>
     );
   }
@@ -21,11 +21,13 @@ class TapsContainer extends React.Component {
 
 TapsContainer.propTypes = {
   taps: PropTypes.object.isRequired,
+  brews: PropTypes.object.isRequired,
 };
 
 export default compose(
   connect(state => ({
     taps: state.taps.data,
+    brews: state.brews.data,
   }), {
   })
 )(TapsContainer);
