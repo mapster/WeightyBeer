@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import {updater} from '../libs/formHelpers';
 
 const indent = {
   marginLeft: 20,
@@ -10,12 +11,6 @@ const buttonStyle = {
   ...indent,
   marginTop: 20,
   marginBottom: 20,
-}
-
-function updater(brew, prop, onEdit) {
-  return e => {
-    return onEdit(Object.assign({}, brew, {[prop]: e.target.value }));
-  };
 }
 
 const BrewEdit = ({brew = {}, onEdit, doSave}) => (
