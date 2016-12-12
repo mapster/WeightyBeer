@@ -4,6 +4,11 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import IconButton from 'material-ui/IconButton';
+import FavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+import Favorite from 'material-ui/svg-icons/action/favorite';
+import {updater, selectUpdater, toggle} from '../libs/formHelpers';
+
 
 const indent = {
   marginLeft: 20,
@@ -14,16 +19,12 @@ const buttonStyle = {
   marginBottom: 20,
 }
 
-function updater(tap, prop, onEdit) {
-  return e => onEdit({...tap, [prop]: e.target.value });
-}
-
-function selectUpdater(tap, prop, onEdit) {
-  return (e, k, brew) => onEdit({...tap, [prop]: brew});
-}
 
 const TapEdit = ({tap = {}, onEdit, doSave, brews, weights}) => (
   <Paper zDepth={1} style={{width: '80%', margin: '0 auto'}}>
+    <IconButton onClick={toggle(tap, 'isActive', onEdit)}>{
+      (tap.isActive && <Favorite />) || <FavoriteBorder />
+    }</IconButton><br />
     <TextField onChange={updater(tap, 'name', onEdit)} style={indent} floatingLabelText='Name' name='name' defaultValue={tap.name || ''} /><br />
     <SelectField onChange={selectUpdater(tap, 'brew', onEdit)} floatingLabelText='Brew on tap' style={indent} value={tap.brew} autoWidth={true}>
       <MenuItem value={null} primaryText='' />

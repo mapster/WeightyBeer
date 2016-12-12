@@ -22,13 +22,16 @@ export function editTap(tap) {
 export const SAVED_TAP = 'SAVED_TAP';
 export function saveTap(tap) {
   const id = tap.id == 'new' ? uuid4() : tap.id;
-  console.log('heisann: ' + id);
   return (dispatch) => {
     dispatch(clearChanges(id));
     tapsRef.child(id).set({...tap, id}, () => {
       dispatch(navigationStart('tapEdit', {id}));
     });
   };
+}
+
+export function quickSaveTap(tap) {
+  return () => tapsRef.child(tap.id).set(tap);
 }
 
 export const RECEIVE_TAPS_DATA = 'RECEIVE_TAPS_DATA';
