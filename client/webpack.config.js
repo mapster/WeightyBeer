@@ -4,6 +4,7 @@ const parts = require('./libs/parts');
 const path = require('path');
 const stylelint = require('stylelint');
 const validate = require('webpack-validator');
+const pkg = require('./package.json');
 
 const TARGET = process.env.npm_lifecycle_event;
 const PATHS = {
@@ -12,6 +13,7 @@ const PATHS = {
     path.join(process.cwd(), 'node_modules', 'purecss'),
     path.join(__dirname, 'app', 'main.css'),
   ],
+  images: path.join(__dirname, 'app', 'images'),
   build: path.join(__dirname, 'build'),
 };
 const ENV = {
@@ -29,28 +31,13 @@ const common = {
   },
   module: {
     loaders: [
-      {
-        test: /\.jsx?$/,
-        loaders: ['babel?cacheDirectory'],
-        include: PATHS.app,
-      },
+      { test: /\.jsx?$/, loaders: ['babel?cacheDirectory'], include: PATHS.app, },
+      { test: /\.(jpg|png)$/, loader: 'file?name=[path][name].[hash].[ext]', include: PATHS.images },
     ],
     preLoaders: [
-      {
-        test: /\.json$/,
-        loader: 'json',
-        exclude: [/node_modules/, /build/]
-      },
-      {
-        test: /\.jsx?$/,
-        loaders: ['eslint'],
-        include: PATHS.app,
-      },
-      {
-        test: /\.css$/,
-        loaders: ['postcss'],
-        include: PATHS.app,
-      },
+      { test: /\.json$/, loader: 'json', exclude: [/node_modules/, /build/] },
+      { test: /\.jsx?$/, loaders: ['eslint'], include: PATHS.app, },
+      { test: /\.css$/,  loaders: ['postcss'], include: PATHS.app, },
     ],
   },
   output: {
@@ -80,8 +67,8 @@ const common = {
 let config;
 
 switch (TARGET) {
-  case 'client-build':
-  case 'client-stats':
+  case 'build':
+  case 'stats':
     config = merge(
       common,
       {
@@ -99,7 +86,7 @@ switch (TARGET) {
       ),
       parts.extractBundle({
         name: 'vendor',
-        entries: ['react'],
+        entries: Object.keys(pkg.dependencies),
       }),
       parts.minify(),
       parts.extractCSS(PATHS.style),
