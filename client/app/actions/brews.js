@@ -1,4 +1,4 @@
-import database from '../libs/FirebaseApp';
+import {database} from '../libs/FirebaseApp';
 import uuid4 from 'uuid';
 var brewsRef = database.ref('app/brews');
 import {navigationStart} from './navigation';

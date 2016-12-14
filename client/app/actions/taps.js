@@ -1,4 +1,4 @@
-import database from '../libs/FirebaseApp';
+import {database} from '../libs/FirebaseApp';
 import uuid4 from 'uuid';
 var tapsRef = database.ref('app/taps');
 import {navigationStart} from './navigation';

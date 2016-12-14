@@ -1,11 +1,16 @@
 import React from 'react';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import FlatButton from 'material-ui/FlatButton';
+import {Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
 import ROUTES from '../routes';
 
 
-const muiTheme = getMuiTheme();
+const muiTheme = getMuiTheme({
+  ...darkBaseTheme,
+});
+
 const pages = [
   {name: 'home', text: 'Home'},
   {name: 'taps', text: 'Taps'},
@@ -17,10 +22,12 @@ export default class ApplicationLayout extends React.Component {
   render() {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-        <div>
-          <nav className='navbar'>{pages.map(p =>
-            <FlatButton key={p.name} label={p.text} href={'#'+ROUTES.generate(p.name)} />
-          )}</nav>
+        <div className='container'>
+          <Toolbar style={{backgroundColor: '#212121'}} className='appbar'>
+            <ToolbarGroup firstChild={true}>{pages.map(p =>
+                <FlatButton key={p.name} label={p.text} href={'#'+ROUTES.generate(p.name)} />
+            )}</ToolbarGroup>
+          </Toolbar>
           <main className='content'>
             {this.props.children}
           </main>

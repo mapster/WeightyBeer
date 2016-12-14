@@ -1,3 +1,12 @@
-body {
-  background: cornsilk;
+@import url("style/app.css");
+
+#app {
+  position: absolute;
+  background: #303030;
+  height: 100%;
+  width: 100%;
+}
+
+.content {
+  margin: 10px;
 }

@@ -1,4 +1,4 @@
-import database from '../libs/FirebaseApp';
+import {database} from '../libs/FirebaseApp';
 var weightsRef = database.ref('weighthub/weights');
 var actionsRef = database.ref('weighthub/actions');
 
