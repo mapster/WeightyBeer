@@ -10,6 +10,7 @@ import {navigationComplete} from './actions/navigation';
 import {startListeningToWeightHub} from './actions/weights';
 import {startListeningToBrewsData} from './actions/brews';
 import {startListeningToTapsData} from './actions/taps';
+import {startListeningToImagesData} from './actions/images';
 
 const APP_STORAGE = 'weighty_beer'
 
@@ -47,6 +48,7 @@ setTimeout(() => {
   store.dispatch(startListeningToBrewsData());
   store.dispatch(startListeningToWeightHub());
   store.dispatch(startListeningToTapsData());
+  store.dispatch(startListeningToImagesData());
 });
 
 function onHashChange() {
