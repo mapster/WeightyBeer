@@ -11,6 +11,12 @@ const cardStyle = {
 };
 
 const brewName = (brew) =>  (brew && ('#' + brew.brewNo + ' ' + brew.name)) || '';
+const volumeText = (tap, weight) => {
+  if(!tap.volume || !weight.percent) {
+    return '';
+  }
+  return '(' + (tap.volume * weight.percent / 100.0).toFixed(2) + '/' + tap.volume + ' L)';
+}
 
 const TapCard = ({tap, brew, weight}) => (
   <Card style={cardStyle} className='favorite-tap'>
@@ -20,7 +26,7 @@ const TapCard = ({tap, brew, weight}) => (
     </CardMedia>
     <CardTitle title={brewName(brew)} subtitle={brew.style}>
       <Divider style={{marginTop: '5px', marginBottom: '5px'}} />
-      <div>Volume 13/19 L</div>
+      <div>Remaining: {weight.percent}% {volumeText(tap, weight)}</div>
     </CardTitle>
   </Card>
 );

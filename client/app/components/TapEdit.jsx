@@ -19,7 +19,6 @@ const buttonStyle = {
   marginBottom: 20,
 }
 
-
 const TapEdit = ({tap = {}, onEdit, doSave, brews, weights}) => (
   <Paper zDepth={1} style={{width: '80%', margin: '0 auto'}}>
     <IconButton onClick={toggle(tap, 'isActive', onEdit)}>{
@@ -38,6 +37,7 @@ const TapEdit = ({tap = {}, onEdit, doSave, brews, weights}) => (
         <MenuItem key={weight.id} value={weight.id} primaryText={weight.id} />
       )}
     </SelectField><br />
+    <TextField onChange={updater(tap, 'volume', onEdit)} type='number' style={indent} floatingLabelText='Volume (L)' defaultValue={tap.volume || 1} /><br />
     <RaisedButton onClick={() => doSave(tap)} style={buttonStyle} backgroundColor='green' label='Save' labelColor='white' />
   </Paper>
 );
