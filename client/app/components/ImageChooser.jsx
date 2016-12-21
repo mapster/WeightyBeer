@@ -1,6 +1,9 @@
 import React, {PropTypes} from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
 import RaisedButton from 'material-ui/RaisedButton';
+import IconButton from 'material-ui/IconButton';
+import FavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+import Favorite from 'material-ui/svg-icons/action/favorite';
 
 const fileInputStyle = {
   cursor: 'pointer',
@@ -17,15 +20,23 @@ const gridListStyle = {
   flexWrap: 'noWrap',
   overflowX: 'auto',
 };
-
-const ImageChooser = ({doSelectImage, doUploadImage, images}) => (
+// (img.id == selectedId && <Favorite />) ||
+ // onClick={() => doSelectImage(img.id)}
+const ImageChooser = ({doSelectImage, doUploadImage, images, selectedId}) => (
   <div>
     <GridList style={gridListStyle} cols={2.2}>{images.map(img =>
-      <GridTile onClick={() => doSelectImage(img.id)} key={img.id}>
+      <GridTile
+        actionIcon={
+          <IconButton>
+            <FavoriteBorder />
+          </IconButton>
+        }
+        key={img.id}
+        >
         <img src={img.url} />
       </GridTile>
     )}</GridList>
-    <RaisedButton containerElement='label' label='Choose image' labelPosition='before'>
+    <RaisedButton containerElement='label' label='Upload image' labelPosition='before'>
       <input type='file' style={fileInputStyle} onChange={(e) => doUploadImage(e.target.files[0])} />
     </RaisedButton>
   </div>
@@ -35,6 +46,7 @@ ImageChooser.propTypes = {
   doSelectImage: PropTypes.func.isRequired,
   doUploadImage: PropTypes.func.isRequired,
   images: PropTypes.array.isRequired,
+  selectedId: PropTypes.string,
 }
 
 export default ImageChooser;

@@ -16,7 +16,7 @@ export function startListeningToImagesData() {
 }
 
 export function uploadImage(file) {
-  return (dispatch) => {
+  return () => {
     const id = uuid4();
     storageRef.child(id).put(file).then((snapshot) => {
       imagesRef.child(id).set({

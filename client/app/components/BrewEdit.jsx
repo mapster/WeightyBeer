@@ -16,9 +16,7 @@ const paperStyle = {
   paddingLeft: 20,
   backgroundColor: '#424242',
 }
-
-const doSelectImg = (brew, onEdit) => updater(brew, 'image', onEdit)
-
+// style={{marginTop: '20px', width: '45%', marginRight: 20, float: 'right'}}
 const BrewEdit = ({brew = {}, onEdit, doSave, doUploadImage, images}) => (
   <Paper zDepth={1} style={paperStyle}>
     <div style={{float: 'left', width: '45%'}}>
@@ -26,7 +24,7 @@ const BrewEdit = ({brew = {}, onEdit, doSave, doUploadImage, images}) => (
       <TextField onChange={updater(brew, 'name', onEdit)} floatingLabelText='Name' name='name' defaultValue={brew.name || ''} /><br />
       <TextField onChange={updater(brew, 'style', onEdit)} floatingLabelText='Style' name='style' defaultValue={brew.style || ''} /><br />
     </div>
-    <div style={{marginTop: '20px', width: '45%', marginRight: 20, float: 'right'}}>
+    <div >
       <ImageChooser
         doSelectImage={(id) => onEdit({...brew, image: id})}
         doUploadImage={doUploadImage}
