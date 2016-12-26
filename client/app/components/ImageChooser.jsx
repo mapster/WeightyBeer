@@ -20,19 +20,19 @@ const gridListStyle = {
   flexWrap: 'noWrap',
   overflowX: 'auto',
 };
-// (img.id == selectedId && <Favorite />) ||
- // onClick={() => doSelectImage(img.id)}
+
 const ImageChooser = ({doSelectImage, doUploadImage, images, selectedId}) => (
   <div>
     <GridList style={gridListStyle} cols={2.2}>{images.map(img =>
       <GridTile
         actionIcon={
-          <IconButton>
-            <FavoriteBorder />
+          <IconButton onClick={() => doSelectImage(img.id)}>
+            { img.id == selectedId && <Favorite /> || <FavoriteBorder /> }
           </IconButton>
         }
         key={img.id}
-        >
+        title=' '
+      >
         <img src={img.url} />
       </GridTile>
     )}</GridList>

@@ -29,6 +29,7 @@ const BrewEdit = ({brew = {}, onEdit, doSave, doUploadImage, images}) => (
         doSelectImage={(id) => onEdit({...brew, image: id})}
         doUploadImage={doUploadImage}
         images={Object.entries(images).map(e => e[1])}
+        selectedId={brew.image}
       />
     </div>
     <br style={{clear: 'both'}} />

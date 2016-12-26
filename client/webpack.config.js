@@ -17,7 +17,7 @@ const PATHS = {
   build: path.join(__dirname, 'build'),
 };
 const ENV = {
-  host: process.env.HOST || 'localhost',
+  host: process.env.HOST || '0.0.0.0',
   port: process.env.PORT || 8080
 }
 
