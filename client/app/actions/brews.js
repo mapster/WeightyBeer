@@ -23,6 +23,9 @@ export const SAVED_BREW = 'SAVED_BREW';
 export function saveBrew(brew) {
   const id = brew.id == 'new' ? uuid4() : brew.id;
   return (dispatch) => {
+    if (brew.id == 'new') {
+      dispatch(clearChanges('new'));
+    }
     dispatch(clearChanges(id));
     brewsRef.child(id).set({...brew, id}, () => {
       dispatch(navigationStart('brewEdit', {id}));

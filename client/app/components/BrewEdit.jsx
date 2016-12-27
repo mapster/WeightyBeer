@@ -17,7 +17,7 @@ const paperStyle = {
   backgroundColor: '#424242',
 }
 
-const BrewEdit = ({brew = {}, onEdit, doSave, doDeleteImage, doUploadImage, images}) => (
+const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadImage, images}) => (
   <Paper zDepth={1} style={paperStyle}>
     <div style={{float: 'left', width: '45%'}}>
       <TextField onChange={updater(brew, 'brewNo', onEdit)} type='number' floatingLabelText='Brew #' name='brewNo' defaultValue={brew.brewNo || ''} /><br />
@@ -35,13 +35,14 @@ const BrewEdit = ({brew = {}, onEdit, doSave, doDeleteImage, doUploadImage, imag
     </div>
     <br style={{clear: 'both'}} />
     <RaisedButton onClick={() => doSave(brew)} style={buttonStyle} primary={true} label='Save'/>
-    <RaisedButton style={buttonStyle} secondary={true} label='Cancel'/>
+    <RaisedButton onClick={doCancel} style={buttonStyle} secondary={true} label='Cancel'/>
   </Paper>
 );
 
 BrewEdit.propTypes = {
   brew: PropTypes.object.isRequired,
   onEdit: PropTypes.func.isRequired,
+  doCancel: PropTypes.func.isRequired,
   doSave: PropTypes.func.isRequired,
   doDeleteImage: PropTypes.func.isRequired,
   doUploadImage: PropTypes.func.isRequired,
