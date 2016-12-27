@@ -23,6 +23,8 @@ const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadI
       <TextField onChange={updater(brew, 'brewNo', onEdit)} type='number' floatingLabelText='Brew #' name='brewNo' defaultValue={brew.brewNo || ''} /><br />
       <TextField onChange={updater(brew, 'name', onEdit)} floatingLabelText='Name' name='name' defaultValue={brew.name || ''} /><br />
       <TextField onChange={updater(brew, 'style', onEdit)} floatingLabelText='Style' name='style' defaultValue={brew.style || ''} /><br />
+      <TextField onChange={updater(brew, 'abv', onEdit)} floatingLabelText='ABV' name='abv' defaultValue={brew.abv || ''} /><br />
+      <TextField onChange={updater(brew, 'ibu', onEdit)} floatingLabelText='IBU' name='ibu' defaultValue={brew.ibu || ''} /><br />
     </div>
     <div >
       <ImageChooser
