@@ -7,7 +7,7 @@ const cardStyle = {
   backgroundColor: '#424242',
 };
 
-const brewName = (brew) =>  (brew && ('#' + brew.brewNo + ' ' + brew.name)) || '';
+const brewName = (brew) =>  (brew && brew.name) || '';
 const volumeText = (tap, weight) => {
   if(!tap.volume || !weight.percent) {
     return '';
@@ -21,16 +21,18 @@ const brewImage = (images, brew) => {
 }
 
 const TapCard = ({tap, brew, images, weight}) => (
-  <Card style={cardStyle} className='favorite-tap'>
-    <CardHeader title={tap.name}/>
-    <CardMedia>
-      <img src={brewImage(images, brew)} />
-    </CardMedia>
-    <CardTitle title={brewName(brew)} subtitle={brew.style}>
-      <Divider style={{marginTop: '5px', marginBottom: '5px'}} />
-      <div>Remaining: {weight.percent}% {volumeText(tap, weight)}</div>
-    </CardTitle>
-  </Card>
+  <div className='tapCard'>
+    <Card style={cardStyle} className='favorite-tap'>
+      <CardHeader title={tap.name}/>
+      <CardMedia>
+        <img className='tapCardImg' src={brewImage(images, brew)} />
+      </CardMedia>
+      <CardTitle title={brewName(brew)} subtitle={'Brew #' + brew.brewNo + ' - ' + brew.style}>
+        <Divider style={{marginTop: '5px', marginBottom: '5px'}} />
+        <div>Remaining: {weight.percent}% {volumeText(tap, weight)}</div>
+      </CardTitle>
+    </Card>
+  </div>
 );
 
 TapCard.propTypes = {

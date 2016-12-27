@@ -3,9 +3,11 @@ import {GridList} from 'material-ui/GridList';
 import TapCard from './TapCard';
 
 const FavoriteTaps = ({taps, brews, images, weights}) => (
-  <GridList cols={3}>{taps.filter(tap => tap.isActive).map((tap) =>
-    <TapCard key={tap.id} tap={tap} brew={brews[tap.brew]} images={images} weight={weights[tap.weight]} />
-  )}</GridList>
+  <div className='favoriteTaps'>
+    <GridList cols={3}>{taps.filter(tap => tap.isActive).map((tap) =>
+      <TapCard key={tap.id} tap={tap} brew={brews[tap.brew]} images={images} weight={weights[tap.weight]} />
+    )}</GridList>
+  </div>
 );
 
 FavoriteTaps.propTypes = {

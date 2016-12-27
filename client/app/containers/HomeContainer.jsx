@@ -7,7 +7,7 @@ class HomeContainer extends React.Component {
   render() {
     const {taps, brews, images, weights} = this.props;
     return (
-      <div>
+      <div className='homeContainer'>
         <FavoriteTaps taps={Object.entries(taps).map(e => e[1])} brews={brews} images={images} weights={weights} />
       </div>
     );
