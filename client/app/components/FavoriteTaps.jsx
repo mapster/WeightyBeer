@@ -2,15 +2,16 @@ import React, {PropTypes} from 'react';
 import {GridList} from 'material-ui/GridList';
 import TapCard from './TapCard';
 
-const FavoriteTaps = ({taps, brews, weights}) => (
+const FavoriteTaps = ({taps, brews, images, weights}) => (
   <GridList cols={3}>{taps.filter(tap => tap.isActive).map((tap) =>
-    <TapCard key={tap.id} tap={tap} brew={brews[tap.brew]} weight={weights[tap.weight]} />
+    <TapCard key={tap.id} tap={tap} brew={brews[tap.brew]} images={images} weight={weights[tap.weight]} />
   )}</GridList>
 );
 
 FavoriteTaps.propTypes = {
   taps: PropTypes.array.isRequired,
   brews: PropTypes.object.isRequired,
+  images: PropTypes.object.isRequired,
   weights: PropTypes.object.isRequired,
 };
 
