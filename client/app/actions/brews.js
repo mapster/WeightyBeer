@@ -30,6 +30,12 @@ export function saveBrew(brew) {
   };
 }
 
+export function deleteBrew(id) {
+  return () => {
+    brewsRef.child(id).remove();
+  }
+}
+
 export const RECEIVE_BREWS_DATA = 'RECEIVE_BREWS_DATA';
 export function startListeningToBrewsData() {
   return (dispatch) => {

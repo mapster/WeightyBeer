@@ -5,16 +5,18 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import BrewsList from '../components/BrewsList';
 import link from '../libs/link';
+import {navigationStart} from '../actions/navigation';
+import {deleteBrew} from '../actions/brews';
 
 class BrewsListContainer extends React.Component {
   render() {
-    const {brews, images} = this.props;
+    const {brews, images, doNavigateTo, doDeleteBrew} = this.props;
     return (
       <div>
         <h1>Brews</h1>
         <FloatingActionButton href={ link('brewEdit', {id: 'new'}) }><ContentAdd /></FloatingActionButton>
         <div className='brewsList'>
-          <BrewsList brews={Object.entries(brews).map(e => e[1])} images={images} />
+          <BrewsList doDeleteBrew={doDeleteBrew} toEditBrew={(id) => doNavigateTo('brewEdit', {id})} brews={Object.entries(brews).map(e => e[1])} images={images} />
         </div>
       </div>
     );
@@ -24,6 +26,8 @@ class BrewsListContainer extends React.Component {
 BrewsListContainer.propTypes = {
   brews: PropTypes.object.isRequired,
   images: PropTypes.object.isRequired,
+  doNavigateTo: PropTypes.func.isRequired,
+  doDeleteBrew: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -31,5 +35,7 @@ export default compose(
     brews: state.brews.data,
     images: state.images.data,
   }), {
+    doDeleteBrew: deleteBrew,
+    doNavigateTo: navigationStart,
   })
 )(BrewsListContainer);
