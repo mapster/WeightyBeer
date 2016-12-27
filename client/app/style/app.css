@@ -8,6 +8,10 @@
 .homeContainer {
 }
 
+.brewsList {
+  margin-top: 10px;
+}
+
 .tapCardImg {
   max-height: 230px;
 }

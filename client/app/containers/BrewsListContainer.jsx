@@ -8,12 +8,14 @@ import link from '../libs/link';
 
 class BrewsListContainer extends React.Component {
   render() {
-    const {brews} = this.props;
+    const {brews, images} = this.props;
     return (
       <div>
         <h1>Brews</h1>
         <FloatingActionButton href={ link('brewEdit', {id: 'new'}) }><ContentAdd /></FloatingActionButton>
-        <BrewsList brews={Object.entries(brews).map(e => e[1])} />
+        <div className='brewsList'>
+          <BrewsList brews={Object.entries(brews).map(e => e[1])} images={images} />
+        </div>
       </div>
     );
   }
@@ -21,11 +23,13 @@ class BrewsListContainer extends React.Component {
 
 BrewsListContainer.propTypes = {
   brews: PropTypes.object.isRequired,
+  images: PropTypes.object.isRequired,
 };
 
 export default compose(
   connect(state => ({
     brews: state.brews.data,
+    images: state.images.data,
   }), {
   })
 )(BrewsListContainer);
