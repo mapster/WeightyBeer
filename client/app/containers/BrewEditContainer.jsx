@@ -4,11 +4,11 @@ import {connect} from 'react-redux';
 import BrewEdit from '../components/BrewEdit';
 import NotFound from '../components/NotFound';
 import {editBrew, saveBrew} from '../actions/brews';
-import {uploadImage} from '../actions/images';
+import {uploadImage, deleteImage} from '../actions/images';
 
 class BrewEditContainer extends React.Component {
   render() {
-    const {edit, brews, id, editBrew, doSave, doUploadImage, images} = this.props;
+    const {edit, brews, id, editBrew, doSave, doDeleteImage, doUploadImage, images} = this.props;
 
     let brew = edit[id];
     if (!brew) {
@@ -22,6 +22,7 @@ class BrewEditContainer extends React.Component {
       brew={brew}
       onEdit={editBrew}
       doSave={doSave}
+      doDeleteImage={doDeleteImage}
       doUploadImage={doUploadImage}
       images={images}
       />;
@@ -33,6 +34,7 @@ BrewEditContainer.propTypes = {
   edit: PropTypes.object.isRequired,
   editBrew: PropTypes.func.isRequired,
   doSave: PropTypes.func.isRequired,
+  doDeleteImage: PropTypes.func.isRequired,
   doUploadImage: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
   images: PropTypes.object.isRequired,
@@ -47,6 +49,7 @@ export default compose(
   }), {
     editBrew,
     doSave: saveBrew,
+    doDeleteImage: deleteImage,
     doUploadImage: uploadImage,
   })
 )(BrewEditContainer);

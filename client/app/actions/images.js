@@ -15,6 +15,14 @@ export function startListeningToImagesData() {
   };
 }
 
+export const IMAGE_DELETED = 'IMAGE_DELETED';
+export function deleteImage(id) {
+  return () => {
+    storageRef.child(id).delete();
+    imagesRef.child(id).remove();
+  };
+}
+
 export function uploadImage(file) {
   return () => {
     const id = uuid4();
