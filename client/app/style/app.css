@@ -15,3 +15,7 @@
 .tapCardImg {
   max-height: 230px;
 }
+
+.centerText {
+  text-align: center !important;
+}

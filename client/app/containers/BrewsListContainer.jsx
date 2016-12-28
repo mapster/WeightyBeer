@@ -13,7 +13,6 @@ class BrewsListContainer extends React.Component {
     const {brews, images, doNavigateTo, doDeleteBrew} = this.props;
     return (
       <div>
-        <h1>Brews</h1>
         <FloatingActionButton href={ link('brewEdit', {id: 'new'}) }><ContentAdd /></FloatingActionButton>
         <div className='brewsList'>
           <BrewsList doDeleteBrew={doDeleteBrew} toEditBrew={(id) => doNavigateTo('brewEdit', {id})} brews={Object.entries(brews).map(e => e[1])} images={images} />

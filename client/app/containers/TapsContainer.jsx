@@ -12,7 +12,6 @@ class TapsContainer extends React.Component {
     const {taps, brews, doQuickSave} = this.props;
     return (
       <div>
-        <h1>Taps</h1>
         <FloatingActionButton href={ link('tapEdit', {id: 'new'}) }><ContentAdd /></FloatingActionButton>
         <TapsList taps={Object.entries(taps).map(e => e[1])} brews={brews} doQuickSave={doQuickSave} />
       </div>

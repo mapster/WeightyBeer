@@ -8,10 +8,7 @@ class WeightHubContainer extends React.Component {
   render() {
     const {weights, doCalibrate} = this.props;
     return (
-      <div>
-        <h1>WeightHub</h1>
-        <WeightsList weights={Object.entries(weights).map(e => e[1])} doCalibrate={doCalibrate} />
-      </div>
+      <WeightsList weights={Object.entries(weights).map(e => e[1])} doCalibrate={doCalibrate} />
     );
   }
 }
