@@ -1,7 +1,6 @@
 import React, {PropTypes} from 'react';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardMedia, CardTitle} from 'material-ui/Card';
 import Divider from 'material-ui/Divider';
-import {storage} from '../libs/FirebaseApp';
 
 const cardStyle = {
   backgroundColor: '#424242',
@@ -14,6 +13,14 @@ const volumeText = (tap, weight) => {
   }
   return '(' + (tap.volume * weight.percent / 100.0).toFixed(2) + '/' + tap.volume + ' L)';
 }
+const brewDetails = (brew) => {
+  if (brew.ibu || brew.abv) {
+    const ibu = brew.ibu ? ('IBU: ' + brew.ibu) : '';
+    const abv = brew.abv ? ('ABV: ' + brew.abv + '%') : '';
+    return <CardTitle subtitle={ibu + (brew.ibu && brew.abv ? ' - ' : '') + abv} />;
+  }
+  return null;
+}
 
 const brewImage = (images, brew) => {
   const img = images[brew.image] || {};
@@ -24,7 +31,7 @@ const TapCard = ({tap, brew, images, weight}) => (
   <div className='tapCard'>
     <Card style={cardStyle} className='favorite-tap'>
       <CardHeader title={tap.name}/>
-      <CardMedia>
+      <CardMedia overlay={brewDetails(brew)}>
         <img className='tapCardImg' src={brewImage(images, brew)} />
       </CardMedia>
       <CardTitle title={brewName(brew)} subtitle={'Brew #' + brew.brewNo + ' - ' + brew.style}>
