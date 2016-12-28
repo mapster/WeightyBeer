@@ -38,3 +38,8 @@ The only thing to know about the _weighthub_ app is that it expects the sensor r
   }
 }
 ```
+
+# License
+
+This project is licensed under the terms of the
+[MIT license](https://github.com/mapster/WeightyBeer/blob/master/LICENSE).
