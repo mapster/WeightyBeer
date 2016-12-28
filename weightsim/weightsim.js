@@ -1,5 +1,5 @@
 var firebase = require('firebase');
-var config = require('./firebase-config');
+var config = require('../firebase-config');
 
 firebase.initializeApp(config);
 

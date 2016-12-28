@@ -1,0 +1,22 @@
+{
+  "name": "weightsim",
+  "version": "1.0.0",
+  "description": "Simple weight sensor simulator for testing of WeightyHub.",
+  "main": "weightsim.js",
+  "scripts": {
+    "start": "node weightsim.js"
+  },
+  "dependencies": {
+    "firebase": "^3.6.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mapster/WeightyBeer.git"
+  },
+  "author": "@mapster",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mapster/WeightyBeer/issues"
+  },
+  "homepage": "https://github.com/mapster/WeightyBeer#readme"
+}
