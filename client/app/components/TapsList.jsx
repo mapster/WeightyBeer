@@ -13,7 +13,7 @@ const TapsList = ({taps, brews, doQuickSave}) => (
         <TableHeaderColumn />
       </TableRow>
     </TableHeader>
-    <TableBody>{taps.map(tap =>
+    <TableBody>{taps.sort((a, b) => a.order - b.order).map(tap =>
         <TapEntry key={tap.id} tap={tap} brew={brews[tap.brew]} doQuickSave={doQuickSave} />
     )}</TableBody>
   </Table>

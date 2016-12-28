@@ -4,7 +4,7 @@ import TapCard from './TapCard';
 
 const FavoriteTaps = ({taps, brews, images, weights}) => (
   <div className='favoriteTaps'>
-    <GridList cols={3}>{taps.filter(tap => tap.isActive).map((tap) =>
+    <GridList cols={3}>{taps.filter(tap => tap.isActive).sort((a, b) => a.order - b.order).map((tap) =>
       <TapCard key={tap.id} tap={tap} brew={brews[tap.brew]} images={images} weight={weights[tap.weight]} />
     )}</GridList>
   </div>

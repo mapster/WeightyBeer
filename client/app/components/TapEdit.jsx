@@ -38,6 +38,7 @@ const TapEdit = ({tap = {}, onEdit, doSave, brews, weights}) => (
       )}
     </SelectField><br />
     <TextField onChange={updater(tap, 'volume', onEdit)} type='number' style={indent} floatingLabelText='Volume (L)' defaultValue={tap.volume || 1} /><br />
+    <TextField onChange={updater(tap, 'order', onEdit)} style={indent} floatingLabelText='Order' name='order' type='number' defaultValue={tap.order || ''} /><br />
     <RaisedButton onClick={() => doSave(tap)} style={buttonStyle} backgroundColor='green' label='Save' labelColor='white' />
   </Paper>
 );
