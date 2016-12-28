@@ -39,13 +39,13 @@ The only thing to know about the _weighthub_ app is that it expects the sensor r
 }
 ```
 
-# Contribute
+## Contribute
 
 If you want to contribute then styling is in dire need. Also a better aggregation
 algorithm for the _weighthub_ app would be nice. Just give me a pull request and
 I'll look into it. Thanks :D  
 
-# License
+## License
 
 This project is licensed under the terms of the
 [MIT license](https://github.com/mapster/WeightyBeer/blob/master/LICENSE).
