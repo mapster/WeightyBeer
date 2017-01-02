@@ -1,0 +1,22 @@
+{
+  "name": "weightsensor",
+  "version": "1.0.0",
+  "description": "WeightHub arduino serial reader",
+  "main": "reader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mapster/WeightyBeer.git"
+  },
+  "author": "@mapster",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mapster/WeightyBeer/issues"
+  },
+  "homepage": "https://github.com/mapster/WeightyBeer#readme",
+  "dependencies": {
+    "serialport": "^4.0.7"
+  }
+}
