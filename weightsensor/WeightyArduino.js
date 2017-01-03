@@ -3,6 +3,7 @@ const SerialPort = require("serialport");
 module.exports = class WeighthArduino {
 
   constructor(config) {
+    this.dataListeners = [];
     this.config = config;
 
     const configError = this.isInvalidConfig(this.config);
@@ -21,6 +22,11 @@ module.exports = class WeighthArduino {
       console.log('Connected to arduino');
       this.connection.on('data', this.arduinoListener.bind(this));
     }.bind(this));
+  }
+
+  addDataListener(listener) {
+    this.dataListeners.push(listener);
+    this.config.sensors.forEach(s => listener(s.id, 0, true));
   }
 
   arduinoListener(rawData) {
@@ -46,7 +52,7 @@ module.exports = class WeighthArduino {
     const value = data.substring(splitAt+1);
 
     if(Number.isInteger(id)) {
-      console.log(this.config.sensors[id].id + ": " + value);
+      this.dataListeners.forEach(l => l(this.config.sensors[id].id, value));
     } else {
       console.log('Unprocessable data received: ' + data);
     }
