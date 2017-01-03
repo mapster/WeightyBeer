@@ -1,0 +1,10 @@
+{
+  "serialport": "/dev/ttyACM0",
+  "sensors": [
+    {
+      "id": "tap1",
+      "clockPin": 3,
+      "outPin": 2
+    }
+  ]
+}
