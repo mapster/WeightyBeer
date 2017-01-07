@@ -10,6 +10,7 @@ const sensorsRef = database.ref('sensors/weight');
 
 const weigthyArduino = new WeightyArduino(config);
 weigthyArduino.addDataListener(pushToFirebaseListener);
+// weigthyArduino.addDataListener(consoleListener);
 weigthyArduino.startListening();
 
 function pushToFirebaseListener(id, value, initialize = false) {
@@ -17,5 +18,11 @@ function pushToFirebaseListener(id, value, initialize = false) {
     sensorsRef.child(id).update({id, value});
   } else {
     sensorsRef.child(id + '/value').set(value);
+  }
+}
+
+function consoleListener(id, value, initialize = false) {
+  if (!initialize) {
+    console.log(value);
   }
 }

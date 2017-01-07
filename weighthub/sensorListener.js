@@ -1,18 +1,18 @@
-function sensorListener(weightRef, sensor) {
-  weightRef.once('value').then(function (weightSnap) {
-    const weight = weightSnap.val();
-    const one = weight.empty - weight.full || 1;
-    const part = weight.empty - sensor.value || 1;
-    const basisPoint = Math.round((part / one) * 10000);
-    const percent = Math.min(100, basisPoint / 100);
-    const diff = Math.round(Math.abs(percent - weight.percent) * 100) / 100;
+const quantize = require('./quantizer');
 
-    if(percent != weight.percent && diff > 0.01) {
-      weightRef.update({
-        current: sensor.value,
-        percent,
-      });
-    }
+function sensorListener(weightRef, sensor) {
+  const quantized = quantize(sensor.value) || 1;
+  weightRef.once('value').then(function (weightSnap) {
+    const weight = weightSnap.val() || 1;
+    const avg = Math.floor((weight.current + quantized) / 2);
+    const one = weight.empty - weight.full || 1;
+    const part = weight.empty - avg || 1;
+    const percent = Math.min(100, Math.floor((part / one) * 100));
+
+    weightRef.update({
+      current: avg,
+      percent,
+    });
   });
 };
 

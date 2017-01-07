@@ -49,7 +49,7 @@ module.exports = class WeighthArduino {
   processData(data) {
     const splitAt = data.indexOf(':');
     const id = Number.parseInt(data.substring(0, splitAt));
-    const value = data.substring(splitAt+1);
+    const value = Number.parseInt(data.substring(splitAt+1));
 
     if(Number.isInteger(id)) {
       this.dataListeners.forEach(l => l(this.config.sensors[id].id, value));
