@@ -2,11 +2,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const parts = require('./libs/parts');
 const path = require('path');
-const stylelint = require('stylelint');
 const validate = require('webpack-validator');
 const pkg = require('./package.json');
 
 const TARGET = process.env.npm_lifecycle_event;
+process.env.BABEL_ENV = TARGET;
+
 const PATHS = {
   app: path.join(__dirname, 'app'),
   style: [
@@ -20,8 +21,6 @@ const ENV = {
   host: process.env.HOST || '0.0.0.0',
   port: process.env.PORT || 8080
 }
-
-process.env.BABEL_ENV = TARGET;
 
 const common = {
   entry: {
@@ -37,7 +36,6 @@ const common = {
     preLoaders: [
       { test: /\.json$/, loader: 'json', exclude: [/node_modules/, /build/] },
       { test: /\.jsx?$/, loaders: ['eslint'], include: PATHS.app, },
-      { test: /\.css$/,  loaders: ['postcss'], include: PATHS.app, },
     ],
   },
   output: {
@@ -51,13 +49,6 @@ const common = {
       appMountId: 'app',
       inject: false,
     }),
-  ],
-  postcss: () => [
-    stylelint({
-      rules: {
-        'color-hex-case': 'lower'
-      }
-    })
   ],
   resolve: {
     extensions: ['', '.js', '.jsx'],
