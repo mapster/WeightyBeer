@@ -1,6 +1,6 @@
 {
   "name": "weighty-beer",
-  "version": "1.0.0",
+  "version": "v1.0.1",
   "description": "Keg weight monitor.",
   "main": "index.js",
   "scripts": {
