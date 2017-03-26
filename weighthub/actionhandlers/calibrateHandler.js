@@ -10,7 +10,9 @@ function calibrate(weightsRef, sensorsRef, action) {
     weightRef.once('value', weightSnap => {
       const current = weightSnap.val().current;
       console.log('Calibrating ' + id + ' ' + target + ' as: ' + current);
-      weightRef.child(target).set(current);
+      if (current) {
+        weightRef.child(target).set(current);
+      }
     });
   } else {
     console.log('Unknown calibration target: ' + target);
