@@ -19,7 +19,7 @@ const buttonStyle = {
   marginBottom: 20,
 }
 
-const TapEdit = ({tap = {}, onEdit, doSave, brews, weights}) => (
+const TapEdit = ({tap = {}, onEdit, doSave, doCancel, brews, weights}) => (
   <Paper zDepth={1} style={{width: '80%', margin: '0 auto'}}>
     <IconButton onClick={toggle(tap, 'isActive', onEdit)}>{
       (tap.isActive && <Favorite />) || <FavoriteBorder />
@@ -39,7 +39,8 @@ const TapEdit = ({tap = {}, onEdit, doSave, brews, weights}) => (
     </SelectField><br />
     <TextField onChange={updater(tap, 'volume', onEdit)} type='number' style={indent} floatingLabelText='Volume (L)' defaultValue={tap.volume || 1} /><br />
     <TextField onChange={updater(tap, 'order', onEdit)} style={indent} floatingLabelText='Order' name='order' type='number' defaultValue={tap.order || ''} /><br />
-    <RaisedButton onClick={() => doSave(tap)} style={buttonStyle} backgroundColor='green' label='Save' labelColor='white' />
+    <RaisedButton onClick={() => doSave(tap)} style={buttonStyle} primary={true} label='Save' />
+    <RaisedButton onClick={doCancel} style={buttonStyle} secondary={true} label='Cancel' />
   </Paper>
 );
 
@@ -47,6 +48,7 @@ TapEdit.propTypes = {
   tap: PropTypes.object,
   onEdit: PropTypes.func.isRequired,
   doSave: PropTypes.func.isRequired,
+  doCancel: PropTypes.func.isRequired,
   brews: PropTypes.array.isRequired,
   weights: PropTypes.array.isRequired,
 };

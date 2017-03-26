@@ -3,13 +3,14 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import TapEdit from '../components/TapEdit';
 import NotFound from '../components/NotFound';
-import {editTap, saveTap} from '../actions/taps';
+import {editTap, saveTap, clearChanges} from '../actions/taps';
+import {navigationStart} from '../actions/navigation';
 
 const toArray = (obj) => Object.entries(obj).map(e => e[1]);
 
 class TapsEditContainer extends React.Component {
   render() {
-    const {edit, taps, id, onEdit, doSave, brews, weights} = this.props;
+    const {edit, taps, id, onEdit, doSave, doClearChanges, doNavigateTo, brews, weights} = this.props;
 
     let tap = edit[id];
     if (!tap) {
@@ -19,7 +20,12 @@ class TapsEditContainer extends React.Component {
       return <NotFound />;
     }
 
-    return <TapEdit tap={tap} onEdit={onEdit} doSave={doSave} brews={toArray(brews)} weights={toArray(weights)}/>;
+    const doCancel = () => {
+      doClearChanges(tap.id);
+      doNavigateTo('taps');
+    };
+
+    return <TapEdit tap={tap} onEdit={onEdit} doSave={doSave} doCancel={doCancel} brews={toArray(brews)} weights={toArray(weights)}/>;
   }
 }
 
@@ -31,6 +37,8 @@ TapsEditContainer.propTypes = {
   id: PropTypes.string.isRequired,
   onEdit: PropTypes.func.isRequired,
   doSave: PropTypes.func.isRequired,
+  doClearChanges: PropTypes.func.isRequired,
+  doNavigateTo: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -43,5 +51,7 @@ export default compose(
   }), {
     onEdit: editTap,
     doSave: saveTap,
+    doClearChanges: clearChanges,
+    doNavigateTo: navigationStart,
   })
 )(TapsEditContainer);

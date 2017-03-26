@@ -21,6 +21,11 @@ export default function taps(state = initialState, action) {
         ...state,
         data: action.data,
       };
+    case types.CLEAR_TAP_CHANGES:
+      return {
+        ...state,
+        edit: {...state.edit, [action.id]: null}
+      };
     default:
       return state;
   }
