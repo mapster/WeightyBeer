@@ -2,6 +2,7 @@ import {database} from '../libs/FirebaseApp';
 import uuid4 from 'uuid';
 var tapsRef = database.ref('app/taps');
 import {navigationStart} from './navigation';
+import {notify} from './notification';
 
 export const CLEAR_TAP_CHANGES = 'CLEAR_TAP_CHANGES';
 export function clearChanges(id) {
@@ -25,7 +26,8 @@ export function saveTap(tap) {
   return (dispatch) => {
     dispatch(clearChanges(id));
     tapsRef.child(id).set({...tap, id}, () => {
-      dispatch(navigationStart('tapEdit', {id}));
+      dispatch(navigationStart('taps', {id}));
+      dispatch(notify('"' + tap.name + '"' + ' saved'));
     });
   };
 }

@@ -1,4 +1,6 @@
 import {database} from '../libs/FirebaseApp';
+import {notify} from './notification';
+
 var weightsRef = database.ref('weighthub/weights');
 var actionsRef = database.ref('weighthub/actions');
 
@@ -15,7 +17,8 @@ export function startListeningToWeightHub() {
 }
 
 export function calibrateWeight(id, target) {
-  return () => {
+  return (dispatch) => {
+    dispatch(notify('Setting tap "' + id + '" as "' + target + '"'));
     actionsRef.push({
       type: 'calibrate',
       target,

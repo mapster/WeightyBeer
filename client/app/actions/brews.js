@@ -2,6 +2,7 @@ import {database} from '../libs/FirebaseApp';
 import uuid4 from 'uuid';
 var brewsRef = database.ref('app/brews');
 import {navigationStart} from './navigation';
+import {notify} from './notification';
 
 export const CLEAR_BREW_CHANGES = 'CLEAR_BREW_CHANGES';
 export function clearChanges(id) {
@@ -28,7 +29,8 @@ export function saveBrew(brew) {
     }
     dispatch(clearChanges(id));
     brewsRef.child(id).set({...brew, id}, () => {
-      dispatch(navigationStart('brewEdit', {id}));
+      dispatch(navigationStart('brews', {id}));
+      dispatch(notify('"' + brew.name + '"' + ' saved'));
     });
   };
 }
