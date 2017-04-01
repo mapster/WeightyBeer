@@ -3,3 +3,4 @@ node_modules
 stats.json
 client/build
 firebase-config.json
+.idea

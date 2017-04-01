@@ -4,8 +4,14 @@
     "react"
   ],
   "plugins": [
-    "react-hot-loader/babel",
     "transform-object-rest-spread",
     "transform-react-jsx-img-import"
   ],
+  "env": {
+    "development": {
+      "presets": [
+        "react-hmre"
+      ]
+    }
+  }
 }
