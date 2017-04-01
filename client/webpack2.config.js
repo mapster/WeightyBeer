@@ -1,15 +1,21 @@
 const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const pkg = require('./package.json');
 
 const sourcePath = path.join(__dirname, './app');
-const buildPath = path.join(__dirname, './static');
+const buildPath = path.join(__dirname, './build');
 
 module.exports = function (env) {
     const nodeEnv = env && env.prod ? 'production' : 'development';
     const isProd = nodeEnv === 'production';
 
     const plugins = [
+        new CleanWebpackPlugin([buildPath], {
+            root: process.cwd(),
+        }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             minChunks: Infinity,
@@ -24,7 +30,8 @@ module.exports = function (env) {
             title: 'WeightyBeer',
             appMountId: 'app',
             inject: false,
-        })
+        }),
+        new ExtractTextPlugin('styles.css'),
     ];
 
     if (isProd) {
@@ -62,7 +69,8 @@ module.exports = function (env) {
         context: sourcePath,
         entry: {
             js: './index.jsx',
-            vendor: ['react']
+            vendor: Object.keys(pkg.dependencies),
+            style: './main.css',
         },
         output: {
             path: buildPath,
@@ -71,22 +79,12 @@ module.exports = function (env) {
         module: {
             rules: [
                 {
-                    test: /\.html$/,
-                    exclude: /node_modules/,
-                    use: {
-                        loader: 'file-loader',
-                        query: {
-                            name: '[name].[ext]'
-                        },
-                    },
-                },
-                {
                     test: /\.css$/,
                     exclude: /node_modules/,
-                    use: [
-                        'style-loader',
-                        'css-loader'
-                    ]
+                    use: ExtractTextPlugin.extract({
+                        fallback: 'style-loader',
+                        use: 'css-loader'
+                    })
                 },
                 {
                     test: /\.(js|jsx)$/,
