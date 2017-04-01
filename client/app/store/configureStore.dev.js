@@ -1,19 +1,14 @@
 import {createStore, compose, applyMiddleware} from 'redux';
-import {persistState} from 'redux-devtools';
 import rootReducer from '../reducers';
-import DevTools from '../containers/DevTools';
 import ReduxThunk from 'redux-thunk';
 
-const createStoreWithMiddleware = compose(
-  applyMiddleware(ReduxThunk),
-  DevTools.instrument(),
-  persistState(getDebugSessionKey()),
-)(createStore);
+/* eslint-disable no-underscore-dangle */
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+/* eslint-enable */
 
-function getDebugSessionKey() {
-  const matches = window.location.href.match(/[?&]debug_session=([^&]+)\b/);
-  return (matches && matches.length > 0) ? matches[1] : null;
-}
+const createStoreWithMiddleware = composeEnhancers(
+  applyMiddleware(ReduxThunk),
+)(createStore);
 
 export default function configureStore(initialState) {
   const store = createStoreWithMiddleware(rootReducer, initialState);
