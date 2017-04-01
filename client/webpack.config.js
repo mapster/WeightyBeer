@@ -1,104 +1,144 @@
+const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const merge = require('webpack-merge');
-const parts = require('./libs/parts');
 const path = require('path');
-const validate = require('webpack-validator');
 const pkg = require('./package.json');
 
-const TARGET = process.env.npm_lifecycle_event;
-process.env.BABEL_ENV = TARGET;
+const sourcePath = path.join(__dirname, './app');
+const buildPath = path.join(__dirname, './build');
 
-const PATHS = {
-  app: path.join(__dirname, 'app'),
-  style: [
-    path.join(process.cwd(), 'node_modules', 'purecss'),
-    path.join(__dirname, 'app', 'main.css'),
-  ],
-  images: path.join(__dirname, 'app', 'images'),
-  build: path.join(__dirname, 'build'),
-};
-const ENV = {
-  host: process.env.HOST || '0.0.0.0',
-  port: process.env.PORT || 8080
-}
+module.exports = function (env) {
+    const nodeEnv = env && env.prod ? 'production' : 'development';
+    const isProd = nodeEnv === 'production';
 
-const common = {
-  entry: {
-    hot: 'react-hot-loader/patch',
-    app: PATHS.app,
-    style: PATHS.style,
-  },
-  module: {
-    loaders: [
-      { test: /\.jsx?$/, loaders: ['babel?cacheDirectory'], include: PATHS.app, },
-      { test: /\.(jpg|png)$/, loader: 'file?name=[path][name].[hash].[ext]', include: PATHS.images },
-    ],
-    preLoaders: [
-      { test: /\.json$/, loader: 'json', exclude: [/node_modules/, /build/] },
-      { test: /\.jsx?$/, loaders: ['eslint'], include: PATHS.app, },
-    ],
-  },
-  output: {
-    path: PATHS.build,
-    filename: '[name].js',
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: require('html-webpack-template'),
-      title: 'WeightyBeer',
-      appMountId: 'app',
-      inject: false,
-    }),
-  ],
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-  },
-};
+    const plugins = [
+        new CleanWebpackPlugin([buildPath], {
+            root: process.cwd(),
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            minChunks: Infinity,
+            filename: 'vendor.bundle.js'
+        }),
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: nodeEnv,
+        }),
+        new webpack.NamedModulesPlugin(),
+        new HtmlWebpackPlugin({
+            template: require('html-webpack-template'),
+            title: 'WeightyBeer',
+            appMountId: 'app',
+            inject: false,
+        }),
+        new ExtractTextPlugin('styles.css'),
+    ];
 
-let config;
+    if (isProd) {
+        plugins.push(
+            new webpack.LoaderOptionsPlugin({
+                minimize: true,
+                debug: false
+            }),
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false,
+                    screw_ie8: true,
+                    conditionals: true,
+                    unused: true,
+                    comparisons: true,
+                    sequences: true,
+                    dead_code: true,
+                    evaluate: true,
+                    if_return: true,
+                    join_vars: true,
+                },
+                output: {
+                    comments: false,
+                },
+            })
+        );
+    } else {
+        plugins.push(
+            new webpack.HotModuleReplacementPlugin()
+        );
+    }
 
-switch (TARGET) {
-  case 'build':
-  case 'stats':
-    config = merge(
-      common,
-      {
-        devtool: 'source-map',
-        output: {
-          path: PATHS.build,
-          filename: '[name].[chunkhash].js',
-          chunkFilename: '[chunkhash].js',
+    return {
+        devtool: isProd ? 'source-map' : 'eval',
+        context: sourcePath,
+        entry: {
+            js: './index.jsx',
+            vendor: Object.keys(pkg.dependencies),
+            style: './main.css',
         },
-      },
-      parts.clean(PATHS.build),
-      parts.setFreeVariable(
-        'process.env.NODE_ENV',
-        'production'
-      ),
-      parts.extractBundle({
-        name: 'vendor',
-        entries: Object.keys(pkg.dependencies),
-      }),
-      parts.minify(),
-      parts.extractCSS(PATHS.style),
-      parts.purifyCSS([PATHS.app])
-    );
-    break;
+        output: {
+            path: buildPath,
+            filename: '[name].bundle.js',
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.css$/,
+                    exclude: /node_modules/,
+                    use: ExtractTextPlugin.extract({
+                        fallback: 'style-loader',
+                        use: 'css-loader'
+                    })
+                },
+                {
+                    test: /\.(js|jsx)$/,
+                    exclude: /node_modules/,
+                    use: [
+                        'babel-loader',
+                        'eslint-loader',
+                    ],
+                },
+            ],
+        },
+        resolve: {
+            extensions: ['.webpack-loader.js', '.web-loader.js', '.loader.js', '.js', '.jsx'],
+            modules: [
+                path.resolve(__dirname, 'node_modules'),
+                sourcePath
+            ]
+        },
 
-  default:
-    config = merge(
-      common,
-      parts.devServer({
-        host: ENV.HOST,
-        port: ENV.PORT,
-      }),
-      {
-        devtool: 'source-map',
-      },
-      parts.setupCSS(PATHS.style)
-    );
-}
+        plugins,
 
-module.exports = validate(config, {
-  quiet: true,
-});
+        performance: isProd && {
+            maxAssetSize: 100,
+            maxEntrypointSize: 300,
+            hints: 'warning',
+        },
+
+        stats: {
+            colors: {
+                green: '\u001b[32m',
+            }
+        },
+
+        devServer: {
+            contentBase: sourcePath,
+            historyApiFallback: true,
+            port: 3000,
+            compress: isProd,
+            inline: !isProd,
+            hot: !isProd,
+            stats: {
+                assets: true,
+                children: false,
+                chunks: false,
+                hash: false,
+                modules: false,
+                publicPath: false,
+                timings: true,
+                version: false,
+                warnings: true,
+                colors: {
+                    green: '\u001b[32m',
+                }
+            },
+        }
+    };
+};
