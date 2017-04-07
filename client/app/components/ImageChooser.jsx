@@ -6,25 +6,9 @@ import FavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import Favorite from 'material-ui/svg-icons/action/favorite';
 import Delete from 'material-ui/svg-icons/action/delete';
 
-const fileInputStyle = {
-  cursor: 'pointer',
-  position: 'absolute',
-  top: 0,
-  bottom: 0,
-  right: 0,
-  left: 0,
-  width: '100%',
-  opacity: 0,
-};
-const gridListStyle = {
-  display: 'flex',
-  flexWrap: 'noWrap',
-  overflowX: 'auto',
-};
-
 const ImageChooser = ({doSelectImage, doDeleteImage, doUploadImage, images, selectedId}) => (
-  <div>
-    <GridList style={gridListStyle} cols={2.2}>{images.map(img =>
+  <div className='imageChooser'>
+    <GridList className='gridList' cols={2.2}>{images.map(img =>
       <GridTile
         actionIcon={
           <div>
@@ -43,7 +27,7 @@ const ImageChooser = ({doSelectImage, doDeleteImage, doUploadImage, images, sele
       </GridTile>
     )}</GridList>
     <RaisedButton containerElement='label' label='Upload image' labelPosition='before'>
-      <input type='file' style={fileInputStyle} onChange={(e) => doUploadImage(e.target.files[0])} />
+      <input type='file' className='fileInput' onChange={(e) => doUploadImage(e.target.files[0])} />
     </RaisedButton>
   </div>
 );

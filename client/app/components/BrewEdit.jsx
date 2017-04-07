@@ -5,21 +5,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {updater} from '../libs/formHelpers';
 import ImageChooser from './ImageChooser';
 
-const buttonStyle = {
-  marginTop: 20,
-  marginBottom: 20,
-  marginLeft: 20,
-}
-const paperStyle = {
-  width: '80%',
-  margin: '0 auto',
-  paddingLeft: 20,
-  backgroundColor: '#424242',
-}
-
 const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadImage, images}) => (
-  <Paper zDepth={1} style={paperStyle}>
-    <div style={{float: 'left', width: '45%'}}>
+  <Paper zDepth={1} className='editPaper'>
+    <div className='leftColumn'>
       <TextField onChange={updater(brew, 'brewNo', onEdit)} type='number' floatingLabelText='Brew #' name='brewNo' defaultValue={brew.brewNo || ''} /><br />
       <TextField onChange={updater(brew, 'name', onEdit)} floatingLabelText='Name' name='name' defaultValue={brew.name || ''} /><br />
       <TextField onChange={updater(brew, 'style', onEdit)} floatingLabelText='Style' name='style' defaultValue={brew.style || ''} /><br />
@@ -35,9 +23,9 @@ const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadI
         selectedId={brew.image}
       />
     </div>
-    <br style={{clear: 'both'}} />
-    <RaisedButton onClick={() => doSave(brew)} style={buttonStyle} primary={true} label='Save'/>
-    <RaisedButton onClick={doCancel} style={buttonStyle} secondary={true} label='Cancel'/>
+    <br className='buttonSeparator'/>
+    <RaisedButton onClick={() => doSave(brew)} primary={true} label='Save' className='formButton'/>
+    <RaisedButton onClick={doCancel} secondary={true} label='Cancel' className='formButton'/>
   </Paper>
 );
 

@@ -1,16 +1,5 @@
-@import url("style/app.css");
-
-#app {
-  position: absolute;
-  background: #303030;
-  height: 100%;
-  width: 100%;
-}
+@import url("style/index.css");
 
 body {
   background: #303030;
-}
-
-.content {
-  margin: 10px;
 }

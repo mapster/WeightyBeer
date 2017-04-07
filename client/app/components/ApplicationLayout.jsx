@@ -23,7 +23,7 @@ export default class ApplicationLayout extends React.Component {
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className='container'>
-          <Toolbar style={{backgroundColor: '#212121'}} className='appbar'>
+          <Toolbar className='appbar'>
             <ToolbarGroup firstChild={true}>{pages.map(p =>
                 <FlatButton key={p.name} label={p.text} href={'#'+ROUTES.generate(p.name)} />
             )}</ToolbarGroup>
