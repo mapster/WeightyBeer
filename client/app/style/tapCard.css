@@ -3,8 +3,12 @@
   height: 230px;
 }
 
-.tapCard {
+.favoriteTaps .tapCard {
   background-color: #424242 !important;
+}
+
+.tapEdit .tapCard {
+  background-color: #616161 !important;
 }
 
 .tapCard .titleDivider {
