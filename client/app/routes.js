@@ -7,4 +7,5 @@ export default uniloc({
   brews: 'GET /brews',
   brewEdit: 'GET /brews/:id/edit',
   weighthub: 'GET /weights',
+  image: 'GET /image',
 });
