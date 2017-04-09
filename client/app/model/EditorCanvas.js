@@ -8,12 +8,14 @@ const MODE = {
 export default class EditorCanvas {
   constructor(state) {
     let {canvas, imgSrc, width, height, targetWidth, targetHeight} = state;
+    imgSrc = imgSrc || {complete: false};
     let internal = {
       image: new EditorImage(imgSrc, (width - targetWidth) / 2, (height - targetHeight) / 2, targetWidth, targetHeight),
       drag: {is: false},
       grab: {is: false},
       ...state,
     };
+
     this.getInternal = () => internal;
     this.setDrag = (drag) => {internal.drag = drag};
     this.setGrab = (grab) => {internal.grab = grab};
@@ -26,7 +28,11 @@ export default class EditorCanvas {
   }
 
   static merge(prev, updates = {}) {
-    return new EditorCanvas({...prev.getInternal(), ...updates});
+    let newState = {...prev.getInternal(), ...updates};
+    if (updates.imgSrc) {
+      delete newState.image;
+    }
+    return new EditorCanvas(newState);
   }
 
   draw() {
