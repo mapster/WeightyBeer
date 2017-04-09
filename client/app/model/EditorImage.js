@@ -32,7 +32,10 @@ export default class EditorImage {
   }
 
   draw(ctx) {
-    ctx.drawImage(this.imgSrc, this.x, this.y, this.width, this.height);
+    console.log('draw image');
+    if (this.imgSrc.complete) {
+      ctx.drawImage(this.imgSrc, this.x, this.y, this.width, this.height);
+    }
   }
 
   move(x, y) {
@@ -42,13 +45,6 @@ export default class EditorImage {
 
   resize(x, y, handle, keepRatio = false) {
     let resize = {x, y};
-    if (keepRatio) {
-      if (Math.abs(x / this.ratio) > Math.abs(y)) {
-        resize.y = (x / this.ratio);
-      } else {
-        resize.x = (y * this.ratio);
-      }
-    }
     switch (handle) {
       case 'topLeft':
         resize.x = -resize.x;
@@ -60,6 +56,13 @@ export default class EditorImage {
       case 'bottomLeft':
         resize.x = -resize.x;
         break;
+    }
+    if (keepRatio) {
+      if (Math.abs(x / this.ratio) > Math.abs(y)) {
+        resize.y = (x / this.ratio);
+      } else {
+        resize.x = (y * this.ratio);
+      }
     }
     this.width += resize.x;
     this.height += resize.y;
