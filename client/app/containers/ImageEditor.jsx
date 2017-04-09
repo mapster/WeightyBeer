@@ -2,13 +2,7 @@ import React from 'react';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 
-// import Handle from '../model/handle';
-import EditorImage from '../model/EditorImage';
-
-const targetDim = {
-  width: 332,
-  height: 230
-};
+import EditorCanvas from '../model/EditorCanvas';
 
 const canvasDim = {
   width: 500,
@@ -30,102 +24,19 @@ class ImageEditor extends React.Component {
 
     // Initial state
     this.state = {
-      image: new EditorImage(img, (canvasDim.width - targetDim.width) / 2, (canvasDim.height - targetDim.height) / 2, targetDim.width, targetDim.height),
       mode: MODE.move,
     };
 
     // Draw image on load
     img.onload = () => {
-      this.updateCanvas();
+      this.setState({canvas: new EditorCanvas(this.refs.canvas, img, 500, 350, 332, 230)});
     };
-  }
-
-  componentDidMount() {
-    this.bindCanvasEventListeners();
-    this.updateCanvas();
   }
 
   componentDidUpdate() {
-    this.componentDidMount();
-  }
-
-  bindCanvasEventListeners() {
-    const canvas = this.refs.canvas;
-    const {mode, drag} = this.state;
-
-    if (mode == MODE.move) {
-      // Set mouse event listeners for canvas
-      canvas.onmousedown = (e) => {
-        this.setState({
-          drag: {x: e.x, y: e.y}
-        });
-      };
-      canvas.onmouseup = (e) => {
-        if (drag) {
-          this.moveImage(e.x - drag.x , e.y - drag.y);
-        }
-        this.setState({drag: null});
-        this.updateCanvas();
-      };
-      canvas.onmousemove = (e) => {
-        if (drag) {
-          this.setState({
-            drag: {x: e.x, y: e.y}
-          });
-          this.moveImage(e.x - drag.x, e.y - drag.y);
-        }
-      };
-    } else if (mode == MODE.scale) {
-      canvas.onmousedown = () => {
-        // if (this.isNearHandle(e.x, e.y)) {
-        //
-        // }
-      };
-      canvas.onmouseup = () => {};
-      canvas.onmousemove = () => {};
-    }
-  }
-
-  drawFrame() {
-    const ctx = this.refs.canvas.getContext('2d');
-    const vertical = {
-      width: (canvasDim.width - targetDim.width) / 2,
-      height: targetDim.height,
-    };
-    const horizontal = {
-      width: canvasDim.width,
-      height: (canvasDim.height - targetDim.height) / 2,
-    }
-    ctx.fillStyle = 'rgba(33, 33, 33, 0.65)';
-    // Draw top
-    ctx.fillRect(0, 0, horizontal.width, horizontal.height);
-    // Draw bottom
-    ctx.fillRect(0, horizontal.height + vertical.height, horizontal.width, horizontal.height);
-    // Draw left
-    ctx.fillRect(0, horizontal.height, vertical.width, vertical.height);
-    // Draw right
-    ctx.fillRect(canvasDim.width - vertical.width, horizontal.height, vertical.width, vertical.height);
-  }
-
-  updateCanvas() {
-    const ctx = this.refs.canvas.getContext('2d');
-    const {image, mode} = this.state;
-    ctx.clearRect(0,0, canvasDim.width, canvasDim.height);
-    image.draw(ctx);
-    this.drawFrame();
-    if (mode == MODE.scale) {
-      this.drawScaleFrame();
-    }
-  }
-
-  drawScaleFrame() {
-    const ctx = this.refs.canvas.getContext('2d');
-    this.state.image.drawHandleFrame(ctx);
-  }
-
-  moveImage(x, y) {
-    this.state.image.move(x, y);
-    this.updateCanvas();
+    var canvas = this.state.canvas;
+    canvas.mode = this.state.mode;
+    canvas.draw();
   }
 
   setMode(mode) {

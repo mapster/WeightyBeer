@@ -22,6 +22,13 @@ export default class Handle {
     return this.centerY + (this.size / 2);
   }
 
+  canGrab(x, y) {
+    return  x >= this.getStartX() &&
+            x <= this.getEndX() &&
+            y >= this.getStartY() &&
+            y <= this.getEndY();
+  }
+
   draw(ctx) {
     ctx.strokeRect(this.getStartX(), this.getStartY(), this.size, this.size);
   }
