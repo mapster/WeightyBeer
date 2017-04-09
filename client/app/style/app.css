@@ -34,3 +34,14 @@
 .formButton {
   margin: 20px 0px 20px 20px !important;
 }
+
+.hiddenFileInput {
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  opacity: 0 !important;
+}

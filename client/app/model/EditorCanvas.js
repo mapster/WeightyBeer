@@ -7,8 +7,8 @@ const MODE = {
 
 export default class EditorCanvas {
   constructor(state) {
-    let {canvas, imgSrc, width, height, targetWidth, targetHeight} = state;
-    imgSrc = imgSrc || {complete: false};
+    let {canvas, width, height, targetWidth, targetHeight} = state;
+    let imgSrc = state.imgSrc || {complete: false};
     let internal = {
       image: new EditorImage(imgSrc, (width - targetWidth) / 2, (height - targetHeight) / 2, targetWidth, targetHeight),
       drag: {is: false},

@@ -10,7 +10,6 @@ import BrewEditContainer from './BrewEditContainer';
 import BrewsListContainer from './BrewsListContainer';
 import WeightHubContainer from './WeightHubContainer';
 import NotificationBar from '../components/NotificationBar';
-import ImageEditor from './ImageEditor';
 
 import {clearNotification} from '../actions/notification';
 
@@ -40,7 +39,6 @@ const route2 = {
   brews: <BrewsListContainer />,
   brewEdit: <BrewEditContainer />,
   weighthub: <WeightHubContainer />,
-  image: <ImageEditor />,
 }
 
 const route = (location) => {

@@ -28,9 +28,12 @@ export function saveBrew(brew) {
       dispatch(clearChanges('new'));
     }
     dispatch(clearChanges(id));
-    brewsRef.child(id).set({...brew, id}, () => {
+
+    let toStore = {...brew, id};
+    delete toStore.newImage;
+    brewsRef.child(id).set(toStore, () => {
       dispatch(navigationStart('brews', {id}));
-      dispatch(notify('"' + brew.name + '"' + ' saved'));
+      dispatch(notify('"' + toStore.name + '"' + ' saved'));
     });
   };
 }

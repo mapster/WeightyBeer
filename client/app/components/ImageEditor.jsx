@@ -1,7 +1,4 @@
-import React from 'react';
-import {compose} from 'redux';
-import {connect} from 'react-redux';
-
+import React, {PropTypes} from 'react';
 import EditorCanvas from '../model/EditorCanvas';
 
 const canvasDim = {
@@ -22,6 +19,7 @@ class ImageEditor extends React.Component {
     this.state = {
       canvas: new EditorCanvas({
         canvas: this.refs.canvas,
+        imgSrc: props.imgSrc,
         mode: MODE.move,
         width: 500,
         height: 350,
@@ -37,6 +35,10 @@ class ImageEditor extends React.Component {
 
   componentDidUpdate() {
     this.state.canvas.draw();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({canvas: EditorCanvas.merge(this.state.canvas, {imgSrc: nextProps.imgSrc})});
   }
 
   setMode(mode) {
@@ -71,8 +73,8 @@ class ImageEditor extends React.Component {
   }
 }
 
-export default compose(
-  connect(() => ({
-  }), {
-  })
-)(ImageEditor);
+ImageEditor.propTypes = {
+  imgSrc: PropTypes.any.isRequired,
+};
+
+export default ImageEditor;

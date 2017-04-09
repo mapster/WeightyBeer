@@ -1,12 +1,11 @@
 import React, {PropTypes} from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
-import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
 import FavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import Favorite from 'material-ui/svg-icons/action/favorite';
 import Delete from 'material-ui/svg-icons/action/delete';
 
-const ImageChooser = ({doSelectImage, doDeleteImage, doUploadImage, images, selectedId}) => (
+const ImageChooser = ({doSelectImage, doDeleteImage, images, selectedId}) => (
   <div className='imageChooser'>
     <GridList className='gridList' cols={2.2}>{images.map(img =>
       <GridTile
@@ -26,16 +25,12 @@ const ImageChooser = ({doSelectImage, doDeleteImage, doUploadImage, images, sele
         <img src={img.url} />
       </GridTile>
     )}</GridList>
-    <RaisedButton containerElement='label' label='Upload image' labelPosition='before'>
-      <input type='file' className='fileInput' onChange={(e) => doUploadImage(e.target.files[0])} />
-    </RaisedButton>
   </div>
 );
 
 ImageChooser.propTypes = {
   doSelectImage: PropTypes.func.isRequired,
   doDeleteImage: PropTypes.func.isRequired,
-  doUploadImage: PropTypes.func.isRequired,
   images: PropTypes.array.isRequired,
   selectedId: PropTypes.string,
 }
