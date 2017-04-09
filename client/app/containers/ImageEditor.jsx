@@ -24,7 +24,6 @@ class ImageEditor extends React.Component {
 
     // Initial state
     this.state = {
-      imgSrc,
       canvas: new EditorCanvas({
         canvas: this.refs.canvas,
         imgSrc,

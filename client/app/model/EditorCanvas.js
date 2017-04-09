@@ -16,6 +16,7 @@ export default class EditorCanvas {
     };
     this.getInternal = () => internal;
     this.setDrag = (drag) => {internal.drag = drag};
+    this.setGrab = (grab) => {internal.grab = grab};
 
     if (canvas) {
       internal.context = canvas.getContext('2d');
@@ -31,9 +32,7 @@ export default class EditorCanvas {
   draw() {
     const {context, image, mode, width, height} = this.getInternal();
 
-    console.log('attempt to draw canvas');
     if (context) {
-      console.log('draw canvas');
       context.clearRect(0,0, width, height);
       image.draw(context);
       this.drawFrame();
@@ -69,18 +68,6 @@ export default class EditorCanvas {
     image.drawHandleFrame(context);
   }
 
-  doDrag(x, y, start = true) {
-    this.setDrag({x, y, is: start});
-    console.log('drag: ', this.getInternal().drag);
-  }
-
-  grab(x, y) {
-    const {grab, image} = this.getInternal();
-    image.resize(x - grab.x, y - grab.y, grab.handle, true);
-    this.draw();
-    this.setGrab({...grab, x, y});
-  }
-
   bindCanvasEventListeners() {
     const {canvas, mode} = this.getInternal();
     if (!canvas) {
@@ -88,13 +75,12 @@ export default class EditorCanvas {
     }
 
     if (mode == MODE.move) {
-      console.log('binding for move');
       // Set mouse event listeners for canvas
       canvas.onmousedown = (e) => {
-        this.doDrag(e.x, e.y);
+        this.setDrag({x: e.x, y: e.y, is: true});
       };
       canvas.onmouseup = () => {
-        this.doDrag(0, 0, false);
+        this.setDrag({is: false});
       };
       canvas.onmousemove = (e) => {
         const {drag, image} = this.getInternal();
@@ -110,7 +96,6 @@ export default class EditorCanvas {
         const {image} = this.getInternal();
         let mousePos = this.getMousePos(e);
         let handle = image.getGrabbableHandle(mousePos.x, mousePos.y);
-        console.log('grabbed: ', handle);
         if (handle) {
           this.setGrab({
             handle: handle,
@@ -126,7 +111,11 @@ export default class EditorCanvas {
       canvas.onmousemove = (e) => {
         const {grab} = this.getInternal();
         if (grab.is) {
-          this.grab(e.x, e.y);
+          const {grab, image} = this.getInternal();
+          const {x, y} = e;
+          image.resize(x - grab.x, y - grab.y, grab.handle, true);
+          this.draw();
+          this.setGrab({...grab, x, y});
         }
       };
     }
