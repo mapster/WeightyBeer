@@ -23,8 +23,8 @@ class ImageEditor extends React.Component {
         mode: MODE.move,
         width: 500,
         height: 350,
-        targetWidth: 332,
-        targetHeight: 230,
+        targetWidth: props.targetWidth,
+        targetHeight: props.targetHeight,
       }),
     };
   }
@@ -61,20 +61,29 @@ class ImageEditor extends React.Component {
     }
   }
 
+  copyImage() {
+    this.state.canvas.drawTargetToContext(this.refs.saveCanvas.getContext('2d'));
+  }
+
   render() {
     return (
       <div>
+        <button onClick={this.copyImage.bind(this)}>Save</button>
         <button onClick={this.setMode.bind(this, MODE.scale)}>Scale</button>
         <button onClick={this.setMode.bind(this, MODE.move)}>Move</button>
         <input type='file' onChange={this.openImage.bind(this)} />
         <canvas ref='canvas' width={canvasDim.width} height={canvasDim.height}></canvas>
+        <canvas ref='saveCanvas' width={this.props.targetWidth} height={this.props.targetHeight}></canvas>
       </div>
     );
   }
 }
 
 ImageEditor.propTypes = {
+  targetWidth: PropTypes.number.isRequired,
+  targetHeight: PropTypes.number.isRequired,
   imgSrc: PropTypes.any.isRequired,
+  saveImage: PropTypes.func.isRequired,
 };
 
 export default ImageEditor;

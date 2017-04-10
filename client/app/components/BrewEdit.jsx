@@ -53,7 +53,7 @@ const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadI
       </Paper>
     );
   } else {
-    return <ImageEditor imgSrc={brew.newImage} />;
+    return <ImageEditor targetWidth={332} targetHeight={230} imgSrc={brew.newImage} saveImage={doUploadImage} />;
   }
 };
 

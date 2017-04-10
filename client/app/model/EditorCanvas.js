@@ -35,6 +35,17 @@ export default class EditorCanvas {
     return new EditorCanvas(newState);
   }
 
+  drawTargetToContext(ctx) {
+    const {canvas, targetWidth, targetHeight} = this.getInternal();
+    const {vertical, horizontal} = this.getFrameDimensions();
+
+    ctx.clearRect(0, 0, targetWidth, targetHeight);
+    ctx.drawImage(canvas,
+      vertical, horizontal, targetWidth, targetHeight,
+      0, 0, targetWidth, targetHeight,
+    );
+  }
+
   draw() {
     const {context, image, mode, width, height} = this.getInternal();
 
@@ -48,25 +59,25 @@ export default class EditorCanvas {
     }
   }
 
-  drawFrame() {
-    const {width, height, targetWidth, targetHeight, context} = this.getInternal();
-    const vertical = {
-      width: (width - targetWidth) / 2,
-      height: targetHeight,
-    };
-    const horizontal = {
-      width: width,
-      height: (height - targetHeight) / 2,
+  getFrameDimensions() {
+    const {width, height, targetWidth, targetHeight} = this.getInternal();
+    return {
+      vertical: (width - targetWidth) / 2,
+      horizontal: (height - targetHeight) / 2,
     }
+  }
+
+  drawFrame() {
+    const {width, height, context} = this.getInternal();
+    // const frameDim = this.getFrameDimensions();
+    const {vertical, horizontal} = this.getFrameDimensions();
+
     context.fillStyle = 'rgba(33, 33, 33, 0.65)';
-    // Draw top
-    context.fillRect(0, 0, horizontal.width, horizontal.height);
-    // Draw bottom
-    context.fillRect(0, horizontal.height + vertical.height, horizontal.width, horizontal.height);
-    // Draw left
-    context.fillRect(0, horizontal.height, vertical.width, vertical.height);
-    // Draw right
-    context.fillRect(width - vertical.width, horizontal.height, vertical.width, vertical.height);
+    // Draw top, right, bottom, right
+    context.fillRect(0, 0, width - vertical, horizontal);
+    context.fillRect(width - vertical, 0, vertical, height - horizontal);
+    context.fillRect(vertical, height - horizontal, width - vertical, horizontal);
+    context.fillRect(0, horizontal, vertical, height - horizontal);
   }
 
   drawScaleFrame() {
