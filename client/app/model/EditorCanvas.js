@@ -46,6 +46,11 @@ export default class EditorCanvas {
     );
   }
 
+  targetToBlob(saveCtx, saveImage) {
+    this.drawTargetToContext(saveCtx);
+    saveCtx.canvas.toBlob(saveImage);
+  }
+
   draw() {
     const {context, image, mode, width, height} = this.getInternal();
 

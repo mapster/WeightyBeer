@@ -61,14 +61,17 @@ class ImageEditor extends React.Component {
     }
   }
 
-  copyImage() {
-    this.state.canvas.drawTargetToContext(this.refs.saveCanvas.getContext('2d'));
+  saveImage() {
+    const {canvas} = this.state;
+    const {saveCanvas} = this.refs;
+
+    canvas.targetToBlob(saveCanvas.getContext('2d'), this.props.saveImage);
   }
 
   render() {
     return (
       <div>
-        <button onClick={this.copyImage.bind(this)}>Save</button>
+        <button onClick={this.saveImage.bind(this)}>Save</button>
         <button onClick={this.setMode.bind(this, MODE.scale)}>Scale</button>
         <button onClick={this.setMode.bind(this, MODE.move)}>Move</button>
         <input type='file' onChange={this.openImage.bind(this)} />
