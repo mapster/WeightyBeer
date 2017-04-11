@@ -23,7 +23,6 @@ const openImage = (doEdit, brew, e) => {
   }
 }
 
-
 const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadImage, images}) => {
   if (!brew.newImage) {
     return (
@@ -53,7 +52,7 @@ const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadI
       </Paper>
     );
   } else {
-    return <ImageEditor targetWidth={332} targetHeight={230} imgSrc={brew.newImage} saveImage={doUploadImage} />;
+    return <ImageEditor targetWidth={332} targetHeight={230} imgSrc={brew.newImage} saveImage={doUploadImage} doCancel={() => onEdit({...brew, newImage: false})} />;
   }
 };
 

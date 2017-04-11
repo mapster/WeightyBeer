@@ -4,6 +4,7 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import ContentSave from 'material-ui/svg-icons/content/save';
 import ImageImage from 'material-ui/svg-icons/image/image';
+import NavigationCancel from 'material-ui/svg-icons/navigation/cancel';
 
 import EditorCanvas from '../model/EditorCanvas';
 
@@ -73,6 +74,7 @@ class ImageEditor extends React.Component {
             <MenuItem primaryText="Open" rightIcon={<ImageImage className='menuIcon' />}>
               <input type='file' className='hiddenFileInput' onChange={this.openImage.bind(this)} />
             </MenuItem>
+            <MenuItem primaryText="Cancel" rightIcon={<NavigationCancel className='menuIcon' />} onClick={this.props.doCancel}/>
           </Menu>
           <div className="canvas">
             <canvas ref='canvas' width={canvasDim.width} height={canvasDim.height}></canvas>
@@ -89,6 +91,7 @@ ImageEditor.propTypes = {
   targetHeight: PropTypes.number.isRequired,
   imgSrc: PropTypes.any.isRequired,
   saveImage: PropTypes.func.isRequired,
+  doCancel: PropTypes.func.isRequired,
 };
 
 export default ImageEditor;
