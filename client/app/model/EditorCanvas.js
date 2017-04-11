@@ -11,14 +11,14 @@ export default class EditorCanvas {
     let imgSrc = state.imgSrc || {complete: false};
     let internal = {
       image: new EditorImage(imgSrc, (width - targetWidth) / 2, (height - targetHeight) / 2, targetWidth, targetHeight),
-      drag: {is: false},
-      grab: {is: false},
+      mode: MODE.move,
       ...state,
     };
 
     this.getInternal = () => internal;
     this.setDrag = (drag) => {internal.drag = drag};
     this.setGrab = (grab) => {internal.grab = grab};
+    this.setMode = (mode) => {internal.mode = mode};
 
     if (canvas) {
       internal.context = canvas.getContext('2d');
@@ -52,13 +52,13 @@ export default class EditorCanvas {
   }
 
   draw() {
-    const {context, image, mode, width, height} = this.getInternal();
+    const {context, image, width, height} = this.getInternal();
 
     if (context) {
       context.clearRect(0,0, width, height);
       image.draw(context);
       this.drawFrame();
-      if (mode == MODE.scale) {
+      if (image.hasContent()){
         this.drawScaleFrame();
       }
     }
@@ -91,62 +91,60 @@ export default class EditorCanvas {
   }
 
   bindCanvasEventListeners() {
-    const {canvas, mode} = this.getInternal();
+    const {canvas} = this.getInternal();
     if (!canvas) {
       return;
     }
 
-    if (mode == MODE.move) {
-      // Set mouse event listeners for canvas
-      canvas.onmousedown = (e) => {
-        if (this.isLeftClick(e)) {
-          this.setDrag({x: e.x, y: e.y, is: true});
-        }
-      };
-      canvas.onmouseup = () => {
-        this.setDrag({is: false});
-      };
-      canvas.onmousemove = (e) => {
-        const {drag, image} = this.getInternal();
-        const {x, y} = e;
-        if (drag.is) {
-          image.move(x - drag.x, y - drag.y);
-          this.draw();
-          this.setDrag({x, y, is: true});
-        }
-      };
-    } else if (mode == MODE.scale) {
-      canvas.onmousedown = (e) => {
+    canvas.onmousedown = (e) => {
+      if (this.isLeftClick(e)) {
         const {image} = this.getInternal();
+
+        // Get handle if mouse can grab one
         let mousePos = this.getMousePos(e);
         let handle = image.getGrabbableHandle(mousePos.x, mousePos.y);
         if (handle) {
+          // Do handle action
+          this.setMode(MODE.scale);
           this.setGrab({
             handle: handle,
-            is: true,
             x: e.x,
             y: e.y,
           });
+        } else {
+          // Do drag action
+          this.setMode(MODE.move);
+          this.setDrag({x: e.x, y: e.y});
         }
-      };
-      canvas.onmouseup = () => {
-        this.setGrab({is: false});
-      };
-      canvas.onmousemove = (e) => {
-        const {grab} = this.getInternal();
-        if (grab.is) {
-          const {grab, image} = this.getInternal();
-          const {x, y} = e;
-          image.resize(x - grab.x, y - grab.y, grab.handle, true);
-          this.draw();
-          this.setGrab({...grab, x, y});
-        }
-      };
-    }
+      }
+    };
+    canvas.onmouseup = () => {
+      if (this.getInternal().mode === MODE.scale) {
+        this.setMode(MODE.move);
+        this.setGrab();
+      } else {
+        this.setDrag();
+      }
+    };
+    canvas.onmousemove = (e) => {
+      const {mode, grab, drag, image} = this.getInternal();
+      const {x, y} = e;
+
+      if (mode === MODE.move && drag) {
+        image.move(x - drag.x, y - drag.y);
+        this.draw();
+        this.setDrag({x, y});
+      } else if (this.isLeftClick(e) && grab) {
+        const {grab, image} = this.getInternal();
+        image.resize(x - grab.x, y - grab.y, grab.handle, true);
+        this.draw();
+        this.setGrab({...grab, x, y});
+      }
+    };
   }
 
   isLeftClick(e) {
-      return e.button === 0;
+    return e.button === 0;
   }
 
   getMousePos(e) {

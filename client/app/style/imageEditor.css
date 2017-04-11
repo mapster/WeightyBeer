@@ -10,6 +10,6 @@
   display: inline-block !important;
 }
 
-.imageChooserPaper canvas {
+.imageChooserPaper .canvas {
   padding: 20px 0 20px 0;
 }

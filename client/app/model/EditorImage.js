@@ -31,6 +31,10 @@ export default class EditorImage {
     return handle && handle[0];
   }
 
+  hasContent() {
+    return this.imgSrc.complete;
+  }
+
   draw(ctx) {
     if (this.imgSrc.complete) {
       ctx.drawImage(this.imgSrc, this.x, this.y, this.width, this.height);

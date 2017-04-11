@@ -10,11 +10,6 @@ const canvasDim = {
   height: 350,
 };
 
-const MODE = {
-  scale: 'scale',
-  move: 'move',
-};
-
 class ImageEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -24,7 +19,6 @@ class ImageEditor extends React.Component {
       canvas: new EditorCanvas({
         canvas: this.refs.canvas,
         imgSrc: props.imgSrc,
-        mode: MODE.move,
         width: 500,
         height: 350,
         targetWidth: props.targetWidth,
@@ -43,10 +37,6 @@ class ImageEditor extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({canvas: EditorCanvas.merge(this.state.canvas, {imgSrc: nextProps.imgSrc})});
-  }
-
-  setMode(mode) {
-    this.setState({canvas: EditorCanvas.merge(this.state.canvas, {mode})});
   }
 
   openImage(e) {
@@ -81,10 +71,10 @@ class ImageEditor extends React.Component {
             <MenuItem primaryText="Open">
               <input type='file' className='hiddenFileInput' onChange={this.openImage.bind(this)} />
             </MenuItem>
-            <MenuItem primaryText="Move" onClick={this.setMode.bind(this, MODE.move)} />
-            <MenuItem primaryText="Scale" onClick={this.setMode.bind(this, MODE.scale)} />
           </Menu>
-          <canvas ref='canvas' width={canvasDim.width} height={canvasDim.height}></canvas>
+          <div className="canvas">
+            <canvas ref='canvas' width={canvasDim.width} height={canvasDim.height}></canvas>
+          </div>
         </Paper>
         <canvas ref='saveCanvas' width={this.props.targetWidth} height={this.props.targetHeight}></canvas>
       </div>
