@@ -36,14 +36,20 @@ export default class EditorCanvas {
   }
 
   drawTargetToContext(ctx) {
-    const {canvas, targetWidth, targetHeight} = this.getInternal();
+    const {image, context, canvas, targetWidth, targetHeight} = this.getInternal();
     const {vertical, horizontal} = this.getFrameDimensions();
+
+    // clear scaling frame
+    image.draw(context);
 
     ctx.clearRect(0, 0, targetWidth, targetHeight);
     ctx.drawImage(canvas,
       vertical, horizontal, targetWidth, targetHeight,
       0, 0, targetWidth, targetHeight,
     );
+
+    // redraw with scaling frame
+    this.draw();  
   }
 
   targetToBlob(saveCtx, saveImage) {
