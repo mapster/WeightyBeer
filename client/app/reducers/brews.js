@@ -1,4 +1,5 @@
 import * as types from '../actions/brews';
+import * as imageActions from '../actions/images';
 
 const initialState = {
   edit: { new: null},
@@ -24,7 +25,15 @@ export default function brews(state = initialState, action) {
         ...state,
         edit: {...state.edit, [action.id]: null}
       };
+    case imageActions.IMAGE_UPLOADED:
+      if (action.target && action.target.brew) {
+        return {
+          ...state,
+          edit: {...state.edit, [action.target.brew]: {...state.edit[action.target.brew], image: action.id}}
+        };
+      }
+      break;
     default:
       return state;
+    }
   }
-}

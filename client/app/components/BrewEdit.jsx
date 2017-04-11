@@ -1,7 +1,9 @@
 import React, {PropTypes} from 'react';
 import Paper from 'material-ui/Paper';
+import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import {updater} from '../libs/formHelpers';
 import ImageChooser from './ImageChooser';
 import ImageEditor from './ImageEditor';
@@ -23,36 +25,54 @@ const openImage = (doEdit, brew, e) => {
   }
 }
 
+const brewImage = (images, brew) => {
+  const img = images[brew.image] || {};
+  return img.url;
+}
+
 const BrewEdit = ({brew = {}, onEdit, doCancel, doSave, doDeleteImage, doUploadImage, images}) => {
-  if (!brew.newImage) {
+  if (brew.newImage) {
+    const chooseAndUploadImage = (img) => {
+      onEdit({...brew, newImage: false});
+      doUploadImage(img, {brew: brew.id});
+    };
+    return <ImageEditor targetWidth={332} targetHeight={230} imgSrc={brew.newImage} saveImage={chooseAndUploadImage} doCancel={() => onEdit({...brew, newImage: false})} />;
+  } else {
+    const galleryActions = [
+      <FlatButton label="Done" primary={true} onClick={() => onEdit({...brew, chooseImage: false})} />
+    ];
+
     return (
-      <Paper zDepth={1} className='editPaper'>
-        <div className='leftColumn'>
-          <TextField onChange={updater(brew, 'brewNo', onEdit)} type='number' floatingLabelText='Brew #' name='brewNo' defaultValue={brew.brewNo || ''} /><br />
-          <TextField onChange={updater(brew, 'name', onEdit)} floatingLabelText='Name' name='name' defaultValue={brew.name || ''} /><br />
-          <TextField onChange={updater(brew, 'style', onEdit)} floatingLabelText='Style' name='style' defaultValue={brew.style || ''} /><br />
-          <TextField onChange={updater(brew, 'abv', onEdit)} type='number' floatingLabelText='ABV' name='abv' defaultValue={brew.abv || ''} /><br />
-          <TextField onChange={updater(brew, 'ibu', onEdit)} type='number' floatingLabelText='IBU' name='ibu' defaultValue={brew.ibu || ''} /><br />
-        </div>
-        <div>
+      <div>
+        <Paper zDepth={1} className='editPaper'>
+          <div className='leftColumn'>
+            <TextField onChange={updater(brew, 'brewNo', onEdit)} type='number' floatingLabelText='Brew #' name='brewNo' defaultValue={brew.brewNo || ''} /><br />
+            <TextField onChange={updater(brew, 'name', onEdit)} floatingLabelText='Name' name='name' defaultValue={brew.name || ''} /><br />
+            <TextField onChange={updater(brew, 'style', onEdit)} floatingLabelText='Style' name='style' defaultValue={brew.style || ''} /><br />
+            <TextField onChange={updater(brew, 'abv', onEdit)} type='number' floatingLabelText='ABV' name='abv' defaultValue={brew.abv || ''} /><br />
+            <TextField onChange={updater(brew, 'ibu', onEdit)} type='number' floatingLabelText='IBU' name='ibu' defaultValue={brew.ibu || ''} /><br />
+          </div>
+          <div>
+            <img src={brewImage(images, brew)} /><br />
+            <RaisedButton label='Choose image' onClick={() => onEdit({...brew, chooseImage: true})} />
+            <RaisedButton containerElement='label' label='Upload image' labelPosition='before'>
+              <input type='file' className='hiddenFileInput' onChange={e => openImage(onEdit, brew, e)} />
+            </RaisedButton>
+          </div>
+          <br className='buttonSeparator'/>
+          <RaisedButton onClick={() => doSave(brew)} primary={true} label='Save' className='formButton'/>
+          <RaisedButton onClick={doCancel} secondary={true} label='Cancel' className='formButton'/>
+        </Paper>
+        <Dialog title='Image gallery' actions={galleryActions} modal={true} open={brew.chooseImage || false}>
           <ImageChooser
             doSelectImage={(id) => onEdit({...brew, image: id})}
             doDeleteImage={doDeleteImage}
-            doUploadImage={doUploadImage}
             images={Object.entries(images).map(e => e[1])}
             selectedId={brew.image}
             />
-          <RaisedButton containerElement='label' label='Upload image' labelPosition='before'>
-            <input type='file' className='hiddenFileInput' onChange={e => openImage(onEdit, brew, e)} />
-          </RaisedButton>
-        </div>
-        <br className='buttonSeparator'/>
-        <RaisedButton onClick={() => doSave(brew)} primary={true} label='Save' className='formButton'/>
-        <RaisedButton onClick={doCancel} secondary={true} label='Cancel' className='formButton'/>
-      </Paper>
+        </Dialog>
+      </div>
     );
-  } else {
-    return <ImageEditor targetWidth={332} targetHeight={230} imgSrc={brew.newImage} saveImage={doUploadImage} doCancel={() => onEdit({...brew, newImage: false})} />;
   }
 };
 

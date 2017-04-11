@@ -23,13 +23,19 @@ export function deleteImage(id) {
   };
 }
 
-export function uploadImage(file) {
-  return () => {
+export const IMAGE_UPLOADED = 'IMAGE_UPLOADED';
+export function uploadImage(file, target) {
+  return (dispatch) => {
     const id = uuid4();
     storageRef.child(id).put(file).then((snapshot) => {
       imagesRef.child(id).set({
         id,
         url: snapshot.downloadURL,
+      });
+      dispatch({
+        type: IMAGE_UPLOADED,
+        id,
+        target
       });
     });
   };
