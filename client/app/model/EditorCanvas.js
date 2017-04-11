@@ -77,7 +77,7 @@ export default class EditorCanvas {
     // const frameDim = this.getFrameDimensions();
     const {vertical, horizontal} = this.getFrameDimensions();
 
-    context.fillStyle = 'rgba(33, 33, 33, 0.65)';
+    context.fillStyle = 'rgba(66, 66, 66, 0.65)';
     // Draw top, right, bottom, right
     context.fillRect(0, 0, width - vertical, horizontal);
     context.fillRect(width - vertical, 0, vertical, height - horizontal);
@@ -99,7 +99,9 @@ export default class EditorCanvas {
     if (mode == MODE.move) {
       // Set mouse event listeners for canvas
       canvas.onmousedown = (e) => {
-        this.setDrag({x: e.x, y: e.y, is: true});
+        if (this.isLeftClick(e)) {
+          this.setDrag({x: e.x, y: e.y, is: true});
+        }
       };
       canvas.onmouseup = () => {
         this.setDrag({is: false});
@@ -141,6 +143,10 @@ export default class EditorCanvas {
         }
       };
     }
+  }
+
+  isLeftClick(e) {
+      return e.button === 0;
   }
 
   getMousePos(e) {

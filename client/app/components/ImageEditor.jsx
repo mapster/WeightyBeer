@@ -1,4 +1,8 @@
 import React, {PropTypes} from 'react';
+import Paper from 'material-ui/Paper';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+
 import EditorCanvas from '../model/EditorCanvas';
 
 const canvasDim = {
@@ -71,11 +75,17 @@ class ImageEditor extends React.Component {
   render() {
     return (
       <div>
-        <button onClick={this.saveImage.bind(this)}>Save</button>
-        <button onClick={this.setMode.bind(this, MODE.scale)}>Scale</button>
-        <button onClick={this.setMode.bind(this, MODE.move)}>Move</button>
-        <input type='file' onChange={this.openImage.bind(this)} />
-        <canvas ref='canvas' width={canvasDim.width} height={canvasDim.height}></canvas>
+        <Paper className="imageChooserPaper">
+          <Menu className="leftMenu">
+            <MenuItem primaryText="Save" onClick={this.saveImage.bind(this)} />
+            <MenuItem primaryText="Open">
+              <input type='file' className='hiddenFileInput' onChange={this.openImage.bind(this)} />
+            </MenuItem>
+            <MenuItem primaryText="Move" onClick={this.setMode.bind(this, MODE.move)} />
+            <MenuItem primaryText="Scale" onClick={this.setMode.bind(this, MODE.scale)} />
+          </Menu>
+          <canvas ref='canvas' width={canvasDim.width} height={canvasDim.height}></canvas>
+        </Paper>
         <canvas ref='saveCanvas' width={this.props.targetWidth} height={this.props.targetHeight}></canvas>
       </div>
     );
