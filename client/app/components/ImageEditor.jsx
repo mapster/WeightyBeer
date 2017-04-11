@@ -2,6 +2,8 @@ import React, {PropTypes} from 'react';
 import Paper from 'material-ui/Paper';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import ContentSave from 'material-ui/svg-icons/content/save';
+import ImageImage from 'material-ui/svg-icons/image/image';
 
 import EditorCanvas from '../model/EditorCanvas';
 
@@ -67,8 +69,8 @@ class ImageEditor extends React.Component {
       <div>
         <Paper className="imageChooserPaper">
           <Menu className="leftMenu">
-            <MenuItem primaryText="Save" onClick={this.saveImage.bind(this)} />
-            <MenuItem primaryText="Open">
+            <MenuItem primaryText="Save" rightIcon={<ContentSave className='menuIcon' />} onClick={this.saveImage.bind(this)} />
+            <MenuItem primaryText="Open" rightIcon={<ImageImage className='menuIcon' />}>
               <input type='file' className='hiddenFileInput' onChange={this.openImage.bind(this)} />
             </MenuItem>
           </Menu>
@@ -76,7 +78,7 @@ class ImageEditor extends React.Component {
             <canvas ref='canvas' width={canvasDim.width} height={canvasDim.height}></canvas>
           </div>
         </Paper>
-        <canvas ref='saveCanvas' width={this.props.targetWidth} height={this.props.targetHeight}></canvas>
+        <canvas ref='saveCanvas' className='saveCanvas' width={this.props.targetWidth} height={this.props.targetHeight}></canvas>
       </div>
     );
   }
