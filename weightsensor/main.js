@@ -9,7 +9,7 @@ const configCred = Object.assign(
   {
     credential: firebase.credential.cert(credentials),
     databaseAuthVariableOverride: {
-      uid: 'weighthub'
+      uid: 'sensors'
     },
   },
   firebaseConfig
