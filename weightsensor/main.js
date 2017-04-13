@@ -1,10 +1,21 @@
 const path = require('path');
-const firebase = require('firebase');
+const firebase = require('firebase-admin');
 const firebaseConfig = require('../firebase-config');
+const credentials = require('../credentials');
 const WeightyArduino = require("./WeightyArduino");
 const config = require(path.resolve(process.argv[2] || './config.json'));
 
-firebase.initializeApp(firebaseConfig);
+const configCred = Object.assign(
+  {
+    credential: firebase.credential.cert(credentials),
+    databaseAuthVariableOverride: {
+      uid: 'weighthub'
+    },
+  },
+  firebaseConfig
+)
+
+firebase.initializeApp(configCred);
 const database = firebase.database();
 const sensorsRef = database.ref('sensors/weight');
 

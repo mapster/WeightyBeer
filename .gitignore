@@ -3,4 +3,5 @@ node_modules
 stats.json
 client/build
 firebase-config.json
+credentials.json
 .idea
