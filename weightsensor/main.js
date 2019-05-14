@@ -1,34 +1,28 @@
 const path = require('path');
-const firebase = require('firebase-admin');
-const firebaseConfig = require('../firebase-config');
-const credentials = require('../credentials');
 const WeightyArduino = require("./WeightyArduino");
+const FirebasePublisher = require('./firebasePublisher');
+const RedisPublisher = require('./redisPublisher');
 const config = require(path.resolve(process.argv[2] || './config.json'));
 
-const configCred = Object.assign(
-  {
-    credential: firebase.credential.cert(credentials),
-    databaseAuthVariableOverride: {
-      uid: 'sensors'
-    },
-  },
-  firebaseConfig
-)
-
-firebase.initializeApp(configCred);
-const database = firebase.database();
-const sensorsRef = database.ref('sensors/weight');
-
 const weigthyArduino = new WeightyArduino(config);
-weigthyArduino.addDataListener(pushToFirebaseListener);
-// weigthyArduino.addDataListener(consoleListener);
+
+if(Array.isArray(config.publishers)) {
+  config.publishers.forEach(pub => createPublisher(pub));
+} else {
+  throw 'Invalid config: publishers is not an array';
+}
+
 weigthyArduino.startListening();
 
-function pushToFirebaseListener(id, value, initialize = false) {
-  if (initialize) {
-    sensorsRef.child(id).update({id, value});
+function createPublisher(publisherConfig) {
+  if (publisherConfig.firebase) {
+    weigthyArduino.addDataListener(new FirebasePublisher(publisherConfig.firebase).createPublisher());
+  } else if (publisherConfig.console) {
+    weigthyArduino.addDataListener(consoleListener);
+  } else if (publisherConfig.redis) { 
+    weigthyArduino.addDataListener(new RedisPublisher(publisherConfig.redis).createPublisher());
   } else {
-    sensorsRef.child(id + '/value').set(value);
+    throw 'Invalid config: Unknown publisher - publisherConfig';
   }
 }
 

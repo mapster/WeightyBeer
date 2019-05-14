@@ -6,5 +6,19 @@
       "clockPin": 3,
       "outPin": 2
     }
+  ],
+  "publishers": [
+    { "console": {} },
+    { 
+      "firebase": {
+        "configPath": "../firebase-config.json",
+        "credentialsPath": "../credentials.json"
+      }
+    },
+    {
+      "redis": {
+        "channel": "sensors"
+      }
+    }
   ]
 }
