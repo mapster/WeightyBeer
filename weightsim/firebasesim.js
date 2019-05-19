@@ -1,7 +1,18 @@
-var firebase = require('firebase');
-var config = require('../firebase-config');
+const firebase = require('firebase-admin');
+const config = require('../firebase-config');
+const credentials = require('../credentials.json');
 
-firebase.initializeApp(config);
+const configCred = Object.assign(
+  {
+    credential: firebase.credential.cert(credentials),
+    databaseAuthVariableOverride: {
+      uid: 'sensors'
+    },
+  },
+  config
+);
+
+firebase.initializeApp(configCred);
 
 function getRandomInt(min, max) {
   min = Math.ceil(min);

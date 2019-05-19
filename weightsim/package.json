@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "firebase": "^3.6.4",
+    "firebase-admin": "^7.3.0",
     "redis": "^2.8.0"
   },
   "repository": {
