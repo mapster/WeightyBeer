@@ -15,6 +15,10 @@ export abstract class RedisRepository {
 
     protected abstract asDbId(id: string): string;
 
+    protected fromDbId(dbId: string): string {
+        return dbId.split(":")[1];
+    }
+
     protected async scanKeys(pattern: string) {
         const keys: string[] = [];
 

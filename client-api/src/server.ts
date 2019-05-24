@@ -5,17 +5,16 @@ import { compiledSchema } from './api/schema/WeightyBeerSchema';
 import { BrewRepository } from './dao/BrewRepository';
 import { RepoContext } from './RepoContext';
 import { ImageRepository } from './dao/ImageRepository';
+import { TapRepository } from './dao/TapRepository';
 
 const app: express.Application = express();
 const redis = new Redis();
 
 const context: RepoContext = {
     brewRepo: new BrewRepository(redis),
-    imageRepo: new ImageRepository(redis)
+    imageRepo: new ImageRepository(redis),
+    tapRepo: new TapRepository(redis),
 }
-
-// app.get('/', (req, res) => res.send('Hello alexander!'));
-app.get('/jadda', (req, res) => res.send('Jadda alexander!'));
 
 app.use('/graphql', graphqlHTTP({
     schema: compiledSchema,

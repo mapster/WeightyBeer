@@ -14,10 +14,6 @@ export class BrewRepository extends RedisRepository {
         return `brew:${id}`;
     }
 
-    private fromDbId(dbId: string): string {
-        return dbId.split(":")[1];
-    }
-
     async get(id: string): Promise<Brew | undefined> {
         const fieldValues = await this.getFieldValues(id);
         return Brew.fromFieldValues(fieldValues);

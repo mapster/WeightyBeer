@@ -11,7 +11,7 @@ export class Brew {
     @Field({ isNullable: false }) style: string;
     @Field({ isNullable: false }) ibu: number;
     @Field({ isNullable: false }) abv: number;
-    _image: string;
+    private _image: string;
 
     constructor(id: string, brewNumber: number, name: string, style: string, ibu: number, abv: number, image: string) {
         this.id = id;
@@ -31,11 +31,11 @@ export class Brew {
     }
 
     static fromFieldValues({ id, brewNumber, name, style, ibu, abv, image }: FieldMap): Brew | undefined {
-        const brewNumberParsed = parseInt(brewNumber);
-        const ibuParsed = parseInt(ibu);
-        const abvParsed = parseFloat(abv);
-        if (id && brewNumberParsed && name && style && ibuParsed && abv) {
-            return new Brew(id, brewNumberParsed, name, style, ibuParsed, abvParsed, image);
+        const brewNumberInt = parseInt(brewNumber);
+        const ibuInt = parseInt(ibu);
+        const abvFloat = parseFloat(abv);
+        if (id && !isNaN(brewNumberInt) && name && style && !isNaN(ibuInt) && !isNaN(abvFloat)) {
+            return new Brew(id, brewNumberInt, name, style, ibuInt, abvFloat, image);
         }
     }
 }

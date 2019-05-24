@@ -2,6 +2,7 @@ import { Query, SchemaRoot, compileSchema, Context, Mutation } from "typegql";
 import { Brew, BrewMutation } from "./Brew";
 import { RepoContext } from "../../RepoContext";
 import { Image, ImageMutation } from "./Image";
+import { Tap, TapMutation } from "./Tap";
 
 
 @SchemaRoot()
@@ -21,6 +22,16 @@ export class QuerySchema {
     async image(@Context context: RepoContext, id: string): Promise<Image | undefined> {
         return context.imageRepo.get(id)
     }
+
+    @Query({ isNullable: true, type: Tap })
+    async tap(@Context context: RepoContext, id: string): Promise<Tap | undefined> {
+        return await context.tapRepo.get(id);
+    }
+
+    @Query({ type: [Tap] })
+    async taps(@Context context: RepoContext): Promise<Tap[] | undefined> {
+        return await context.tapRepo.getAll();
+    }
 }
 
 @SchemaRoot()
@@ -36,6 +47,10 @@ export class MutationSchema {
         return new BrewMutation();
     }
 
+    @Mutation()
+    tap(): TapMutation {
+        return new TapMutation();
+    }
 }
 
 export const compiledSchema = compileSchema({ roots: [QuerySchema, MutationSchema] });
