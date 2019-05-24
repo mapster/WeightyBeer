@@ -3,6 +3,7 @@ import { Brew, BrewMutation } from "./Brew";
 import { RepoContext } from "../../RepoContext";
 import { Image, ImageMutation } from "./Image";
 import { Tap, TapMutation } from "./Tap";
+import { Weight } from "./Weight";
 
 
 @SchemaRoot()
@@ -31,6 +32,16 @@ export class QuerySchema {
     @Query({ type: [Tap] })
     async taps(@Context context: RepoContext): Promise<Tap[] | undefined> {
         return await context.tapRepo.getAll();
+    }
+
+    @Query({ isNullable: true, type: Weight })
+    async weight(@Context context: RepoContext, id: string): Promise<Weight | undefined> {
+        return await context.weightRepo.get(id);
+    }
+
+    @Query({ type: [Weight] })
+    async weights(@Context context: RepoContext): Promise<Weight[] | undefined> {
+        return await context.weightRepo.getAll();
     }
 }
 
