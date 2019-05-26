@@ -1,12 +1,12 @@
-const redis = require("redis");
+const Redis = require("ioredis");
 
 module.exports = class RedisPublisher {
-    
+
     constructor(redisConfig) {
         this.config = redisConfig;
         this.isValidConfig(this.config);
 
-        this.pub = redis.createClient();
+        this.pub = new Redis();
     }
 
     createPublisher() {
@@ -14,7 +14,7 @@ module.exports = class RedisPublisher {
         const channel = this.config.channel;
 
         return (id, value, initialize = false) => {
-            pub.publish(channel, JSON.stringify({id, value}));
+            pub.publish(channel, JSON.stringify({ id, value }));
         }
     }
 

@@ -18,9 +18,8 @@
   },
   "homepage": "https://github.com/mapster/WeightyBeer#readme",
   "dependencies": {
-    "firebase": "^3.6.4",
-    "firebase-admin": "^4.2.1",
-    "redis": "^2.8.0",
-    "serialport": "^4.0.7"
+    "firebase-admin": "^8.0.0",
+    "ioredis": "^4.9.5",
+    "serialport": "^7.1.5"
   }
 }
