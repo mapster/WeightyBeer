@@ -2,12 +2,12 @@ import { Field, ObjectType } from "typegql";
 
 @ObjectType()
 export class Weight {
-    @Field() id: string;
-    @Field() zero: number;
-    @Field() empty: number;
-    @Field() full: number;
-    @Field() current: number;
-    @Field() percent: number;
+    @Field({ isNullable: false }) id: string;
+    @Field({ isNullable: true }) zero?: number;
+    @Field({ isNullable: true }) empty?: number;
+    @Field({ isNullable: true }) full?: number;
+    @Field({ isNullable: false }) current: number;
+    @Field({ isNullable: false }) percent: number;
 
     constructor(
         id: string,
@@ -32,7 +32,7 @@ export class Weight {
         const fullInt = parseInt(full);
         const currentInt = parseInt(current);
         const percentInt = parseInt(percent);
-        if (id && !isNaN(zeroInt) && !isNaN(emptyInt) && !isNaN(fullInt) && !isNaN(currentInt) && !isNaN(percentInt)) {
+        if (id && !isNaN(currentInt) && !isNaN(percentInt)) {
             return new Weight(id, zeroInt, emptyInt, fullInt, currentInt, percentInt);
         }
     }

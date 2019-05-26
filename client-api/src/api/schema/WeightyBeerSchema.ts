@@ -14,7 +14,7 @@ export class QuerySchema {
         return context.brewRepo.get(id);
     }
 
-    @Query({ type: [Brew] })
+    @Query({ isNullable: false, type: [Brew] })
     async brews(@Context context: RepoContext): Promise<Brew[]> {
         return context.brewRepo.getAll();
     }
@@ -29,7 +29,7 @@ export class QuerySchema {
         return await context.tapRepo.get(id);
     }
 
-    @Query({ type: [Tap] })
+    @Query({ isNullable: false, type: [Tap] })
     async taps(@Context context: RepoContext): Promise<Tap[] | undefined> {
         return await context.tapRepo.getAll();
     }
@@ -39,7 +39,7 @@ export class QuerySchema {
         return await context.weightRepo.get(id);
     }
 
-    @Query({ type: [Weight] })
+    @Query({ isNullable: false, type: [Weight] })
     async weights(@Context context: RepoContext): Promise<Weight[] | undefined> {
         return await context.weightRepo.getAll();
     }
