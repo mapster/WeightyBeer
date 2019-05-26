@@ -1,5 +1,5 @@
 const LEVEL_STEP = 1024;
 
-module.exports = function quantize(value) {
+export default function quantize(value: number) {
   return Math.floor(value / LEVEL_STEP);
 }
