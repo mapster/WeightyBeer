@@ -4,8 +4,9 @@
   "description": "Aggregate real-time readings from weight sensors.",
   "main": "main.js",
   "scripts": {
-    "start": "tsc && node build/Main.js",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "dev": "ts-node-dev --respawn --transpileOnly ./src/Main.ts",
+    "prod": "tsc && node ./build/Main.js"
   },
   "dependencies": {
     "firebase-admin": "^8.0.0",
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/mapster/WeightyBeer#readme",
   "devDependencies": {
     "@types/ioredis": "^4.0.10",
+    "ts-node-dev": "^1.0.0-pre.39",
     "typescript": "^3.4.5"
   }
 }

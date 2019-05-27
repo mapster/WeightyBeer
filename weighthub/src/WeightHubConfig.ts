@@ -1,6 +1,7 @@
 import { RedisOptions } from "ioredis";
 
 export interface WeightHubConfig {
+    actionSource: RedisPubSub | FirebaseObject;
     sensorSource: RedisPubSub | FirebaseObject;
     weightHub: RedisHash | FirebaseObject;
     connections?: { [key: string]: RedisConnection | FirebaseConnection };

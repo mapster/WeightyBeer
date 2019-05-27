@@ -4,7 +4,7 @@ import { WeightHubPublisher } from "./WeightHubPublisher";
 import { getFirebaseConfig } from "../firebase";
 import { FirebaseOptions } from '../WeightHubConfig';
 import quantize from '../quantize';
-import { Weight } from '../WeightHub';
+import { Weight, ActionTarget } from '../WeightHub';
 
 export class FirebasePublisher implements WeightHubPublisher {
 
@@ -43,6 +43,16 @@ export class FirebasePublisher implements WeightHubPublisher {
     async getWeight(id: string): Promise<Weight> {
         const snapshot = await this.weightHubRef.child(id).once('value');
         return snapshot.val();
+    }
+
+    async set(id: string, field: ActionTarget, value: number): Promise<boolean> {
+        try {
+            await this.weightHubRef.child(id).update({ [field]: value });
+            return true;
+        } catch (reason) {
+            console.error(`Firebase - Failed to update '${field}' of '${id}'.`);
+            return false;
+        }
     }
 
 }

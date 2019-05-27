@@ -1,5 +1,5 @@
 import { WeightHubPublisher } from "./WeightHubPublisher";
-import { Weight } from "../WeightHub";
+import { Weight, ActionTarget } from "../WeightHub";
 import Redis from "ioredis";
 
 export class RedisPublisher implements WeightHubPublisher {
@@ -49,6 +49,15 @@ export class RedisPublisher implements WeightHubPublisher {
         const percent = parseInt(fieldValues.percent);
 
         return { id, zero, empty, full, current, percent };
+    }
+
+    async set(id: string, field: ActionTarget, value: number): Promise<boolean> {
+        const success = await this.client.hset(this.asDbId(id), field, value)
+            .catch(reason => {
+                console.error(`Redis - Failed to update field '${field}' of '${id}.`);
+                return -1;
+            });
+        return success >= 0;
     }
 
     private asDbId(id: string) {

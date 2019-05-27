@@ -3,10 +3,13 @@
 Node.js script that listens for sensor value changes, quantizes and aggregates them, and then publishes those values to the weightHub store.
 
 Weighthub supports the following databases and can be configured
-to use any of them as both sensor reading source and storage of
+to use any of them as sensor reading source, action source and storage of
 weight data.
 * Redis
 * Firebase
+
+## Actions
+Actions are messages that trigger events in WeightHub. The only that currently exists is `calibrate` which can set the `empty`, `zero` or `full` fields of a weight entry. These fields are used to calculate the `percent` field (remaining beer).
 
 ## Configuration
 
@@ -21,6 +24,10 @@ will attempt to read `weighthub-config.json` from the current directory, but you
 
 * `weightHub.firebase.path` is the path in Firebase where WeightHub stores the weight entries.
 
+* `actionSource.redis.channel` is the Redis Pub/Sub channel to listen for WeightHub actions.
+
+* `actionSource.firebase.path` is the path in Firebase to listen for WeightHub actions.
+
 ### Connections
 The `connections` object is optional and weighthub will use default connection parameters to connect if none is specified. The `connection` fields of both `redis` and `firebase` in `sensorSource` and `weightHub` must be keys in the `connections` object.
 
@@ -28,7 +35,7 @@ The `connections` object is optional and weighthub will use default connection p
 Redis connections defaults to `127.0.0.1:6379`. See a full reference here https://github.com/luin/ioredis#connect-to-redis.
 
 #### Firebase
-Firebase connections must either specified in the configuration file or as environment variables. 
+Firebase connections must either specified in the configuration file or as environment variables. It is important that the `userUID` used has write access to the used paths in Firebase.
 
 | Field                 | Required  |           Description                               |
 | --------------------- | ----      | -----------                                         |
@@ -46,13 +53,18 @@ Environment Variables:
 ### Example configurations
 
 #### Redis and Firebase
-The following configuration will set up WeightHub to listen for sensor readings from Redis Pub/Sub and store the weight data in Firebase.
+The following configuration will set up WeightHub to listen for sensor readings and actions from Redis Pub/Sub, and store the weight data in Firebase.
 
 ```JSON
 {
     "sensorSource": {
         "redis": {
             "channel": "sensors"
+        }
+    },
+    "actionSource": {
+        "redis": {
+            "channel": "actions"
         }
     },
     "weightHub": {
@@ -74,13 +86,19 @@ The following configuration will set up WeightHub to listen for sensor readings 
 ```
 
 #### Redis
-The following configuration will set up WeightHub to listen for sensor readings from Redis Pub/Sub and store the weight data in Redis.
+The following configuration will set up WeightHub to listen for sensor readings and actions from Redis Pub/Sub and store the weight data in Redis.
 
 ```JSON
 {
     "sensorSource": {
         "redis": {
             "channel": "sensors",
+            "connection": "my-non-local-redis"
+        }
+    },
+    "actionSource": {
+        "redis": {
+            "channel": "actions",
             "connection": "my-non-local-redis"
         }
     },

@@ -1,6 +1,7 @@
 import quantize from "./quantize";
 import { WeightHubPublisher } from "./publisher/WeightHubPublisher";
 import { SensorSource } from "./source/SensorSource";
+import { ActionSource } from "./action/ActionSource";
 
 export interface Weight {
     id: string;
@@ -16,14 +17,23 @@ export interface SensorReading {
     value: number;
 }
 
+export type ActionTarget = 'zero' | 'full' | 'empty';
+export interface Action {
+    id: string;
+    type: 'calibrate';
+    target: ActionTarget;
+}
+
 export class WeightHub {
     constructor(
         private sensorSource: SensorSource,
+        private actionSource: ActionSource,
         private weightHubPublisher: WeightHubPublisher
     ) { }
 
     run() {
         this.sensorSource.start(this);
+        this.actionSource.start(this);
     }
 
     async registerSensor(reading: SensorReading): Promise<void> {
@@ -48,6 +58,36 @@ export class WeightHub {
         if (!success) {
             console.error(`Failed to update weight data: ${reading.id}`);
         }
+    }
 
+    async doAction(action: Action): Promise<void> {
+        switch (action.type) {
+            case 'calibrate':
+                await this.calibrate(action);
+                break;
+            default:
+                console.error(`Unknown action.type requested: '${action.type}'`);
+        }
+    }
+
+    private async calibrate({ id, target }: Action): Promise<void> {
+        if (!id) {
+            console.error(`Invalid/missing action.id: ${id}`);
+            return;
+        }
+
+        const weight = await this.weightHubPublisher.getWeight(id);
+
+        if (['zero', 'empty', 'full'].includes(target)) {
+            if (!isNaN(weight.current)) {
+                console.log(`Calibrating '${target}' of '${id}' to: ${weight.current}`);
+                const success = await this.weightHubPublisher.set(id, target, weight.current);
+                if (!success) {
+                    console.error(`Failed to calibrate '${target}' of '${id}' to: ${weight.current}`);
+                }
+            }
+        } else {
+            console.error(`Unknown calibration target: '${target}'`);
+        }
     }
 }
