@@ -2,14 +2,15 @@ import { ObjectType, Field, ID, Context } from 'typegql';
 import { Image } from './Image';
 import { RepoContext } from '../../RepoContext';
 import { BrewRepository } from '../../dao/BrewRepository';
+import { GraphQLInt } from 'graphql';
 
 @ObjectType()
 export class Brew {
     @Field({ isNullable: false }) id: string;
-    @Field({ isNullable: false }) brewNumber: number;
+    @Field({ isNullable: false, type: GraphQLInt }) brewNumber: number;
     @Field({ isNullable: false }) name: string;
     @Field({ isNullable: false }) style: string;
-    @Field({ isNullable: false }) ibu: number;
+    @Field({ isNullable: false, type: GraphQLInt }) ibu: number;
     @Field({ isNullable: false }) abv: number;
     private _image: string;
 

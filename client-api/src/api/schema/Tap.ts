@@ -1,15 +1,17 @@
 import { ObjectType, Field, Context } from "typegql";
 import { RepoContext } from "../../RepoContext";
 import { Brew } from "./Brew";
+import { Weight } from "./Weight";
+import { GraphQLInt } from "graphql";
 
 @ObjectType()
 export class Tap {
-    @Field() id: string;
-    @Field() name: string;
-    @Field() order: number;
-    @Field() volume: number;
-    @Field() isActive: boolean;
-    @Field({ isNullable: true }) weight: string;
+    @Field({ isNullable: false }) id: string;
+    @Field({ isNullable: false }) name: string;
+    @Field({ isNullable: false, type: GraphQLInt }) order: number;
+    @Field({ isNullable: false }) volume: number;
+    @Field({ isNullable: false }) isActive: boolean;
+    private _weight: string;
     private _brew: string;
 
     constructor(
@@ -25,7 +27,7 @@ export class Tap {
         this.name = name;
         this.order = order;
         this.volume = volume;
-        this.weight = weight;
+        this._weight = weight;
         this.isActive = isActive;
         this._brew = brew;
     }
@@ -33,6 +35,11 @@ export class Tap {
     @Field({ isNullable: true, type: Brew })
     async brew(@Context context: RepoContext): Promise<Brew | undefined> {
         return context.brewRepo.get(this._brew);
+    }
+
+    @Field({ isNullable: true, type: Weight })
+    async weight(@Context context: RepoContext): Promise<Weight | undefined> {
+        return context.weightRepo.get(this._weight);
     }
 
     static fromFieldValues({ id, name, order, volume, isActive, weight, brew }: FieldMap): Tap | undefined {

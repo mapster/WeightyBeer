@@ -1,6 +1,7 @@
 import express from 'express';
 import graphqlHTTP from 'express-graphql';
 import Redis from 'ioredis';
+import cors from 'cors';
 import { compiledSchema } from './api/schema/WeightyBeerSchema';
 import { BrewRepository } from './dao/BrewRepository';
 import { RepoContext } from './RepoContext';
@@ -17,6 +18,8 @@ const context: RepoContext = {
     tapRepo: new TapRepository(redis),
     weightRepo: new WeightRepository(redis),
 }
+
+app.use(cors());
 
 app.use('/graphql', graphqlHTTP({
     schema: compiledSchema,

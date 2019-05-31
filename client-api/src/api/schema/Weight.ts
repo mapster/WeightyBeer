@@ -1,13 +1,14 @@
 import { Field, ObjectType } from "typegql";
+import { GraphQLInt } from "graphql";
 
 @ObjectType()
 export class Weight {
     @Field({ isNullable: false }) id: string;
-    @Field({ isNullable: true }) zero?: number;
-    @Field({ isNullable: true }) empty?: number;
-    @Field({ isNullable: true }) full?: number;
-    @Field({ isNullable: false }) current: number;
-    @Field({ isNullable: false }) percent: number;
+    @Field({ isNullable: true, type: GraphQLInt }) zero?: number;
+    @Field({ isNullable: true, type: GraphQLInt }) empty?: number;
+    @Field({ isNullable: true, type: GraphQLInt }) full?: number;
+    @Field({ isNullable: false, type: GraphQLInt }) current: number;
+    @Field({ isNullable: false, type: GraphQLInt }) percent: number;
 
     constructor(
         id: string,
