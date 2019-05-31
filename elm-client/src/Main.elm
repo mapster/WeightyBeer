@@ -2,7 +2,9 @@ module Main exposing (..)
 
 import Browser
 import Home
-import Html exposing (Html)
+import Html exposing (Html, a, div, text)
+import Html.Attributes exposing (class, href)
+import Utils exposing (textEl)
 
 main =
     Browser.document
@@ -45,4 +47,27 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    Html.map HomeMsg (Home.view model.home)
+    div [ class "page-container" ]
+        [ viewMenu
+        , div [ class "vertical-space" ] []
+        , Html.map HomeMsg (Home.view model.home)
+        , div [ class "vertical-space" ] []
+        ]
+
+
+viewMenu : Html Msg
+viewMenu =
+    div [ class "page-menu"]
+        [ div [ class "entries" ]
+            [ viewMenuEntry "Home"
+            , viewMenuEntry "Taps"
+            , viewMenuEntry "Brews"
+            , viewMenuEntry "Weight Hub"
+            ]
+        , div [ class "space"] []
+        ]
+
+viewMenuEntry : String -> Html Msg
+viewMenuEntry title =
+    div [ class "entry" ]
+        [ a [ href "/tst" ] [ textEl title ] ]

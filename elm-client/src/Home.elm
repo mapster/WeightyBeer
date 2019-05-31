@@ -9,6 +9,7 @@ import Html.Attributes exposing (..)
 import RemoteData exposing (RemoteData)
 import String exposing (fromFloat, fromInt)
 import Time
+import Utils exposing (textClass, textEl)
 import WeightyBeer.Object
 import WeightyBeer.Object.Brew
 import WeightyBeer.Object.Image
@@ -178,7 +179,7 @@ viewTapCard weights tap =
 
 viewTapCardHeader : Tap -> Html Msg
 viewTapCardHeader tap =
-    div [ class "tap-card-header debug" ]
+    div [ class "tap-card-header" ]
         [ div [ class "tap-card-indent"]
             [ text tap.name]
         ]
@@ -194,7 +195,7 @@ tapCardBodyAttrs brew =
             Maybe.andThen .image brew
                 |> Maybe.withDefault "/img/fallback-brew-image.png"
     in
-        (style "background-image" ("url(" ++ imageUrl ++ ")")) :: [ class "tap-card-body debug" ]
+        (style "background-image" ("url(" ++ imageUrl ++ ")")) :: [ class "tap-card-body" ]
 
 abvText : Maybe Brew -> Html Msg
 abvText brew =
@@ -206,7 +207,7 @@ abvText brew =
 
 viewTapCardFooter : Dict String Weight -> Tap -> Html Msg
 viewTapCardFooter weights tap =
-    div [ class "tap-card-footer tap-card-indent debug" ]
+    div [ class "tap-card-footer tap-card-indent" ]
         <| case tap.brew of
             Nothing ->
                 [textEl "No brew on tap"]
@@ -240,11 +241,3 @@ viewWeight weights tap =
                 , " L)"
                 ]
     )
-
-textEl : String -> Html Msg
-textEl string =
-    textClass [] string
-
-textClass : List String -> String -> Html Msg
-textClass classes string =
-    span (List.map class classes) [ text string ]
