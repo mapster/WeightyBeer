@@ -2,7 +2,7 @@ module Main exposing (..)
 
 import Browser
 import Home
-import Html exposing (Html, a, div, text)
+import Html exposing (Html, a, div)
 import Html.Attributes exposing (class, href)
 import Utils exposing (textEl)
 
@@ -24,7 +24,7 @@ type alias Model =
 init : () -> (Model, Cmd Msg)
 init _ =
     let
-        (homeModel, homeCmd) = Home.init()
+        (homeModel, homeCmd) = Home.init
     in
     (
         { home = homeModel }

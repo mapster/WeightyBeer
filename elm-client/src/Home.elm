@@ -1,4 +1,4 @@
-module Home exposing (..)
+module Home exposing (view, init, update, Model, Msg, subscriptions)
 
 import Dict exposing (Dict)
 import Graphql.Http
@@ -58,8 +58,8 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Time.every 1000 (\_ -> FetchWeights)
 
-init : () -> (Model, Cmd Msg)
-init _ =
+init : (Model, Cmd Msg)
+init =
     let
         model = Model RemoteData.Loading Dict.empty
     in
