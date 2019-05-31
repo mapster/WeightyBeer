@@ -24,26 +24,26 @@ id =
     Object.selectionForField "String" "id" [] Decode.string
 
 
-zero : SelectionSet (Maybe Float) WeightyBeer.Object.Weight
+zero : SelectionSet (Maybe Int) WeightyBeer.Object.Weight
 zero =
-    Object.selectionForField "(Maybe Float)" "zero" [] (Decode.float |> Decode.nullable)
+    Object.selectionForField "(Maybe Int)" "zero" [] (Decode.int |> Decode.nullable)
 
 
-empty : SelectionSet (Maybe Float) WeightyBeer.Object.Weight
+empty : SelectionSet (Maybe Int) WeightyBeer.Object.Weight
 empty =
-    Object.selectionForField "(Maybe Float)" "empty" [] (Decode.float |> Decode.nullable)
+    Object.selectionForField "(Maybe Int)" "empty" [] (Decode.int |> Decode.nullable)
 
 
-full : SelectionSet (Maybe Float) WeightyBeer.Object.Weight
+full : SelectionSet (Maybe Int) WeightyBeer.Object.Weight
 full =
-    Object.selectionForField "(Maybe Float)" "full" [] (Decode.float |> Decode.nullable)
+    Object.selectionForField "(Maybe Int)" "full" [] (Decode.int |> Decode.nullable)
 
 
-current : SelectionSet Float WeightyBeer.Object.Weight
+current : SelectionSet Int WeightyBeer.Object.Weight
 current =
-    Object.selectionForField "Float" "current" [] Decode.float
+    Object.selectionForField "Int" "current" [] Decode.int
 
 
-percent : SelectionSet Float WeightyBeer.Object.Weight
+percent : SelectionSet Int WeightyBeer.Object.Weight
 percent =
-    Object.selectionForField "Float" "percent" [] Decode.float
+    Object.selectionForField "Int" "percent" [] Decode.int

@@ -1,13 +1,19 @@
 module Main exposing (..)
 
 import Browser
---import Element exposing (Element, alignBottom, centerY, column, el, fill, fillPortion, height, htmlAttribute, image, inFront, maximum, none, paddingXY, px, rgb, rgba, row, shrink, spacing, text, width)
---import Element.Background as Background
---import Element.Border
---import Element.Font as Font
+import Graphql.Http
+import Graphql.Operation exposing (RootQuery)
+import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import RemoteData exposing (RemoteData)
 import String exposing (fromFloat, fromInt)
+import WeightyBeer.Object
+import WeightyBeer.Object.Brew
+import WeightyBeer.Object.Image
+import WeightyBeer.Object.Tap
+import WeightyBeer.Object.Weight
+import WeightyBeer.Query as Query
 
 main =
     Browser.document
@@ -18,11 +24,13 @@ main =
         }
 
 type Msg
-    = SomeMsg
+    = GotTapsResponse (RemoteData (Graphql.Http.Error Taps) Taps)
 
 type alias Model =
-    { taps: List Tap
+    { receivedTaps: RemoteData (Graphql.Http.Error Taps) Taps
     }
+
+type alias Taps = List Tap
 
 type alias Tap =
     { id: String
@@ -51,29 +59,73 @@ type alias Brew =
 init : () -> (Model, Cmd Msg)
 init _ =
     let
-        model = Model
-            [ Tap "1" "Venstre kran" 0 19
-                (Just <| Brew "1" 1 "Routsi's Frokost" "Coffee Stout" 87 7.4 (Just "/img/routsis-frokost.png"))
-                (Just <| Weight "tap1" 83 )
-
-            , Tap "2" "Midtre kran" 0 19
-                              Nothing  --(Just <| Brew "2" 1 "My Coffee Stout" "Stout" 87 7.4 (Nothing)) -- Just "/img/routsis-frokost.png"
-                              (Just <| Weight "tap2" 0 )
-
-            , Tap "2" "Høyre kran" 0 19
-                              (Just <| Brew "3" 2 "My Belgian Blonde" "Belgian Blonde" 87 9.2 Nothing)--(Just "/img/routsis-frokost.png"))
-                              (Just <| Weight "tap3" 34 )
-            ]
+        model = Model RemoteData.Loading
     in
-        (model, Cmd.none)
+        (model, requestTaps)
+
+requestTaps : Cmd Msg
+requestTaps =
+    tapsQuery
+        |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
+        |> Graphql.Http.send ( RemoteData.fromResult >> GotTapsResponse )
+
+tapsQuery : SelectionSet (List Tap) RootQuery
+tapsQuery =
+    Query.taps tapSelection
+
+tapSelection : SelectionSet Tap WeightyBeer.Object.Tap
+tapSelection =
+    SelectionSet.map6 Tap
+        WeightyBeer.Object.Tap.id
+        WeightyBeer.Object.Tap.name
+        WeightyBeer.Object.Tap.order
+        WeightyBeer.Object.Tap.volume
+        (WeightyBeer.Object.Tap.brew brewSelection)
+        (WeightyBeer.Object.Tap.weight weightSelection)
+
+brewSelection : SelectionSet Brew WeightyBeer.Object.Brew
+brewSelection =
+    SelectionSet.map7 Brew
+        WeightyBeer.Object.Brew.id
+        WeightyBeer.Object.Brew.brewNumber
+        WeightyBeer.Object.Brew.name
+        WeightyBeer.Object.Brew.style
+        WeightyBeer.Object.Brew.ibu
+        WeightyBeer.Object.Brew.abv
+        (WeightyBeer.Object.Brew.image imageSelection)
+
+imageSelection : SelectionSet String WeightyBeer.Object.Image
+imageSelection = WeightyBeer.Object.Image.url
+
+weightSelection : SelectionSet Weight WeightyBeer.Object.Weight
+weightSelection =
+    SelectionSet.map2 Weight
+        WeightyBeer.Object.Weight.id
+        WeightyBeer.Object.Weight.percent
+
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update _ model =
-    (model, Cmd.none)
+update msg model =
+    case msg of
+        GotTapsResponse response ->
+            ({ model | receivedTaps = response}, Cmd.none)
 
 view : Model -> Html Msg
 view model =
-    viewTaps model.taps
+    case model.receivedTaps of
+        RemoteData.Loading ->
+            text "Loading..."
+
+        RemoteData.NotAsked ->
+            text "Not asked!"
+
+
+        RemoteData.Failure e ->
+            text "Failed to fetch taps: "
+
+
+        RemoteData.Success taps ->
+                viewTaps taps
 
 viewTaps : List Tap -> Html Msg
 viewTaps taps =

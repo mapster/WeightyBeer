@@ -24,9 +24,9 @@ id =
     Object.selectionForField "String" "id" [] Decode.string
 
 
-brewNumber : SelectionSet Float WeightyBeer.Object.Brew
+brewNumber : SelectionSet Int WeightyBeer.Object.Brew
 brewNumber =
-    Object.selectionForField "Float" "brewNumber" [] Decode.float
+    Object.selectionForField "Int" "brewNumber" [] Decode.int
 
 
 name : SelectionSet String WeightyBeer.Object.Brew
@@ -39,9 +39,9 @@ style =
     Object.selectionForField "String" "style" [] Decode.string
 
 
-ibu : SelectionSet Float WeightyBeer.Object.Brew
+ibu : SelectionSet Int WeightyBeer.Object.Brew
 ibu =
-    Object.selectionForField "Float" "ibu" [] Decode.float
+    Object.selectionForField "Int" "ibu" [] Decode.int
 
 
 abv : SelectionSet Float WeightyBeer.Object.Brew

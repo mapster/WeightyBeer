@@ -31,6 +31,7 @@ html, body {
     height: 100%;
     margin: 5px;
     background-color: #424242;
+    box-shadow: 10px 5px 5px 3px rgba(0, 0, 0, 0.2);
 
     flex-direction: column;
     display: flex;
@@ -50,6 +51,7 @@ html, body {
     flex-basis: 230px;
     flex-grow: 4;
     width: 100%;
+    background-color: #323232;
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -101,5 +103,7 @@ html, body {
 }
 
 .debug {
+    /*
     outline: 1px dotted white;
+    */
 }

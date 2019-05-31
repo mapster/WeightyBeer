@@ -6,6 +6,7 @@
         "dev": "elm-live src/Main.elm --open -- --output=elm.js"
     },
     "devDependencies": {
+        "@dillonkearns/elm-graphql": "^3.6.2",
         "elm-live": "^3.4.1"
     }
 }

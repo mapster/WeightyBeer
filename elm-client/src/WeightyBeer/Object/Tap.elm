@@ -29,9 +29,9 @@ name =
     Object.selectionForField "String" "name" [] Decode.string
 
 
-order : SelectionSet Float WeightyBeer.Object.Tap
+order : SelectionSet Int WeightyBeer.Object.Tap
 order =
-    Object.selectionForField "Float" "order" [] Decode.float
+    Object.selectionForField "Int" "order" [] Decode.int
 
 
 volume : SelectionSet Float WeightyBeer.Object.Tap
@@ -44,11 +44,11 @@ isActive =
     Object.selectionForField "Bool" "isActive" [] Decode.bool
 
 
-weight : SelectionSet (Maybe String) WeightyBeer.Object.Tap
-weight =
-    Object.selectionForField "(Maybe String)" "weight" [] (Decode.string |> Decode.nullable)
-
-
 brew : SelectionSet decodesTo WeightyBeer.Object.Brew -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.Tap
 brew object_ =
     Object.selectionForCompositeField "brew" [] object_ (identity >> Decode.nullable)
+
+
+weight : SelectionSet decodesTo WeightyBeer.Object.Weight -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.Tap
+weight object_ =
+    Object.selectionForCompositeField "weight" [] object_ (identity >> Decode.nullable)
