@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Browser
+import Dict exposing (Dict)
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
@@ -8,6 +9,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import RemoteData exposing (RemoteData)
 import String exposing (fromFloat, fromInt)
+import Time
 import WeightyBeer.Object
 import WeightyBeer.Object.Brew
 import WeightyBeer.Object.Image
@@ -20,17 +22,21 @@ main =
         { init = init
         , view = \model -> { title = "WeightyBeer", body = [view model] }
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
 
 type Msg
     = GotTapsResponse (RemoteData (Graphql.Http.Error Taps) Taps)
+    | GotWeightsResponse (RemoteData (Graphql.Http.Error Weights) Weights)
+    | FetchWeights
 
 type alias Model =
     { receivedTaps: RemoteData (Graphql.Http.Error Taps) Taps
+    , weights: Dict String Weight
     }
 
 type alias Taps = List Tap
+type alias Weights = List Weight
 
 type alias Tap =
     { id: String
@@ -56,18 +62,33 @@ type alias Brew =
     , image: Maybe String
     }
 
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Time.every 1000 (\_ -> FetchWeights)
+
 init : () -> (Model, Cmd Msg)
 init _ =
     let
-        model = Model RemoteData.Loading
+        model = Model RemoteData.Loading Dict.empty
     in
         (model, requestTaps)
+
+--
+-- GraphQL
+--
+--
 
 requestTaps : Cmd Msg
 requestTaps =
     tapsQuery
         |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
         |> Graphql.Http.send ( RemoteData.fromResult >> GotTapsResponse )
+
+requestWeights : Cmd Msg
+requestWeights =
+    Query.weights weightSelection
+        |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
+        |> Graphql.Http.send ( RemoteData.fromResult >> GotWeightsResponse )
 
 tapsQuery : SelectionSet (List Tap) RootQuery
 tapsQuery =
@@ -103,12 +124,37 @@ weightSelection =
         WeightyBeer.Object.Weight.id
         WeightyBeer.Object.Weight.percent
 
+--
+-- Update
+--
+--
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         GotTapsResponse response ->
             ({ model | receivedTaps = response}, Cmd.none)
+
+        GotWeightsResponse response ->
+            ({ model | weights = updateWeights response }, Cmd.none)
+
+        FetchWeights ->
+            (model, requestWeights)
+
+updateWeights : (RemoteData (Graphql.Http.Error Weights) Weights) -> Dict String Weight
+updateWeights response =
+    case response of
+        RemoteData.Success weights ->
+            List.map (\w -> (w.id, w)) weights
+                |> Dict.fromList
+
+        _ ->
+            Dict.empty
+
+--
+-- View
+--
+--
 
 view : Model -> Html Msg
 view model =
@@ -125,18 +171,18 @@ view model =
 
 
         RemoteData.Success taps ->
-                viewTaps taps
+                viewTaps model.weights taps
 
-viewTaps : List Tap -> Html Msg
-viewTaps taps =
-    div [ class "tap-card-container" ] <| List.map viewTapCard taps
+viewTaps : Dict String Weight -> Taps -> Html Msg
+viewTaps weights taps =
+    div [ class "tap-card-container" ] <| List.map (viewTapCard weights) taps
 
-viewTapCard : Tap -> Html Msg
-viewTapCard tap =
+viewTapCard : Dict String Weight -> Tap -> Html Msg
+viewTapCard weights tap =
      div [ class "tap-card" ]
         [ viewTapCardHeader tap
         , viewTapCardBody tap.brew
-        , viewTapCardFooter tap
+        , viewTapCardFooter weights tap
         ]
 
 viewTapCardHeader : Tap -> Html Msg
@@ -167,8 +213,8 @@ abvText brew =
         |> Maybe.withDefault ""
         |> textClass [ "tap-card-indent" ]
 
-viewTapCardFooter : Tap -> Html Msg
-viewTapCardFooter tap =
+viewTapCardFooter : Dict String Weight -> Tap -> Html Msg
+viewTapCardFooter weights tap =
     div [ class "tap-card-footer tap-card-indent debug" ]
         <| case tap.brew of
             Nothing ->
@@ -178,12 +224,17 @@ viewTapCardFooter tap =
                 [ textClass [ "title" ] brew.name
                 , textClass [ "subtitle" ] <| "Brew #" ++ (fromInt brew.brewNumber) ++ " - " ++ brew.style
                 , hr [ class "title-divider" ] []
-                , viewWeight tap
+                , viewWeight weights tap
                 ]
 
-viewWeight : Tap -> Html Msg
-viewWeight tap =
-    textEl (case tap.weight of
+viewWeight : Dict String Weight -> Tap -> Html Msg
+viewWeight weights tap =
+    let
+        weightMaybe = Maybe.map .id tap.weight
+            |> Maybe.map (\id -> Dict.get id weights)
+            |> Maybe.withDefault tap.weight
+    in
+    textEl (case weightMaybe of
         Nothing ->
             "No weight selected for tap"
 
