@@ -1,0 +1,11 @@
+{
+    "name": "weightybeer-elm-graphql",
+    "version": "0.0.1",
+    "scripts": {
+        "api": "elm-graphql http://localhost:3000/graphql --base WeightyBeer",
+        "dev": "elm-live src/Main.elm --open -- --output=elm.js"
+    },
+    "devDependencies": {
+        "elm-live": "^3.4.1"
+    }
+}
