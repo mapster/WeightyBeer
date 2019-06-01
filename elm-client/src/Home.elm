@@ -215,7 +215,7 @@ viewTapCardFooter weights tap =
             Just brew ->
                 [ textClass [ "title" ] brew.name
                 , textClass [ "subtitle" ] <| "Brew #" ++ (fromInt brew.brewNumber) ++ " - " ++ brew.style
-                , hr [ class "title-divider" ] []
+                , hr [ class "divider" ] []
                 , viewWeight weights tap
                 ]
 
