@@ -2,11 +2,12 @@ module Main exposing (..)
 
 import Browser
 import Browser.Navigation as Nav
-import Home
 import Html exposing (Html, a, div)
 import Html.Attributes exposing (class)
+import Page.EditTap as EditTap
+import Page.Home as Home
+import Page.Taps as Taps
 import Route exposing (Route, href)
-import Taps
 import Url exposing (Url)
 import Utils exposing (textEl)
 
@@ -28,6 +29,7 @@ type Msg
 type PageMsg
     = HomeMsg Home.Msg
     | TapsMsg Taps.Msg
+    | EditTapMsg EditTap.Msg
 
 type alias Model =
     { navKey : Nav.Key
@@ -39,6 +41,7 @@ type Page
     = NotFound
     | Home Home.Model
     | Taps Taps.Model
+    | EditTap EditTap.Model
 
 setPage : Model -> Page -> Model
 setPage model page =
@@ -68,7 +71,8 @@ changeRouteTo maybeRoute =
                 |> updateWith Taps TapsMsg
 
         Just (Route.EditTap id) ->
-            (NotFound, Cmd.none)
+            EditTap.init id
+                |> updateWith EditTap EditTapMsg
 
 updateWith : (srcModel -> targetModel) -> (srcMsg -> targetMsg) -> (srcModel, Cmd srcMsg) -> (targetModel, Cmd targetMsg)
 updateWith modelMap cmdMap (page, cmd) =
@@ -111,14 +115,28 @@ updatePage msg model =
 
                 _ -> (model, Cmd.none)
 
+        EditTapMsg editTapMsg ->
+            case model.page of
+                EditTap editTap ->
+                    EditTap.update editTapMsg editTap
+                        |> updateWith (EditTap >> setPage model) (EditTapMsg >> ToPage)
+
+                _ -> (model, Cmd.none)
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.page of
-        Home home ->
-            Sub.map (HomeMsg >> ToPage ) (Home.subscriptions home)
-
-        _ ->
+        NotFound ->
             Sub.none
+
+        Home home ->
+            Sub.map ( HomeMsg >> ToPage ) ( Home.subscriptions home )
+
+        Taps taps ->
+            Sub.map ( TapsMsg >> ToPage ) ( Taps.subscriptions taps )
+
+        EditTap editTap ->
+            Sub.map ( EditTapMsg >> ToPage ) ( EditTap.subscriptions editTap )
 
 
 view : Model -> Html Msg
@@ -142,6 +160,9 @@ viewPage page =
 
             Taps taps ->
                 Html.map (TapsMsg >> ToPage) (Taps.view taps)
+
+            EditTap editTap ->
+                Html.map (EditTapMsg >> ToPage) (EditTap.view editTap)
     ]
 
 viewMenu : Html Msg

@@ -2,20 +2,21 @@ module Route exposing (Route(..), href, fromUrl)
 
 import Html exposing (Attribute)
 import Html.Attributes as Attr
+import Type.TapID as TapID exposing (TapID)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 
 type Route
     = Home
     | Taps
-    | EditTap String
+    | EditTap TapID
 
 parser : Parser (Route -> a) a
 parser =
     oneOf
         [ Parser.map Home Parser.top
         , Parser.map Taps (s "taps")
-        , Parser.map EditTap (s "taps" </> Parser.string)
+        , Parser.map EditTap (s "taps" </> TapID.urlParser)
         ]
 
 -- Public
@@ -42,6 +43,6 @@ routeToString route =
                     [ "taps" ]
 
                 EditTap id ->
-                    [ "taps", id ]
+                    [ "taps", TapID.toString id ]
     in
     "/" ++ String.join "/" pieces

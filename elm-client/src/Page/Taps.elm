@@ -1,4 +1,4 @@
-module Taps exposing (Model, Msg, init, subscriptions, update, view)
+module Page.Taps exposing (Model, Msg, init, subscriptions, update, view)
 
 import Component.Table exposing (viewTable)
 import Graphql.Http
@@ -9,6 +9,7 @@ import Html.Attributes exposing (class)
 import RemoteData exposing (RemoteData)
 import Route exposing (href)
 import String exposing (fromInt)
+import Type.TapID as TapID exposing (TapID)
 import WeightyBeer.Object
 import WeightyBeer.Object.Brew
 import WeightyBeer.Object.Tap
@@ -25,7 +26,7 @@ type alias Model =
 
 
 type alias Tap =
-    { id : String
+    { id : TapID
     , name : String
     , brew : Maybe Brew
     , weight : Maybe String
@@ -62,7 +63,7 @@ tapsQuery =
 tapSelection : SelectionSet Tap WeightyBeer.Object.Tap
 tapSelection =
     SelectionSet.map5 Tap
-        WeightyBeer.Object.Tap.id
+        TapID.selection
         WeightyBeer.Object.Tap.name
         (WeightyBeer.Object.Tap.brew brewSelection)
         (WeightyBeer.Object.Tap.weight weightSelection)
@@ -92,7 +93,7 @@ init =
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg _ =
     case msg of
         GotTapsResponse response ->
             ( response, Cmd.none )
@@ -127,7 +128,7 @@ viewTaps taps =
         taps
 
 
-viewEditLink : String -> Html Msg
+viewEditLink : TapID -> Html Msg
 viewEditLink id =
     a [ class "symbol-link", href (Route.EditTap id) ] [ text "✎" ]
 
