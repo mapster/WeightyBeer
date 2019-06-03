@@ -168,12 +168,10 @@ viewPage page =
 viewMenu : Html Msg
 viewMenu =
     div [ class "page-menu"]
-        [ div [ class "entries" ]
-            [ viewMenuEntry "Home" Route.Home
-            , viewMenuEntry "Taps" Route.Taps
-            , viewMenuEntry "Brews" Route.Taps
-            , viewMenuEntry "Weight Hub" Route.Taps
-            ]
+        [ viewMenuEntry "Home" Route.Home
+        , viewMenuEntry "Taps" Route.Taps
+        , viewMenuEntry "Brews" Route.Taps
+        , viewMenuEntry "Weight Hub" Route.Taps
         , div [ class "space"] []
         ]
 

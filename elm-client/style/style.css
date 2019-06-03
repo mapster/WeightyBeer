@@ -48,23 +48,13 @@ body {
     justify-content: flex-start;
 }
 
-.page-menu .entries {
-    height: 100%;
-    flex-grow: 12;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-}
-
 .page-menu .space {
     height: 100%;
-    flex-grow: 11;
+    flex-grow: 7;
 }
 
 .page-menu .entry {
     height: 100%;
-    flex-basis: 125px;
     flex-grow: 1;
 
     display: flex;
