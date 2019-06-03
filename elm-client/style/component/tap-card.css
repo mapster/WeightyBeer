@@ -2,11 +2,9 @@
 .tap-card {
     max-width: 400px;
     max-height: 580px;
-    flex-basis: 300px;
     flex-grow: 1;
     height: 100%;
     margin: 5px;
-    background-color: #424242;
     box-shadow: 10px 5px 5px 3px rgba(0, 0, 0, 0.2);
 
     flex-direction: column;
@@ -15,7 +13,6 @@
 
 .tap-card-header {
     min-height: 25px;
-    flex-basis: 50px;
     flex-grow: 1;
 
     display: flex;
@@ -24,8 +21,7 @@
 }
 
 .tap-card-body {
-    flex-basis: 230px;
-    flex-grow: 4;
+    flex-grow: 8;
     width: 100%;
     background-color: #323232;
     background-size: cover;
@@ -48,8 +44,6 @@
 }
 
 .tap-card-footer {
-    min-height: 125px;
-    flex-basis: 50px;
     flex-grow: 2;
 
     display: flex;

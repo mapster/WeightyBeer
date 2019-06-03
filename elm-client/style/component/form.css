@@ -1,0 +1,84 @@
+
+.edit-tap-card .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.form .field {
+    min-height: 65px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.form .field label {
+    order: -1;
+    line-height: 22px;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 16px;
+    transform: scale(0.75);
+    transform-origin: left top;
+}
+
+.form .field input {
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    margin-bottom: -7px;
+}
+
+.form .field select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    background-color: rgba(0, 0, 0, 0);
+
+    background-image: linear-gradient(transparent, transparent),
+        linear-gradient(-135deg, transparent 50%, #424242 50%),
+        linear-gradient(-225deg, transparent 50%, #424242 50%),
+        linear-gradient(transparent 42%, rgba(255, 255, 255, 0.3) 42%);
+
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-size: 1px 100%, 20px 16px, 20px 16px, 20px 100%;
+    background-position: right 20px center, right bottom, right bottom, right bottom;
+}
+
+.form .field select:active {
+    background-image: linear-gradient(transparent, transparent),
+        linear-gradient(-135deg, transparent 50%, #424242 50%),
+        linear-gradient(-225deg, transparent 50%, #424242 50%),
+        linear-gradient(#424242 42%, rgba(255, 255, 255, 0.3) 42%);
+    background-color: #424242;
+}
+
+.form .field hr.divider.overlay {
+    transform: scale(0);
+    transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+    background-color: rgb(0, 151, 167);
+    height: 2px;
+    margin-top: -6px;
+}
+
+.form .field select:active + label {
+    color: rgb(0, 151, 167);
+}
+
+.form .field input:focus + label {
+    color: rgb(0, 151, 167);
+}
+
+.form .field input:focus ~ hr.divider.overlay {
+    transform: scale(1);
+}

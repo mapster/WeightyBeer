@@ -116,5 +116,5 @@ tapWithWeight weights tap =
 
 viewTaps : Dict String Weight -> Taps -> Html Msg
 viewTaps weights taps =
-    div [ class "tap-card-container" ] <| List.map ((tapWithWeight weights) >> Just >> TapCard.view) taps
+    div [ class "home-page-container" ] <| List.map ((tapWithWeight weights) >> Just >> TapCard.view) taps
 

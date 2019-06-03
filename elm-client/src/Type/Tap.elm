@@ -1,4 +1,4 @@
-module Type.Tap exposing (Tap, Weight, Brew, tapSelection, weightSelection)
+module Type.Tap exposing (Tap, Weight, Brew, tapSelection, weightSelection, brewSelection)
 
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
