@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "scripts": {
         "api": "elm-graphql http://localhost:3000/graphql --base WeightyBeer",
-        "dev": "elm-live src/Main.elm --open -u --debug -- --output=elm.js"
+        "dev": "elm-live src/Main.elm --open -u -- --debug --output=elm.js"
     },
     "devDependencies": {
         "@dillonkearns/elm-graphql": "^3.6.2",

@@ -33,6 +33,11 @@
     margin-bottom: -7px;
 }
 
+.form .field input.modified,
+.form .field select.modified {
+    color: red;
+}
+
 .form .field select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -71,7 +76,7 @@
     margin-top: -6px;
 }
 
-.form .field select:active + label {
+.form .field select:focus + label {
     color: rgb(0, 151, 167);
 }
 

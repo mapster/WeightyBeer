@@ -1,4 +1,4 @@
-module Type.WeightID exposing (WeightID, toString, urlParser, selection)
+module Type.WeightID exposing (WeightID, toString, urlParser, selection, eq)
 
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Url.Parser
@@ -7,6 +7,10 @@ import WeightyBeer.Object.Weight
 
 type WeightID
     = WeightID String
+
+eq : String -> WeightID -> Bool
+eq str =
+    (==) (WeightID str)
 
 toString : WeightID -> String
 toString (WeightID id) =
