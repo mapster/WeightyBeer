@@ -1,7 +1,7 @@
 module Page.EditTap exposing (Model, Msg, init, subscriptions, update, view)
 
 import Component.ErrorDetails as ErrorDetails
-import Component.Form as Form exposing (InputType(..), Option, viewField, viewSelect)
+import Component.Form as Form exposing (Field, InputType(..), Option, viewField, viewSelect)
 import Component.TapCard as TapCard
 import Graphql.Http exposing (RawError(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
@@ -13,43 +13,52 @@ import Type.BrewID as BrewID exposing (BrewID)
 import Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
-import Utils.Maybe exposing (isJust)
+import Utils.Maybe
 import WeightyBeer.Query as Query
+
 
 type Model
     = EditTap EditModel
---    | NewTap NewModel
+      --    | NewTap NewModel
     | Error ErrorModel
     | Loading
 
+
 type alias EditModel =
-    { original: Tap
-    , brews: List Brew
-    , weights: List Weight
-    , mutation: TapMutation
-    , error: Maybe String
+    { original : Tap
+    , brews : List Brew
+    , weights : List Weight
+    , mutation : TapMutation
+    , error : Maybe String
     }
+
 
 type alias NewModel =
-    { brews: List Brew
-    , weights: List Weight
-    , mutation: TapMutation
+    { brews : List Brew
+    , weights : List Weight
+    , mutation : TapMutation
     }
 
-type alias ErrorModel = String
+
+type alias ErrorModel =
+    String
+
 
 type alias Response =
     Result (Graphql.Http.Error ResponseData) ResponseData
 
+
 type alias ResponseData =
-    { tap: Maybe Tap
-    , brews: List Brew
-    , weights: List Weight
+    { tap : Maybe Tap
+    , brews : List Brew
+    , weights : List Weight
     }
+
 
 type Msg
     = GotResponse Response
     | Edit Field String
+
 
 type Field
     = Name
@@ -58,12 +67,13 @@ type Field
     | Brew
     | Weight
 
+
 type alias TapMutation =
-    { name: Maybe String
-    , brew: Maybe Brew
-    , weight: Maybe Weight
-    , volume: Maybe Float
-    , order: Maybe Int
+    { name : Maybe String
+    , brew : Maybe Brew
+    , weight : Maybe Weight
+    , volume : Maybe Float
+    , order : Maybe Int
     }
 
 
@@ -71,23 +81,26 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
 
+
 emptyMutation : TapMutation
 emptyMutation =
     TapMutation Nothing Nothing Nothing Nothing Nothing
 
-init : TapID -> (Model, Cmd Msg)
+
+init : TapID -> ( Model, Cmd Msg )
 init id =
-    (Loading, requestTap id)
+    ( Loading, requestTap id )
 
 
 requestTap : TapID -> Cmd Msg
-requestTap id  =
-    (SelectionSet.map3 ResponseData
+requestTap id =
+    SelectionSet.map3 ResponseData
         (Query.tap (TapID.toArg id) tapSelection)
         (Query.brews brewSelection)
-        (Query.weights weightSelection))
+        (Query.weights weightSelection)
         |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
         |> Graphql.Http.send GotResponse
+
 
 fromMutation : TapID -> TapMutation -> Tap
 fromMutation id mutation =
@@ -98,44 +111,46 @@ fromMutation id mutation =
         mutation.brew
         mutation.weight
 
-update : Msg -> Model -> (Model, Cmd Msg)
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotResponse response ->
-            (updateFromResponse response model, Cmd.none)
+            ( updateFromResponse response model, Cmd.none )
 
         Edit field value ->
-            (updateField field value model, Cmd.none)
+            ( updateField field value model, Cmd.none )
+
 
 updateFromResponse : Response -> Model -> Model
 updateFromResponse response model =
     case response of
-
         Err error ->
             Error <| ErrorDetails.errorToString error
 
         Ok data ->
-            case (data.tap, model) of
-                (Just original, Loading) ->
+            case ( data.tap, model ) of
+                ( Just original, Loading ) ->
                     EditTap (EditModel original data.brews data.weights emptyMutation Nothing)
 
-                (Just original, Error _) ->
+                ( Just original, Error _ ) ->
                     EditTap (EditModel original data.brews data.weights emptyMutation Nothing)
 
-                (Just original, EditTap editModel) ->
-                    EditTap { editModel | original = original, brews = data.brews, weights = data.weights}
+                ( Just original, EditTap editModel ) ->
+                    EditTap { editModel | original = original, brews = data.brews, weights = data.weights }
 
-                (Nothing, Error _) ->
+                ( Nothing, Error _ ) ->
                     Error "Tap doesn't exist"
 
-                (Nothing, Loading) ->
+                ( Nothing, Loading ) ->
                     Error "Tap doesn't exist"
 
-                (Nothing, EditTap editModel) ->
-                    EditTap { editModel | error = Just "Tap was deleted remotely"}
+                ( Nothing, EditTap editModel ) ->
+                    EditTap { editModel | error = Just "Tap was deleted remotely" }
+
 
 updateField : Field -> String -> Model -> Model
-updateField field value model=
+updateField field value model =
     case model of
         Error _ ->
             model
@@ -143,7 +158,7 @@ updateField field value model=
         Loading ->
             Error "Cannot edit while loading!"
 
-        EditTap {original, brews, weights, mutation} ->
+        EditTap { original, brews, weights, mutation } ->
             let
                 updatedMutation =
                     case field of
@@ -151,44 +166,68 @@ updateField field value model=
                             { mutation | name = justIfChanged original.name value }
 
                         Volume ->
-                            { mutation | volume =
-                                String.toFloat value
-                                    |> Maybe.withDefault original.volume
-                                    |> justIfChanged original.volume
+                            { mutation
+                                | volume =
+                                    String.toFloat value
+                                        |> Maybe.withDefault original.volume
+                                        |> justIfChanged original.volume
                             }
 
                         Order ->
-                            { mutation | order =
-                                String.toInt value
-                                    |> Maybe.withDefault original.order
-                                    |> justIfChanged original.order
+                            { mutation
+                                | order =
+                                    String.toInt value
+                                        |> Maybe.withDefault original.order
+                                        |> justIfChanged original.order
                             }
 
                         Brew ->
                             let
-                                brew = List.filter (.id >> BrewID.eq value) brews
-                                    |> List.head
+                                brew =
+                                    List.filter (.id >> BrewID.eq value) brews
+                                        |> List.head
                             in
-                            { mutation | brew = if brew == original.brew then Nothing else brew }
+                            { mutation
+                                | brew =
+                                    if brew == original.brew then
+                                        Nothing
+
+                                    else
+                                        brew
+                            }
 
                         Weight ->
                             let
-                                x = List.filter (.id >> WeightID.eq value) weights
-                                    |> List.head
+                                x =
+                                    List.filter (.id >> WeightID.eq value) weights
+                                        |> List.head
                             in
-                            { mutation | weight = if original.weight == x then Nothing else x }
+                            { mutation
+                                | weight =
+                                    if original.weight == x then
+                                        Nothing
+
+                                    else
+                                        x
+                            }
             in
             EditTap (EditModel original brews weights updatedMutation Nothing)
 
+
 justIfChanged : a -> a -> Maybe a
 justIfChanged original value =
-    if original == value then Nothing else Just value
+    if original == value then
+        Nothing
+
+    else
+        Just value
+
 
 view : Model -> Html Msg
 view model =
     case model of
         Loading ->
-            div [] [ text "Loading..."]
+            div [] [ text "Loading..." ]
 
         Error e ->
             div [] [ text e ]
@@ -199,7 +238,7 @@ view model =
                     [ div [ class "column" ]
                         [ viewForm mutation original brews weights ]
                     , div [ class "column" ]
-                        ( applyMutation original mutation
+                        (applyMutation original mutation
                             |> fromMutation original.id
                             |> viewTapCardColumn
                         )
@@ -209,7 +248,7 @@ view model =
 
 viewTapCardColumn : Tap -> List (Html Msg)
 viewTapCardColumn tap =
-    [ div [ class "tap-card-container"] [ TapCard.view (Just tap) ]
+    [ div [ class "tap-card-container" ] [ TapCard.view (Just tap) ]
     , div [ class "vertical-space" ] []
     ]
 
@@ -218,49 +257,38 @@ viewForm : TapMutation -> Tap -> List Brew -> List Weight -> Html Msg
 viewForm mutation original brews weights =
     let
         name =
-            { inputType = Text
-            , field = "Name"
-            , default = original.name
-            , value = mutation.name
-            }
+            Field "Name" mutation.name (Just original.name)
+
         brew =
-            { field = "Brew on tap"
-            , selected = Utils.Maybe.or mutation.brew original.brew |> Maybe.map (.id >> BrewID.toString)
-            , modified =  (isJust mutation.brew) && (mutation.brew /= original.brew)
-            , options = brewOptions brews
-            }
+            Field "Brew on tap"
+                (Maybe.map (.id >> BrewID.toString) mutation.brew)
+                (Maybe.map (.id >> BrewID.toString) original.brew)
+
         weight =
-            { field = "Keg weight"
-            , selected = (Utils.Maybe.or mutation.weight original.weight |> Maybe.map (.id >> WeightID.toString))
-            , modified = (isJust mutation.weight) && (mutation.weight /= original.weight)
-            , options = weightOptions weights
-            }
+            Field "Keg weight"
+                (Maybe.map (.id >> WeightID.toString) mutation.weight)
+                (Maybe.map (.id >> WeightID.toString) original.weight)
+
         volume =
-            { inputType = Number
-            , field = "Volume (L)"
-            , default = (fromFloat original.volume)
-            , value = (Maybe.map fromFloat mutation.volume)
-            }
+            Field "Volume (L)" (Maybe.map fromFloat mutation.volume) (Just (fromFloat original.volume))
+
         order =
-            { inputType = Number
-            , field = "Order"
-            , default = (fromInt original.order)
-            , value = (Maybe.map fromInt mutation.order)
-            }
+            Field "Order" (Maybe.map fromInt mutation.order) (Just (fromInt original.order))
     in
     form [ class "form" ]
-        [ viewField name (Edit Name)
-        , viewSelect brew (Edit Brew)
-        , viewSelect weight (Edit Weight)
-        , viewField volume (Edit Volume)
-        , viewField order (Edit Order)
+        [ viewField name Text (Edit Name)
+        , viewSelect brew (brewOptions brews) (Edit Brew)
+        , viewSelect weight (weightOptions weights) (Edit Weight)
+        , viewField volume Number (Edit Volume)
+        , viewField order Number (Edit Order)
         ]
+
 
 applyMutation : Tap -> TapMutation -> TapMutation
 applyMutation tap mutation =
     TapMutation
         (Just <| Maybe.withDefault tap.name mutation.name)
-        (Utils.Maybe.or mutation.brew tap.brew )
+        (Utils.Maybe.or mutation.brew tap.brew)
         (Utils.Maybe.or mutation.weight tap.weight)
         (Just <| Maybe.withDefault tap.volume mutation.volume)
         (Just <| Maybe.withDefault tap.order mutation.order)
@@ -268,7 +296,8 @@ applyMutation tap mutation =
 
 brewOptions : List Brew -> List Option
 brewOptions brews =
-    List.map (\brew -> Option (BrewID.toString brew.id) ("#" ++ (fromInt brew.brewNumber) ++ " " ++ brew.name) ) brews
+    List.map (\brew -> Option (BrewID.toString brew.id) ("#" ++ fromInt brew.brewNumber ++ " " ++ brew.name)) brews
+
 
 weightOptions : List Weight -> List Option
 weightOptions weights =

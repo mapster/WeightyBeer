@@ -38,6 +38,10 @@
     color: red;
 }
 
+.form .field select option.original {
+    color: white;
+}
+
 .form .field select {
     -webkit-appearance: none;
     -moz-appearance: none;
