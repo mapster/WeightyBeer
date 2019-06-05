@@ -1,15 +1,18 @@
-module Route exposing (Route(..), href, fromUrl)
+module Route exposing (Route(..), fromUrl, href, replaceUrl)
 
+import Browser.Navigation as Nav
 import Html exposing (Attribute)
 import Html.Attributes as Attr
 import Type.TapID as TapID exposing (TapID)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, oneOf, s)
 
+
 type Route
     = Home
     | Taps
     | EditTap TapID
+
 
 parser : Parser (Route -> a) a
 parser =
@@ -19,18 +22,25 @@ parser =
         , Parser.map EditTap (s "taps" </> TapID.urlParser)
         ]
 
+
+
 -- Public
+
 
 href : Route -> Attribute msg
 href targetRoute =
     Attr.href (routeToString targetRoute)
+
 
 fromUrl : Url -> Maybe Route
 fromUrl url =
     Parser.parse parser url
 
 
+
 -- Internal
+
+
 routeToString : Route -> String
 routeToString route =
     let
@@ -46,3 +56,8 @@ routeToString route =
                     [ "taps", TapID.toString id ]
     in
     "/" ++ String.join "/" pieces
+
+
+replaceUrl : Nav.Key -> Route -> Cmd msg
+replaceUrl key route =
+    Nav.replaceUrl key (routeToString route)

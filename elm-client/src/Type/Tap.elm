@@ -1,4 +1,4 @@
-module Type.Tap exposing (Tap, Weight, Brew, tapSelection, weightSelection, brewSelection)
+module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, weightSelection)
 
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
@@ -12,28 +12,31 @@ import WeightyBeer.Object.Tap
 import WeightyBeer.Object.Weight
 import WeightyBeer.Query as Query
 
+
 type alias Tap =
-    { id: TapID
-    , name: String
-    , order: Int
-    , volume: Float
-    , brew: Maybe Brew
-    , weight: Maybe Weight
+    { id : TapID
+    , name : String
+    , order : Int
+    , volume : Float
+    , brew : Maybe Brew
+    , weight : Maybe Weight
     }
+
 
 type alias Weight =
-    { id: WeightID
-    , percent: Int
+    { id : WeightID
+    , percent : Int
     }
 
+
 type alias Brew =
-    { id: BrewID
-    , brewNumber: Int
-    , name: String
-    , style: String
-    , ibu: Int
-    , abv: Float
-    , image: Maybe String
+    { id : BrewID
+    , brewNumber : Int
+    , name : String
+    , style : String
+    , ibu : Int
+    , abv : Float
+    , image : Maybe String
     }
 
 
@@ -47,6 +50,7 @@ tapSelection =
         (WeightyBeer.Object.Tap.brew brewSelection)
         (WeightyBeer.Object.Tap.weight weightSelection)
 
+
 brewSelection : SelectionSet Brew WeightyBeer.Object.Brew
 brewSelection =
     SelectionSet.map7 Brew
@@ -58,11 +62,19 @@ brewSelection =
         WeightyBeer.Object.Brew.abv
         (WeightyBeer.Object.Brew.image imageSelection)
 
+
 imageSelection : SelectionSet String WeightyBeer.Object.Image
-imageSelection = WeightyBeer.Object.Image.url
+imageSelection =
+    WeightyBeer.Object.Image.url
+
 
 weightSelection : SelectionSet Weight WeightyBeer.Object.Weight
 weightSelection =
     SelectionSet.map2 Weight
         WeightID.selection
         WeightyBeer.Object.Weight.percent
+
+
+tapMutation : SelectionSet (Maybe Tap) RootMutation
+tapMutation =
+    WeightyBeer.Mutation.tap

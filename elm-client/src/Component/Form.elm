@@ -1,8 +1,8 @@
-module Component.Form exposing (Field, InputType(..), Option, viewField, viewSelect)
+module Component.Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
 
-import Html exposing (Attribute, Html, div, hr, input, label, select, text)
-import Html.Attributes as Attr exposing (class, for)
-import Html.Events exposing (onInput)
+import Html exposing (Attribute, Html, button, div, hr, input, label, select, text)
+import Html.Attributes as Attr exposing (class, classList, for, type_)
+import Html.Events exposing (onClick, onInput)
 import Utils.Maybe exposing (isJust)
 
 
@@ -30,17 +30,15 @@ type alias Option =
 
 viewField : Field -> InputType -> (String -> msg) -> Html msg
 viewField field inputType msg =
-    let
-        inputAttrs =
-            withModifiedClass field
-                [ typeAttr inputType
-                , Attr.value (reduceValue field)
-                , Attr.id (fieldId field)
-                , onInput msg
-                ]
-    in
     div [ class "field" ]
-        [ input inputAttrs []
+        [ input
+            [ typeAttr inputType
+            , Attr.value (reduceValue field)
+            , Attr.id (fieldId field)
+            , onInput msg
+            , classList [ ( "modified", isModified field ) ]
+            ]
+            []
         , label [ for (fieldId field) ] [ text field.name ]
         , hr [ class "divider " ] []
         , hr [ class "divider overlay" ] []
@@ -50,44 +48,28 @@ viewField field inputType msg =
 viewSelect : Field -> List Option -> (String -> msg) -> Html msg
 viewSelect field options msg =
     div [ class "field" ]
-        [ select (withModifiedClass field [ onInput msg, Attr.id (fieldId field) ]) (viewOptions field options)
+        [ select
+            [ onInput msg
+            , Attr.id (fieldId field)
+            , classList [ ( "modified", isModified field ) ]
+            ]
+            (viewOptions field options)
         , label [ for (fieldId field) ] [ text field.name ]
         , hr [ class "divider" ] []
         , hr [ class "divider overlay" ] []
         ]
 
 
+viewButtons : msg -> msg -> Html msg
+viewButtons save cancel =
+    div [ class "buttons" ]
+        [ button [ class "save", type_ "button", onClick save ] [ text "Save" ]
+        , button [ class "cancel", type_ "button", onClick cancel ] [ text "Cancel" ]
+        ]
+
+
 
 -- Internal
-
-
-reduceValue : Field -> String
-reduceValue { original, mutation } =
-    Utils.Maybe.or mutation original
-        |> Maybe.withDefault ""
-
-
-withModifiedClass : Field -> List (Attribute msg) -> List (Attribute msg)
-withModifiedClass { original, mutation } attributes =
-    if isJust mutation && mutation /= original then
-        [ class "modified" ] ++ attributes
-
-    else
-        attributes
-
-
-withOriginalClass : Maybe String -> Option -> List (Attribute msg) -> List (Attribute msg)
-withOriginalClass originalMaybe option attributes =
-    case originalMaybe of
-        Just original ->
-            if original == option.value then
-                [ class "original" ] ++ attributes
-
-            else
-                attributes
-
-        _ ->
-            attributes
 
 
 viewOptions : Field -> List Option -> List (Html msg)
@@ -96,18 +78,35 @@ viewOptions select options =
 
 
 viewOption : Field -> Option -> Html msg
-viewOption select option =
+viewOption field option =
     Html.option
-        (withOriginalClass select.original
-            option
-            [ Attr.value option.value, Attr.selected (isSelected select option) ]
-        )
+        [ Attr.value option.value
+        , Attr.selected (isSelected field option)
+        , classList [ ( "original", isOriginal field option ) ]
+        ]
         [ text option.label ]
 
 
 isSelected : Field -> Option -> Bool
 isSelected field option =
     reduceValue field == option.value
+
+
+isModified : Field -> Bool
+isModified { original, mutation } =
+    isJust mutation && mutation /= original
+
+
+isOriginal : Field -> Option -> Bool
+isOriginal { original } option =
+    Maybe.map ((==) option.value) original
+        |> Maybe.withDefault False
+
+
+reduceValue : Field -> String
+reduceValue { original, mutation } =
+    Utils.Maybe.or mutation original
+        |> Maybe.withDefault ""
 
 
 fieldId : Field -> String

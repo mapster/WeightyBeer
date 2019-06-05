@@ -1,13 +1,15 @@
 module Page.EditTap exposing (Model, Msg, init, subscriptions, update, view)
 
+import Browser.Navigation as Nav
 import Component.ErrorDetails as ErrorDetails
-import Component.Form as Form exposing (Field, InputType(..), Option, viewField, viewSelect)
+import Component.Form as Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
 import Component.TapCard as TapCard
 import Graphql.Http exposing (RawError(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html, div, form, text)
 import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
+import Route
 import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID exposing (BrewID)
 import Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, weightSelection)
@@ -17,7 +19,13 @@ import Utils.Maybe
 import WeightyBeer.Query as Query
 
 
-type Model
+type alias Model =
+    { navKey : Nav.Key
+    , state : State
+    }
+
+
+type State
     = EditTap EditModel
       --    | NewTap NewModel
     | Error ErrorModel
@@ -58,6 +66,8 @@ type alias ResponseData =
 type Msg
     = GotResponse Response
     | Edit Field String
+    | Save
+    | Cancel
 
 
 type Field
@@ -87,9 +97,9 @@ emptyMutation =
     TapMutation Nothing Nothing Nothing Nothing Nothing
 
 
-init : TapID -> ( Model, Cmd Msg )
-init id =
-    ( Loading, requestTap id )
+init : Nav.Key -> TapID -> ( Model, Cmd Msg )
+init navKey id =
+    ( Model navKey Loading, requestTap id )
 
 
 requestTap : TapID -> Cmd Msg
@@ -116,20 +126,26 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotResponse response ->
-            ( updateFromResponse response model, Cmd.none )
+            ( { model | state = updateFromResponse response model.state }, Cmd.none )
 
         Edit field value ->
-            ( updateField field value model, Cmd.none )
+            ( { model | state = updateField field value model.state }, Cmd.none )
+
+        Save ->
+            Debug.todo "Implement this"
+
+        Cancel ->
+            ( model, Route.replaceUrl model.navKey Route.Taps )
 
 
-updateFromResponse : Response -> Model -> Model
-updateFromResponse response model =
+updateFromResponse : Response -> State -> State
+updateFromResponse response state =
     case response of
         Err error ->
             Error <| ErrorDetails.errorToString error
 
         Ok data ->
-            case ( data.tap, model ) of
+            case ( data.tap, state ) of
                 ( Just original, Loading ) ->
                     EditTap (EditModel original data.brews data.weights emptyMutation Nothing)
 
@@ -149,7 +165,7 @@ updateFromResponse response model =
                     EditTap { editModel | error = Just "Tap was deleted remotely" }
 
 
-updateField : Field -> String -> Model -> Model
+updateField : Field -> String -> State -> State
 updateField field value model =
     case model of
         Error _ ->
@@ -225,7 +241,7 @@ justIfChanged original value =
 
 view : Model -> Html Msg
 view model =
-    case model of
+    case model.state of
         Loading ->
             div [] [ text "Loading..." ]
 
@@ -281,6 +297,7 @@ viewForm mutation original brews weights =
         , viewSelect weight (weightOptions weights) (Edit Weight)
         , viewField volume Number (Edit Volume)
         , viewField order Number (Edit Order)
+        , viewButtons Save Cancel
         ]
 
 
