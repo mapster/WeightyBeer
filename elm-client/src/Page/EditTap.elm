@@ -10,13 +10,13 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html, div, form, text)
 import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
+import Maybe.Extra
 import Route
 import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID exposing (BrewID)
 import Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
-import Utils.Maybe exposing (isJust)
 import WeightyBeer.Query as Query
 
 
@@ -86,8 +86,8 @@ type Field
 
 type alias TapMutation =
     { name : Maybe String
-    , brew : Maybe Brew
-    , weight : Maybe Weight
+    , brew : Maybe (Maybe Brew)
+    , weight : Maybe (Maybe Weight)
     , volume : Maybe Float
     , order : Maybe Int
     }
@@ -131,14 +131,15 @@ makeUpdateRequest state =
             Debug.todo "implement this: Should apply some errors to the editmodel"
 
 
-fromMutation : TapID -> TapMutation -> Tap
-fromMutation id mutation =
-    Tap id
-        (Maybe.withDefault "" mutation.name)
-        (Maybe.withDefault 0 mutation.order)
-        (Maybe.withDefault 0 mutation.volume)
-        mutation.brew
-        mutation.weight
+
+--fromMutation : TapID -> TapMutation -> Tap
+--fromMutation id mutation =
+--    Tap id
+--        (Maybe.withDefault "" mutation.name)
+--        (Maybe.withDefault 0 mutation.order)
+--        (Maybe.withDefault 0 mutation.volume)
+--        mutation.brew
+--        mutation.weight
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -221,34 +222,19 @@ updateField field value model =
                             }
 
                         Brew ->
-                            let
-                                brew =
-                                    List.filter (.id >> BrewID.eq value) brews
-                                        |> List.head
-                            in
                             { mutation
                                 | brew =
-                                    if brew == original.brew then
-                                        Nothing
-
-                                    else
-                                        brew
+                                    List.filter (.id >> BrewID.eq value) brews
+                                        |> List.head
+                                        |> justIfChanged original.brew
                             }
 
                         Weight ->
-                            let
-                                weight =
-                                    -- TODO: Logikk feil på brew og weight. De er Maybe a, men de burde egentlig være Maybe (Maybe a)
-                                    List.filter (.id >> WeightID.eq value) weights
-                                        |> List.head
-                            in
                             { mutation
                                 | weight =
-                                    if original.weight == weight then
-                                        Nothing
-
-                                    else
-                                        weight
+                                    List.filter (.id >> WeightID.eq value) weights
+                                        |> List.head
+                                        |> justIfChanged original.weight
                             }
             in
             EditTap (EditModel original brews weights updatedMutation Nothing)
@@ -300,12 +286,12 @@ viewForm mutation original brews weights =
 
         brew =
             Field "Brew on tap"
-                (Maybe.map (.id >> BrewID.toString) mutation.brew)
+                (unwrap (.id >> BrewID.toString) mutation.brew)
                 (Maybe.map (.id >> BrewID.toString) original.brew)
 
         weight =
             Field "Keg weight"
-                (Maybe.map (.id >> WeightID.toString) mutation.weight)
+                (unwrap (.id >> WeightID.toString) mutation.weight)
                 (Maybe.map (.id >> WeightID.toString) original.weight)
 
         volume =
@@ -324,6 +310,11 @@ viewForm mutation original brews weights =
         ]
 
 
+unwrap : (a -> String) -> Maybe (Maybe a) -> Maybe String
+unwrap toString mutation =
+    Maybe.map (Maybe.Extra.unwrap "" toString) mutation
+
+
 applyMutation : Tap -> TapMutation -> Tap
 applyMutation tap mutation =
     Tap
@@ -331,18 +322,8 @@ applyMutation tap mutation =
         (Maybe.withDefault tap.name mutation.name)
         (Maybe.withDefault tap.order mutation.order)
         (Maybe.withDefault tap.volume mutation.volume)
-        (if isJust mutation.brew then
-            mutation.brew
-
-         else
-            tap.brew
-        )
-        (if isJust mutation.weight then
-            mutation.weight
-
-         else
-            tap.weight
-        )
+        (Maybe.withDefault tap.brew mutation.brew)
+        (Maybe.withDefault tap.weight mutation.weight)
 
 
 brewOptions : List Brew -> List Option

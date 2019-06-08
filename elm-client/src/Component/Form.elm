@@ -3,7 +3,7 @@ module Component.Form exposing (Field, InputType(..), Option, viewButtons, viewF
 import Html exposing (Attribute, Html, button, div, hr, input, label, select, text)
 import Html.Attributes as Attr exposing (class, classList, for, type_)
 import Html.Events exposing (onClick, onInput)
-import Utils.Maybe exposing (isJust)
+import Maybe.Extra
 
 
 type InputType
@@ -74,7 +74,7 @@ viewButtons save cancel =
 
 viewOptions : Field -> List Option -> List (Html msg)
 viewOptions select options =
-    [ Html.option [] [] ] ++ List.map (viewOption select) options
+    [ Html.option [] [ text "<nothing>" ] ] ++ List.map (viewOption select) options
 
 
 viewOption : Field -> Option -> Html msg
@@ -94,7 +94,7 @@ isSelected field option =
 
 isModified : Field -> Bool
 isModified { original, mutation } =
-    isJust mutation && mutation /= original
+    Maybe.Extra.isJust mutation && mutation /= original
 
 
 isOriginal : Field -> Option -> Bool
@@ -105,7 +105,7 @@ isOriginal { original } option =
 
 reduceValue : Field -> String
 reduceValue { original, mutation } =
-    Utils.Maybe.or mutation original
+    Maybe.Extra.or mutation original
         |> Maybe.withDefault ""
 
 

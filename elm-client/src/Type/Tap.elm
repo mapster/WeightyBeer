@@ -7,7 +7,6 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Type.BrewID as BrewID exposing (BrewID)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
-import Utils.Maybe exposing (isJust)
 import WeightyBeer.Mutation as Mutation
 import WeightyBeer.Object
 import WeightyBeer.Object.Brew
