@@ -19,16 +19,16 @@ import WeightyBeer.ScalarCodecs
 import WeightyBeer.Union
 
 
-image : SelectionSet decodesTo WeightyBeer.Object.ImageMutation -> SelectionSet (Maybe decodesTo) RootMutation
+image : SelectionSet decodesTo WeightyBeer.Object.ImageMutation -> SelectionSet decodesTo RootMutation
 image object_ =
-    Object.selectionForCompositeField "image" [] object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "image" [] object_ identity
 
 
-brew : SelectionSet decodesTo WeightyBeer.Object.BrewMutation -> SelectionSet (Maybe decodesTo) RootMutation
+brew : SelectionSet decodesTo WeightyBeer.Object.BrewMutation -> SelectionSet decodesTo RootMutation
 brew object_ =
-    Object.selectionForCompositeField "brew" [] object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "brew" [] object_ identity
 
 
-tap : SelectionSet decodesTo WeightyBeer.Object.TapMutation -> SelectionSet (Maybe decodesTo) RootMutation
+tap : SelectionSet decodesTo WeightyBeer.Object.TapMutation -> SelectionSet decodesTo RootMutation
 tap object_ =
-    Object.selectionForCompositeField "tap" [] object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "tap" [] object_ identity

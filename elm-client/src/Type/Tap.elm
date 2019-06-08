@@ -1,16 +1,20 @@
-module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, weightSelection)
+module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection)
 
-import Graphql.Operation exposing (RootQuery)
+import Constants exposing (weightyBeerHost)
+import Graphql.Http
+import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Type.BrewID as BrewID exposing (BrewID)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
+import Utils.Maybe exposing (isJust)
+import WeightyBeer.Mutation as Mutation
 import WeightyBeer.Object
 import WeightyBeer.Object.Brew
 import WeightyBeer.Object.Image
 import WeightyBeer.Object.Tap
+import WeightyBeer.Object.TapMutation exposing (UpdateOptionalArguments, UpdateRequiredArguments)
 import WeightyBeer.Object.Weight
-import WeightyBeer.Query as Query
 
 
 type alias Tap =
@@ -75,6 +79,39 @@ weightSelection =
         WeightyBeer.Object.Weight.percent
 
 
-tapMutation : SelectionSet (Maybe Tap) RootMutation
-tapMutation =
-    WeightyBeer.Mutation.tap
+updateTapRequest : Tap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error (Maybe result)) (Maybe result) -> msg) -> Cmd msg
+updateTapRequest tap resultSelectionSet msg =
+    let
+        required =
+            { id = TapID.toString tap.id
+            , name = tap.name
+            , order = tap.order
+            , volume = tap.volume
+            , isActive = True
+            }
+    in
+    WeightyBeer.Object.TapMutation.update (fillInTapOptionals tap) required resultSelectionSet
+        |> Mutation.tap
+        |> Graphql.Http.mutationRequest weightyBeerHost
+        |> Graphql.Http.send msg
+
+
+type alias HasId a =
+    { a | id : String }
+
+
+fillInOptional : Maybe a -> (a -> b) -> OptionalArgument b
+fillInOptional arg getter =
+    Maybe.map (getter >> Present) arg
+        |> Maybe.withDefault Absent
+
+
+fillInTapOptionals : Tap -> UpdateOptionalArguments -> UpdateOptionalArguments
+fillInTapOptionals tap optional =
+    { brew =
+        Maybe.map (.id >> BrewID.toString >> Present) tap.brew
+            |> Maybe.withDefault optional.brew
+    , weight =
+        Maybe.map (.id >> WeightID.toString >> Present) tap.weight
+            |> Maybe.withDefault optional.weight
+    }

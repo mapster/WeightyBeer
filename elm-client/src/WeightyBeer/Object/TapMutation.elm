@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Object.TapMutation exposing (CreateRequiredArguments, RemoveRequiredArguments, UpdateRequiredArguments, create, remove, update)
+module WeightyBeer.Object.TapMutation exposing (CreateRequiredArguments, RemoveRequiredArguments, UpdateOptionalArguments, UpdateRequiredArguments, create, remove, update)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -21,7 +21,7 @@ import WeightyBeer.Union
 
 type alias CreateRequiredArguments =
     { name : String
-    , order : Float
+    , order : Int
     , volume : Float
     , isActive : Bool
     , weight : String
@@ -31,23 +31,35 @@ type alias CreateRequiredArguments =
 
 create : CreateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Tap -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.TapMutation
 create requiredArgs object_ =
-    Object.selectionForCompositeField "create" [ Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.float, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool, Argument.required "weight" requiredArgs.weight Encode.string, Argument.required "brew" requiredArgs.brew Encode.string ] object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "create" [ Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.int, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool, Argument.required "weight" requiredArgs.weight Encode.string, Argument.required "brew" requiredArgs.brew Encode.string ] object_ (identity >> Decode.nullable)
+
+
+type alias UpdateOptionalArguments =
+    { weight : OptionalArgument String
+    , brew : OptionalArgument String
+    }
 
 
 type alias UpdateRequiredArguments =
     { id : String
     , name : String
-    , order : Float
+    , order : Int
     , volume : Float
     , isActive : Bool
-    , weight : String
-    , brew : String
     }
 
 
-update : UpdateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Tap -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.TapMutation
-update requiredArgs object_ =
-    Object.selectionForCompositeField "update" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.float, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool, Argument.required "weight" requiredArgs.weight Encode.string, Argument.required "brew" requiredArgs.brew Encode.string ] object_ (identity >> Decode.nullable)
+update : (UpdateOptionalArguments -> UpdateOptionalArguments) -> UpdateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Tap -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.TapMutation
+update fillInOptionals requiredArgs object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { weight = Absent, brew = Absent }
+
+        optionalArgs =
+            [ Argument.optional "weight" filledInOptionals.weight Encode.string, Argument.optional "brew" filledInOptionals.brew Encode.string ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "update" (optionalArgs ++ [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.int, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool ]) object_ (identity >> Decode.nullable)
 
 
 type alias RemoveRequiredArguments =

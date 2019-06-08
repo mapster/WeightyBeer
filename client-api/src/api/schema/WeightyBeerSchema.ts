@@ -48,17 +48,17 @@ export class QuerySchema {
 @SchemaRoot()
 export class MutationSchema {
 
-    @Mutation()
+    @Mutation({ isNullable: false })
     image(): ImageMutation {
         return new ImageMutation();
     }
 
-    @Mutation()
+    @Mutation({ isNullable: false })
     brew(): BrewMutation {
         return new BrewMutation();
     }
 
-    @Mutation()
+    @Mutation({ isNullable: false })
     tap(): TapMutation {
         return new TapMutation();
     }

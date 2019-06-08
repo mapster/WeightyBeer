@@ -1,4 +1,4 @@
-import { ObjectType, Field, Context } from "typegql";
+import { ObjectType, Field, Context, Arg, Int } from "typegql";
 import { RepoContext } from "../../RepoContext";
 import { Brew } from "./Brew";
 import { Weight } from "./Weight";
@@ -58,7 +58,7 @@ export class TapMutation {
     async create(
         @Context context: RepoContext,
         name: string,
-        order: number,
+        @Arg({ type: GraphQLInt }) order: number,
         volume: number,
         isActive: boolean,
         weight: string,
@@ -72,11 +72,11 @@ export class TapMutation {
         @Context context: RepoContext,
         id: string,
         name: string,
-        order: number,
+        @Arg({ type: GraphQLInt }) order: number,
         volume: number,
         isActive: boolean,
-        weight: string,
-        brew: string,
+        @Arg({ isNullable: true }) weight: string,
+        @Arg({ isNullable: true }) brew: string,
     ): Promise<Tap | undefined> {
         return await context.tapRepo.update(id, name, order, volume, isActive, weight, brew);
     }

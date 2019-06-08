@@ -4,6 +4,7 @@ import Browser.Navigation as Nav
 import Component.ErrorDetails as ErrorDetails
 import Component.Form as Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
 import Component.TapCard as TapCard
+import Constants exposing (weightyBeerHost)
 import Graphql.Http exposing (RawError(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html, div, form, text)
@@ -12,10 +13,10 @@ import Maybe exposing (Maybe)
 import Route
 import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID exposing (BrewID)
-import Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, weightSelection)
+import Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
-import Utils.Maybe
+import Utils.Maybe exposing (isJust)
 import WeightyBeer.Query as Query
 
 
@@ -56,6 +57,10 @@ type alias Response =
     Result (Graphql.Http.Error ResponseData) ResponseData
 
 
+type alias SaveResponse =
+    Result (Graphql.Http.Error (Maybe Tap)) (Maybe Tap)
+
+
 type alias ResponseData =
     { tap : Maybe Tap
     , brews : List Brew
@@ -65,6 +70,7 @@ type alias ResponseData =
 
 type Msg
     = GotResponse Response
+    | GotSaveResponse SaveResponse
     | Edit Field String
     | Save
     | Cancel
@@ -108,8 +114,21 @@ requestTap id =
         (Query.tap (TapID.toArg id) tapSelection)
         (Query.brews brewSelection)
         (Query.weights weightSelection)
-        |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
+        |> Graphql.Http.queryRequest weightyBeerHost
         |> Graphql.Http.send GotResponse
+
+
+makeUpdateRequest : State -> Cmd Msg
+makeUpdateRequest state =
+    case state of
+        EditTap { mutation, original } ->
+            updateTapRequest (applyMutation original mutation) tapSelection GotSaveResponse
+
+        Error errorModel ->
+            Debug.todo "implement this: should apply some errors to the editModel"
+
+        Loading ->
+            Debug.todo "implement this: Should apply some errors to the editmodel"
 
 
 fromMutation : TapID -> TapMutation -> Tap
@@ -128,11 +147,15 @@ update msg model =
         GotResponse response ->
             ( { model | state = updateFromResponse response model.state }, Cmd.none )
 
+        GotSaveResponse saveResponse ->
+            -- TODO: update model accordingly
+            ( model, Cmd.none )
+
         Edit field value ->
             ( { model | state = updateField field value model.state }, Cmd.none )
 
         Save ->
-            Debug.todo "Implement this"
+            ( model, makeUpdateRequest model.state )
 
         Cancel ->
             ( model, Route.replaceUrl model.navKey Route.Taps )
@@ -214,17 +237,18 @@ updateField field value model =
 
                         Weight ->
                             let
-                                x =
+                                weight =
+                                    -- TODO: Logikk feil på brew og weight. De er Maybe a, men de burde egentlig være Maybe (Maybe a)
                                     List.filter (.id >> WeightID.eq value) weights
                                         |> List.head
                             in
                             { mutation
                                 | weight =
-                                    if original.weight == x then
+                                    if original.weight == weight then
                                         Nothing
 
                                     else
-                                        x
+                                        weight
                             }
             in
             EditTap (EditModel original brews weights updatedMutation Nothing)
@@ -255,7 +279,6 @@ view model =
                         [ viewForm mutation original brews weights ]
                     , div [ class "column" ]
                         (applyMutation original mutation
-                            |> fromMutation original.id
                             |> viewTapCardColumn
                         )
                     ]
@@ -301,14 +324,25 @@ viewForm mutation original brews weights =
         ]
 
 
-applyMutation : Tap -> TapMutation -> TapMutation
+applyMutation : Tap -> TapMutation -> Tap
 applyMutation tap mutation =
-    TapMutation
-        (Just <| Maybe.withDefault tap.name mutation.name)
-        (Utils.Maybe.or mutation.brew tap.brew)
-        (Utils.Maybe.or mutation.weight tap.weight)
-        (Just <| Maybe.withDefault tap.volume mutation.volume)
-        (Just <| Maybe.withDefault tap.order mutation.order)
+    Tap
+        tap.id
+        (Maybe.withDefault tap.name mutation.name)
+        (Maybe.withDefault tap.order mutation.order)
+        (Maybe.withDefault tap.volume mutation.volume)
+        (if isJust mutation.brew then
+            mutation.brew
+
+         else
+            tap.brew
+        )
+        (if isJust mutation.weight then
+            mutation.weight
+
+         else
+            tap.weight
+        )
 
 
 brewOptions : List Brew -> List Option
