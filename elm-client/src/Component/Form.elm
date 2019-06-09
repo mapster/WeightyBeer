@@ -1,7 +1,7 @@
 module Component.Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
 
 import Html exposing (Attribute, Html, button, div, hr, input, label, select, text)
-import Html.Attributes as Attr exposing (class, classList, for, type_)
+import Html.Attributes as Attr exposing (class, classList, disabled, for, type_)
 import Html.Events exposing (onClick, onInput)
 import Maybe.Extra
 
@@ -60,11 +60,23 @@ viewSelect field options msg =
         ]
 
 
-viewButtons : msg -> msg -> Html msg
-viewButtons save cancel =
+viewButtons : msg -> msg -> Bool -> Html msg
+viewButtons save cancel modified =
     div [ class "buttons" ]
-        [ button [ class "save", type_ "button", onClick save ] [ text "Save" ]
-        , button [ class "cancel", type_ "button", onClick cancel ] [ text "Cancel" ]
+        [ button
+            [ class "save"
+            , type_ "button"
+            , onClick save
+            , disabled (not modified)
+            , classList [ ( "disabled", not modified ) ]
+            ]
+            [ text "Save" ]
+        , button
+            [ class "cancel"
+            , type_ "button"
+            , onClick cancel
+            ]
+            [ text "Cancel" ]
         ]
 
 

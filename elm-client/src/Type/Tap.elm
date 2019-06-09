@@ -78,7 +78,7 @@ weightSelection =
         WeightyBeer.Object.Weight.percent
 
 
-updateTapRequest : Tap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error (Maybe result)) (Maybe result) -> msg) -> Cmd msg
+updateTapRequest : Tap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error ()) (Maybe result) -> msg) -> Cmd msg
 updateTapRequest tap resultSelectionSet msg =
     let
         required =
@@ -92,7 +92,7 @@ updateTapRequest tap resultSelectionSet msg =
     WeightyBeer.Object.TapMutation.update (fillInTapOptionals tap) required resultSelectionSet
         |> Mutation.tap
         |> Graphql.Http.mutationRequest weightyBeerHost
-        |> Graphql.Http.send msg
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> msg)
 
 
 type alias HasId a =

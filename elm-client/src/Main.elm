@@ -2,6 +2,7 @@ module Main exposing (Model, Msg(..), Page(..), PageMsg(..), changeRouteTo, init
 
 import Browser
 import Browser.Navigation as Nav
+import Component.ErrorDetails as ErrorDetails
 import Html exposing (Html, a, div)
 import Html.Attributes exposing (class)
 import Page.EditTap as EditTap
@@ -27,6 +28,7 @@ type Msg
     = ChangedUrl Url
     | ClickedLink Browser.UrlRequest
     | ToPage PageMsg
+    | ShowErrorDetails
 
 
 type PageMsg
@@ -39,6 +41,7 @@ type alias Model =
     { navKey : Nav.Key
     , route : Maybe Route
     , page : Page
+    , showErrorDetails : Bool
     }
 
 
@@ -63,7 +66,7 @@ init _ url key =
         ( page, cmd ) =
             changeRouteTo key route
     in
-    ( Model key route page, Cmd.map ToPage cmd )
+    ( Model key route page False, Cmd.map ToPage cmd )
 
 
 changeRouteTo : Nav.Key -> Maybe Route -> ( Page, Cmd PageMsg )
@@ -107,6 +110,9 @@ update msg model =
 
         ToPage pageMsg ->
             updatePage pageMsg model
+
+        ShowErrorDetails ->
+            ( { model | showErrorDetails = not model.showErrorDetails }, Cmd.none )
 
 
 updatePage : PageMsg -> Model -> ( Model, Cmd Msg )
@@ -163,6 +169,7 @@ view model =
         , div [ class "vertical-space" ] []
         , viewPage model.page
         , div [ class "vertical-space" ] []
+        , viewErrors model
         ]
 
 
@@ -182,6 +189,31 @@ viewPage page =
             EditTap editTap ->
                 Html.map (EditTapMsg >> ToPage) (EditTap.view editTap)
         ]
+
+
+viewErrors : Model -> Html Msg
+viewErrors model =
+    let
+        errorDetails =
+            case model.page of
+                NotFound ->
+                    Nothing
+
+                Home homeModel ->
+                    Nothing
+
+                Taps tapsModel ->
+                    Nothing
+
+                EditTap editModel ->
+                    EditTap.getError editModel
+    in
+    case errorDetails of
+        Just error ->
+            ErrorDetails.view ShowErrorDetails model.showErrorDetails error
+
+        Nothing ->
+            div [] []
 
 
 viewMenu : Html Msg

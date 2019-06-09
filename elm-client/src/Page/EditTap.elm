@@ -1,11 +1,11 @@
-module Page.EditTap exposing (Model, Msg, init, subscriptions, update, view)
+module Page.EditTap exposing (Model, Msg, getError, init, subscriptions, update, view)
 
 import Browser.Navigation as Nav
-import Component.ErrorDetails as ErrorDetails
+import Component.ErrorDetails as ErrorDetails exposing (ErrorDetails, errorDetails)
 import Component.Form as Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
 import Component.TapCard as TapCard
 import Constants exposing (weightyBeerHost)
-import Graphql.Http exposing (RawError(..))
+import Graphql.Http exposing (RawError(..), discardParsedErrorData)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html, div, form, text)
 import Html.Attributes exposing (class)
@@ -28,8 +28,7 @@ type alias Model =
 
 type State
     = EditTap EditModel
-      --    | NewTap NewModel
-    | Error ErrorModel
+    | Error ErrorDetails
     | Loading
 
 
@@ -38,27 +37,16 @@ type alias EditModel =
     , brews : List Brew
     , weights : List Weight
     , mutation : TapMutation
-    , error : Maybe String
+    , error : Maybe ErrorDetails
     }
-
-
-type alias NewModel =
-    { brews : List Brew
-    , weights : List Weight
-    , mutation : TapMutation
-    }
-
-
-type alias ErrorModel =
-    String
 
 
 type alias Response =
-    Result (Graphql.Http.Error ResponseData) ResponseData
+    Result (Graphql.Http.Error ()) ResponseData
 
 
 type alias SaveResponse =
-    Result (Graphql.Http.Error (Maybe Tap)) (Maybe Tap)
+    Result (Graphql.Http.Error ()) (Maybe Tap)
 
 
 type alias ResponseData =
@@ -93,6 +81,19 @@ type alias TapMutation =
     }
 
 
+getError : Model -> Maybe ErrorDetails
+getError { state } =
+    case state of
+        EditTap editModel ->
+            editModel.error
+
+        Error errorDetails ->
+            Just errorDetails
+
+        Loading ->
+            Nothing
+
+
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
@@ -115,7 +116,7 @@ requestTap id =
         (Query.brews brewSelection)
         (Query.weights weightSelection)
         |> Graphql.Http.queryRequest weightyBeerHost
-        |> Graphql.Http.send GotResponse
+        |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> GotResponse)
 
 
 makeUpdateRequest : State -> Cmd Msg
@@ -124,22 +125,8 @@ makeUpdateRequest state =
         EditTap { mutation, original } ->
             updateTapRequest (applyMutation original mutation) tapSelection GotSaveResponse
 
-        Error errorModel ->
-            Debug.todo "implement this: should apply some errors to the editModel"
-
-        Loading ->
-            Debug.todo "implement this: Should apply some errors to the editmodel"
-
-
-
---fromMutation : TapID -> TapMutation -> Tap
---fromMutation id mutation =
---    Tap id
---        (Maybe.withDefault "" mutation.name)
---        (Maybe.withDefault 0 mutation.order)
---        (Maybe.withDefault 0 mutation.volume)
---        mutation.brew
---        mutation.weight
+        _ ->
+            Cmd.none
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -149,8 +136,7 @@ update msg model =
             ( { model | state = updateFromResponse response model.state }, Cmd.none )
 
         GotSaveResponse saveResponse ->
-            -- TODO: update model accordingly
-            ( model, Cmd.none )
+            ( { model | state = updateFromSaveResponse saveResponse model.state }, Cmd.none )
 
         Edit field value ->
             ( { model | state = updateField field value model.state }, Cmd.none )
@@ -162,11 +148,40 @@ update msg model =
             ( model, Route.replaceUrl model.navKey Route.Taps )
 
 
+updateFromSaveResponse : SaveResponse -> State -> State
+updateFromSaveResponse response state =
+    case response of
+        Err error ->
+            case state of
+                EditTap editModel ->
+                    EditTap { editModel | error = Just (errorDetails "Failed to update tap" error) }
+
+                _ ->
+                    Error <| errorDetails "Invalid state: got a save tap error response" error
+
+        Ok data ->
+            case ( data, state ) of
+                ( Just tap, EditTap editModel ) ->
+                    EditTap { editModel | original = tap, mutation = emptyMutation, error = Nothing }
+
+                ( Just _, _ ) ->
+                    Error <| ErrorDetails "Invalid state: got a save tap response" Nothing
+
+                ( Nothing, EditTap editModel ) ->
+                    EditTap { editModel | error = Just (ErrorDetails "Failed to update tap: doesn't exist" Nothing) }
+
+                ( Nothing, Error _ ) ->
+                    state
+
+                ( Nothing, Loading ) ->
+                    Error <| ErrorDetails "Failed to update tap: doesn't exist" Nothing
+
+
 updateFromResponse : Response -> State -> State
 updateFromResponse response state =
     case response of
         Err error ->
-            Error <| ErrorDetails.errorToString error
+            Error <| errorDetails "Failed to fetch data from WeightyBeer API" error
 
         Ok data ->
             case ( data.tap, state ) of
@@ -177,16 +192,16 @@ updateFromResponse response state =
                     EditTap (EditModel original data.brews data.weights emptyMutation Nothing)
 
                 ( Just original, EditTap editModel ) ->
-                    EditTap { editModel | original = original, brews = data.brews, weights = data.weights }
+                    EditTap { editModel | original = original, brews = data.brews, weights = data.weights, error = Nothing }
 
-                ( Nothing, Error _ ) ->
-                    Error "Tap doesn't exist"
+                ( Nothing, Error error ) ->
+                    Error <| { error | message = "Tap doesn't exist" }
 
                 ( Nothing, Loading ) ->
-                    Error "Tap doesn't exist"
+                    Error <| ErrorDetails "Tap doesn't exist" Nothing
 
                 ( Nothing, EditTap editModel ) ->
-                    EditTap { editModel | error = Just "Tap was deleted remotely" }
+                    EditTap { editModel | error = Just (ErrorDetails "Tap was deleted remotely" Nothing) }
 
 
 updateField : Field -> String -> State -> State
@@ -196,7 +211,7 @@ updateField field value model =
             model
 
         Loading ->
-            Error "Cannot edit while loading!"
+            Error <| ErrorDetails "Cannot edit while loading!" Nothing
 
         EditTap { original, brews, weights, mutation } ->
             let
@@ -256,7 +271,7 @@ view model =
             div [] [ text "Loading..." ]
 
         Error e ->
-            div [] [ text e ]
+            div [] [ text e.message ]
 
         EditTap { original, brews, weights, mutation } ->
             div [ class "edit-tap-page-container" ]
@@ -306,8 +321,13 @@ viewForm mutation original brews weights =
         , viewSelect weight (weightOptions weights) (Edit Weight)
         , viewField volume Number (Edit Volume)
         , viewField order Number (Edit Order)
-        , viewButtons Save Cancel
+        , viewButtons Save Cancel (isModified original mutation)
         ]
+
+
+isModified : Tap -> TapMutation -> Bool
+isModified tap mutation =
+    applyMutation tap mutation /= tap
 
 
 unwrap : (a -> String) -> Maybe (Maybe a) -> Maybe String

@@ -46,6 +46,11 @@
     background-color: rgba(0, 151, 167, 0.4);
 }
 
+.form .buttons button.save.disabled {
+    background-color: rgba(0, 151, 167, 0.4);
+    cursor: not-allowed;
+}
+
 
 .form .buttons button.cancel {
     background-color: rgb(255, 64, 129);
