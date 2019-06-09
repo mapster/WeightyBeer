@@ -7,6 +7,7 @@ import Html exposing (Html, a, div)
 import Html.Attributes exposing (class)
 import Page.EditTap as EditTap
 import Page.Home as Home
+import Page.NewTap as NewTap
 import Page.Taps as Taps
 import Route exposing (Route, href)
 import Url exposing (Url)
@@ -34,6 +35,7 @@ type Msg
 type PageMsg
     = HomeMsg Home.Msg
     | TapsMsg Taps.Msg
+    | NewTapMsg NewTap.Msg
     | EditTapMsg EditTap.Msg
 
 
@@ -49,6 +51,7 @@ type Page
     = NotFound
     | Home Home.Model
     | Taps Taps.Model
+    | NewTap NewTap.Model
     | EditTap EditTap.Model
 
 
@@ -82,6 +85,10 @@ changeRouteTo navKey maybeRoute =
         Just Route.Taps ->
             Taps.init
                 |> updateWith Taps TapsMsg
+
+        Just Route.NewTap ->
+            NewTap.init navKey
+                |> updateWith NewTap NewTapMsg
 
         Just (Route.EditTap id) ->
             EditTap.init navKey id
@@ -136,6 +143,15 @@ updatePage msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        NewTapMsg newTapMsg ->
+            case model.page of
+                NewTap newTap ->
+                    NewTap.update newTapMsg newTap
+                        |> updateWith (NewTap >> setPage model) (NewTapMsg >> ToPage)
+
+                _ ->
+                    ( model, Cmd.none )
+
         EditTapMsg editTapMsg ->
             case model.page of
                 EditTap editTap ->
@@ -157,6 +173,9 @@ subscriptions model =
 
         Taps taps ->
             Sub.map (TapsMsg >> ToPage) (Taps.subscriptions taps)
+
+        NewTap newTap ->
+            Sub.map (NewTapMsg >> ToPage) (NewTap.subscriptions newTap)
 
         EditTap editTap ->
             Sub.map (EditTapMsg >> ToPage) (EditTap.subscriptions editTap)
@@ -186,6 +205,9 @@ viewPage page =
             Taps taps ->
                 Html.map (TapsMsg >> ToPage) (Taps.view taps)
 
+            NewTap newTap ->
+                Html.map (NewTapMsg >> ToPage) (NewTap.view newTap)
+
             EditTap editTap ->
                 Html.map (EditTapMsg >> ToPage) (EditTap.view editTap)
         ]
@@ -205,8 +227,11 @@ viewErrors model =
                 Taps tapsModel ->
                     Nothing
 
-                EditTap editModel ->
-                    EditTap.getError editModel
+                NewTap newTapModel ->
+                    NewTap.getError newTapModel
+
+                EditTap editTapModel ->
+                    EditTap.getError editTapModel
     in
     case errorDetails of
         Just error ->

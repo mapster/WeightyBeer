@@ -2,7 +2,7 @@ module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, update
 
 import Constants exposing (weightyBeerHost)
 import Graphql.Http
-import Graphql.OptionalArgument exposing (OptionalArgument(..))
+import Graphql.OptionalArgument as OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Type.BrewID as BrewID exposing (BrewID)
 import Type.TapID as TapID exposing (TapID)
@@ -95,22 +95,18 @@ updateTapRequest tap resultSelectionSet msg =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> msg)
 
 
-type alias HasId a =
-    { a | id : String }
-
-
 fillInOptional : Maybe a -> (a -> b) -> OptionalArgument b
 fillInOptional arg getter =
-    Maybe.map (getter >> Present) arg
-        |> Maybe.withDefault Absent
+    (OptionalArgument.fromMaybe >> OptionalArgument.map getter) arg
 
 
 fillInTapOptionals : Tap -> UpdateOptionalArguments -> UpdateOptionalArguments
-fillInTapOptionals tap optional =
-    { brew =
-        Maybe.map (.id >> BrewID.toString >> Present) tap.brew
-            |> Maybe.withDefault optional.brew
-    , weight =
-        Maybe.map (.id >> WeightID.toString >> Present) tap.weight
-            |> Maybe.withDefault optional.weight
+fillInTapOptionals tap _ =
+    { brew = fillInOptional tap.brew (.id >> BrewID.toString)
+    , weight = fillInOptional tap.weight (.id >> WeightID.toString)
     }
+
+
+
+-- with
+--  <| optional

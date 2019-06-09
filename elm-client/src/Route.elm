@@ -12,6 +12,7 @@ type Route
     = Home
     | Taps
     | EditTap TapID
+    | NewTap
 
 
 parser : Parser (Route -> a) a
@@ -19,6 +20,7 @@ parser =
     oneOf
         [ Parser.map Home Parser.top
         , Parser.map Taps (s "taps")
+        , Parser.map NewTap (s "taps" </> s "_new")
         , Parser.map EditTap (s "taps" </> TapID.urlParser)
         ]
 
@@ -51,6 +53,9 @@ routeToString route =
 
                 Taps ->
                     [ "taps" ]
+
+                NewTap ->
+                    [ "taps", "_new" ]
 
                 EditTap id ->
                     [ "taps", TapID.toString id ]

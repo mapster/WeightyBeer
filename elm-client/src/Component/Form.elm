@@ -86,7 +86,7 @@ viewButtons save cancel modified =
 
 viewOptions : Field -> List Option -> List (Html msg)
 viewOptions select options =
-    [ Html.option [] [ text "<nothing>" ] ] ++ List.map (viewOption select) options
+    List.map (viewOption select) ([ Option "" "<nothing>" ] ++ options)
 
 
 viewOption : Field -> Option -> Html msg
@@ -111,8 +111,12 @@ isModified { original, mutation } =
 
 isOriginal : Field -> Option -> Bool
 isOriginal { original } option =
-    Maybe.map ((==) option.value) original
-        |> Maybe.withDefault False
+    case original of
+        Nothing ->
+            String.isEmpty option.value
+
+        Just value ->
+            option.value == value
 
 
 reduceValue : Field -> String

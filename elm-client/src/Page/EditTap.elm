@@ -1,18 +1,15 @@
 module Page.EditTap exposing (Model, Msg, getError, init, subscriptions, update, view)
 
 import Browser.Navigation as Nav
-import Component.ErrorDetails as ErrorDetails exposing (ErrorDetails, errorDetails)
-import Component.Form as Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
-import Component.TapCard as TapCard
+import Component.EditTap exposing (Field(..), TapMutation, applyMutation, emptyMutation)
+import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
 import Constants exposing (weightyBeerHost)
-import Graphql.Http exposing (RawError(..), discardParsedErrorData)
+import Graphql.Http exposing (RawError(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
-import Html exposing (Html, div, form, text)
+import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
-import Maybe.Extra
 import Route
-import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID exposing (BrewID)
 import Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection)
 import Type.TapID as TapID exposing (TapID)
@@ -64,23 +61,6 @@ type Msg
     | Cancel
 
 
-type Field
-    = Name
-    | Volume
-    | Order
-    | Brew
-    | Weight
-
-
-type alias TapMutation =
-    { name : Maybe String
-    , brew : Maybe (Maybe Brew)
-    , weight : Maybe (Maybe Weight)
-    , volume : Maybe Float
-    , order : Maybe Int
-    }
-
-
 getError : Model -> Maybe ErrorDetails
 getError { state } =
     case state of
@@ -97,11 +77,6 @@ getError { state } =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
-
-
-emptyMutation : TapMutation
-emptyMutation =
-    TapMutation Nothing Nothing Nothing Nothing Nothing
 
 
 init : Nav.Key -> TapID -> ( Model, Cmd Msg )
@@ -217,10 +192,10 @@ updateField field value model =
             let
                 updatedMutation =
                     case field of
-                        Name ->
+                        Component.EditTap.Name ->
                             { mutation | name = justIfChanged original.name value }
 
-                        Volume ->
+                        Component.EditTap.Volume ->
                             { mutation
                                 | volume =
                                     String.toFloat value
@@ -228,7 +203,7 @@ updateField field value model =
                                         |> justIfChanged original.volume
                             }
 
-                        Order ->
+                        Component.EditTap.Order ->
                             { mutation
                                 | order =
                                     String.toInt value
@@ -236,7 +211,7 @@ updateField field value model =
                                         |> justIfChanged original.order
                             }
 
-                        Brew ->
+                        Component.EditTap.Brew ->
                             { mutation
                                 | brew =
                                     List.filter (.id >> BrewID.eq value) brews
@@ -244,7 +219,7 @@ updateField field value model =
                                         |> justIfChanged original.brew
                             }
 
-                        Weight ->
+                        Component.EditTap.Weight ->
                             { mutation
                                 | weight =
                                     List.filter (.id >> WeightID.eq value) weights
@@ -268,91 +243,25 @@ view : Model -> Html Msg
 view model =
     case model.state of
         Loading ->
-            div [] [ text "Loading..." ]
+            div [] []
 
         Error e ->
             div [] [ text e.message ]
 
         EditTap { original, brews, weights, mutation } ->
             div [ class "edit-tap-page-container" ]
-                [ div [ class "edit-tap-card" ]
-                    [ div [ class "column" ]
-                        [ viewForm mutation original brews weights ]
-                    , div [ class "column" ]
-                        (applyMutation original mutation
-                            |> viewTapCardColumn
-                        )
-                    ]
+                [ Html.map mapEditTapMsg <| Component.EditTap.view original brews weights mutation
                 ]
 
 
-viewTapCardColumn : Tap -> List (Html Msg)
-viewTapCardColumn tap =
-    [ div [ class "tap-card-container" ] [ TapCard.view (Just tap) ]
-    , div [ class "vertical-space" ] []
-    ]
+mapEditTapMsg : Component.EditTap.Msg -> Msg
+mapEditTapMsg msg =
+    case msg of
+        Component.EditTap.Edit field value ->
+            Edit field value
 
+        Component.EditTap.Save ->
+            Save
 
-viewForm : TapMutation -> Tap -> List Brew -> List Weight -> Html Msg
-viewForm mutation original brews weights =
-    let
-        name =
-            Field "Name" mutation.name (Just original.name)
-
-        brew =
-            Field "Brew on tap"
-                (unwrap (.id >> BrewID.toString) mutation.brew)
-                (Maybe.map (.id >> BrewID.toString) original.brew)
-
-        weight =
-            Field "Keg weight"
-                (unwrap (.id >> WeightID.toString) mutation.weight)
-                (Maybe.map (.id >> WeightID.toString) original.weight)
-
-        volume =
-            Field "Volume (L)" (Maybe.map fromFloat mutation.volume) (Just (fromFloat original.volume))
-
-        order =
-            Field "Order" (Maybe.map fromInt mutation.order) (Just (fromInt original.order))
-    in
-    form [ class "form" ]
-        [ viewField name Text (Edit Name)
-        , viewSelect brew (brewOptions brews) (Edit Brew)
-        , viewSelect weight (weightOptions weights) (Edit Weight)
-        , viewField volume Number (Edit Volume)
-        , viewField order Number (Edit Order)
-        , viewButtons Save Cancel (isModified original mutation)
-        ]
-
-
-isModified : Tap -> TapMutation -> Bool
-isModified tap mutation =
-    applyMutation tap mutation /= tap
-
-
-unwrap : (a -> String) -> Maybe (Maybe a) -> Maybe String
-unwrap toString mutation =
-    Maybe.map (Maybe.Extra.unwrap "" toString) mutation
-
-
-applyMutation : Tap -> TapMutation -> Tap
-applyMutation tap mutation =
-    Tap
-        tap.id
-        (Maybe.withDefault tap.name mutation.name)
-        (Maybe.withDefault tap.order mutation.order)
-        (Maybe.withDefault tap.volume mutation.volume)
-        (Maybe.withDefault tap.brew mutation.brew)
-        (Maybe.withDefault tap.weight mutation.weight)
-
-
-brewOptions : List Brew -> List Option
-brewOptions brews =
-    List.map (\brew -> Option (BrewID.toString brew.id) ("#" ++ fromInt brew.brewNumber ++ " " ++ brew.name)) brews
-
-
-weightOptions : List Weight -> List Option
-weightOptions weights =
-    List.map .id weights
-        |> List.map WeightID.toString
-        |> List.map (\weight -> Option weight weight)
+        Component.EditTap.Cancel ->
+            Cancel

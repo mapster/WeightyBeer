@@ -1,5 +1,6 @@
 module Page.Taps exposing (Model, Msg, init, subscriptions, update, view)
 
+import Component.AddButton as AddButton
 import Component.Table exposing (viewTable)
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
@@ -101,7 +102,8 @@ update msg _ =
 
 view model =
     div [ class "taps-container" ]
-        [ case model of
+        [ AddButton.view Route.NewTap
+        , case model of
             RemoteData.Loading ->
                 text "Loading..."
 
