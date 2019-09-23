@@ -4,9 +4,9 @@
   "description": "Aggregate real-time readings from weight sensors.",
   "main": "main.js",
   "scripts": {
-    "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./src/Main.ts",
-    "prod": "tsc && node ./build/Main.js"
+    "build": "tsc",
+    "start:dev": "ts-node-dev --respawn --transpileOnly ./src/Main.ts",
+    "start:prod": "node ./build/Main.js"
   },
   "dependencies": {
     "firebase-admin": "^8.0.0",

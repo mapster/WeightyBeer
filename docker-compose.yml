@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  redis:
+    image: redis:5.0.5
+    expose: 
+      - "6379"
+    command: [ "redis-server", "--appendonly", "yes" ]
+
+  weighthub:
+    build:
+      context: ./weighthub
+    depends_on:
+      - redis
+
+  client-api:
+    build:
+      context: ./client-api
+    depends_on: 
+      - redis
+    ports: 
+      - "3000:3000"
+
+  weightsim:
+    build:
+      context: ./weightsim
+    depends_on: 
+      - redis
+    command: tap1

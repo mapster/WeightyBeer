@@ -34,6 +34,8 @@ export class WeightHub {
     run() {
         this.sensorSource.start(this);
         this.actionSource.start(this);
+        
+        console.log("Weighthub successfully started");
     }
 
     async registerSensor(reading: SensorReading): Promise<void> {

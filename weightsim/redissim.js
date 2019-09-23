@@ -6,7 +6,7 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-const publisher = redis.createClient();
+const publisher = redis.createClient({host: "redis"});
 
 const id = process.argv[2];
 const INITIAL_BASE = 814124;

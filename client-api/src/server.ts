@@ -10,7 +10,7 @@ import { TapRepository } from './dao/TapRepository';
 import { WeightRepository } from './dao/WeightRepository';
 
 const app: express.Application = express();
-const redis = new Redis();
+const redis = new Redis({host: "redis"});
 
 const context: RepoContext = {
     brewRepo: new BrewRepository(redis),
@@ -33,4 +33,4 @@ app.use('/graphql', graphqlHTTP({
     })
 }));
 
-app.listen(3000, () => console.log('WeightyBeer GraphQL API!'));
+app.listen(3000, () => console.log('WeightyBeer GraphQL API running on port 3000'));

@@ -7,9 +7,9 @@
   "author": "Alexander Hoem Rosbach <alexander@rosbach.no>",
   "license": "MIT",
   "scripts": {
-    "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
-    "prod": "tsc && node ./build/app.js"
+    "build": "tsc",
+    "start:dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
+    "start:prod": "node ./build/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
