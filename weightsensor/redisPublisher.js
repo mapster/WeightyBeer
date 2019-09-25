@@ -1,12 +1,14 @@
 const Redis = require("ioredis");
 
+const REDIS_HOST = process.env.WEIGHTYBEER_REDIS || 'localhost';
+
 module.exports = class RedisPublisher {
 
     constructor(redisConfig) {
         this.config = redisConfig;
         this.isValidConfig(this.config);
 
-        this.pub = new Redis();
+        this.pub = new Redis({ host: this.config.host || REDIS_HOST });
     }
 
     createPublisher() {

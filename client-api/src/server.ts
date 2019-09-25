@@ -9,8 +9,10 @@ import { ImageRepository } from './dao/ImageRepository';
 import { TapRepository } from './dao/TapRepository';
 import { WeightRepository } from './dao/WeightRepository';
 
+const REDIS_HOST = process.env.WEIGHTYBEER_REDIS || 'localhost';
+
 const app: express.Application = express();
-const redis = new Redis({host: "redis"});
+const redis = new Redis({ host: REDIS_HOST });
 
 const context: RepoContext = {
     brewRepo: new BrewRepository(redis),

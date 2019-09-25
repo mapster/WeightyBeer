@@ -20,10 +20,15 @@ services:
       - redis
     ports: 
       - "3000:3000"
+    environment:
+      - "WEIGHTYBEER_REDIS=redis"
 
-  weightsim:
+  weightsensor:
     build:
-      context: ./weightsim
+      context: ./weightsensor
     depends_on: 
       - redis
-    command: tap1
+    environment:
+      - "WEIGHTYBEER_REDIS=redis"
+    devices:
+      - "/dev/ttyACM0:/dev/ttyACM0"
