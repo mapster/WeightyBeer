@@ -13,6 +13,16 @@ services:
     depends_on:
       - redis
 
+  weightsensor:
+    build:
+      context: ./weightsensor
+    depends_on: 
+      - redis
+    environment:
+      - "WEIGHTYBEER_REDIS=redis"
+    devices:
+      - "/dev/ttyACM0:/dev/ttyACM0"
+
   client-api:
     build:
       context: ./client-api
@@ -23,12 +33,8 @@ services:
     environment:
       - "WEIGHTYBEER_REDIS=redis"
 
-  weightsensor:
+  web-client:
     build:
-      context: ./weightsensor
-    depends_on: 
-      - redis
-    environment:
-      - "WEIGHTYBEER_REDIS=redis"
-    devices:
-      - "/dev/ttyACM0:/dev/ttyACM0"
+      context: ./elm-client
+    ports:
+      - "8080:80"
