@@ -1,0 +1,29 @@
+{
+  "name": "weightybeer-graphql-api",
+  "version": "1.0.0",
+  "description": "A GraphQL api for WeightyBeer backed by redis.",
+  "main": "server.js",
+  "repository": "https://github.com/mapster/WeightyBeer.git",
+  "author": "Alexander Hoem Rosbach <alexander@rosbach.no>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start:dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
+    "start:prod": "node ./build/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.0",
+    "express-graphql": "^0.8.0",
+    "ioredis": "^4.9.5",
+    "typegql": "^0.7.1",
+    "typescript": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.5",
+    "@types/express": "^4.16.1",
+    "@types/express-graphql": "^0.8.0",
+    "@types/ioredis": "^4.0.10",
+    "ts-node-dev": "^1.0.0-pre.39"
+  }
+}

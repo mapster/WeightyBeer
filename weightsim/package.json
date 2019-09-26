@@ -2,9 +2,10 @@
   "name": "weightsim",
   "version": "1.0.0",
   "description": "Simple weight sensor simulator for testing of WeightyHub.",
-  "main": "weightsim.js",
+  "main": "redissim.js",
   "scripts": {
-    "start": "node weightsim.js"
+    "start:firebase": "node firebasesim.js",
+    "start:redis": "node redissim.js"
   },
   "dependencies": {
     "firebase": "^3.6.4",

@@ -1,0 +1,67 @@
+
+.tap-card {
+    max-width: 400px;
+    max-height: 580px;
+    flex-grow: 1;
+    height: 100%;
+    margin: 5px;
+    box-shadow: 10px 5px 5px 3px rgba(0, 0, 0, 0.2);
+
+    flex-direction: column;
+    display: flex;
+}
+
+.tap-card-header {
+    min-height: 25px;
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tap-card-body {
+    flex-grow: 8;
+    width: 100%;
+    background-color: #323232;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.tap-card-body .abvText {
+    flex-basis: 55px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.54);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tap-card-footer {
+    flex-grow: 2;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tap-card-footer .title {
+    font-size: 24px;
+    line-height: 36px;
+}
+
+.tap-card-footer .subtitle {
+    font-size: 14px;
+    opacity: 0.54;
+}
+
+.tap-card-indent {
+    padding-left: 16px;
+    padding-right: 16px;
+}

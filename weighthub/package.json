@@ -4,12 +4,13 @@
   "description": "Aggregate real-time readings from weight sensors.",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "build": "tsc",
+    "start:dev": "ts-node-dev --respawn --transpileOnly ./src/Main.ts ./weighthub-config.local.json",
+    "start:prod": "node ./build/Main.js"
   },
   "dependencies": {
-    "firebase": "^3.6.4",
-    "firebase-admin": "^4.2.1",
-    "redis": "^2.8.0"
+    "firebase-admin": "^8.0.0",
+    "ioredis": "^4.9.5"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/mapster/WeightyBeer/issues"
   },
-  "homepage": "https://github.com/mapster/WeightyBeer#readme"
+  "homepage": "https://github.com/mapster/WeightyBeer#readme",
+  "devDependencies": {
+    "@types/ioredis": "^4.0.10",
+    "ts-node-dev": "^1.0.0-pre.39",
+    "typescript": "^3.4.5"
+  }
 }

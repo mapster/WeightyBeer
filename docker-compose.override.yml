@@ -1,0 +1,13 @@
+version: '3'
+services:
+
+  redis:
+    ports: 
+    - "6379:6379"
+
+  weightsensor:
+    build:
+      context: ./weightsim
+    command: tap1
+    devices: 
+      - "/dev/null:/dev/ttyACM0"

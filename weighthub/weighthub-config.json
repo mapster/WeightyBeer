@@ -1,0 +1,27 @@
+{
+    "sensorSource": {
+        "redis": {
+            "channel": "sensors",
+            "connection": "redis"
+        }
+    },
+    "actionSource": {
+        "redis": {
+            "channel": "actions",
+            "connection": "redis"
+        }
+    },
+    "weightHub": {
+        "redis": {
+            "keyPrefix": "weight",
+            "connection": "redis"
+        }
+    },
+    "connections": {
+        "redis": {
+            "redis": {
+                "host": "redis"
+            }
+        }
+    }
+}

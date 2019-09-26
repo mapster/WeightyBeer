@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  redis:
+    image: redis:5.0.5
+    expose: 
+      - "6379"
+    command: [ "redis-server", "--appendonly", "yes" ]
+
+  weighthub:
+    build:
+      context: ./weighthub
+    depends_on:
+      - redis
+
+  weightsensor:
+    build:
+      context: ./weightsensor
+    depends_on: 
+      - redis
+    environment:
+      - "WEIGHTYBEER_REDIS=redis"
+    devices:
+      - "/dev/ttyACM0:/dev/ttyACM0"
+
+  client-api:
+    build:
+      context: ./client-api
+    depends_on: 
+      - redis
+    ports: 
+      - "3000:3000"
+    environment:
+      - "WEIGHTYBEER_REDIS=redis"
+
+  web-client:
+    build:
+      context: ./elm-client
+    ports:
+      - "8080:80"
