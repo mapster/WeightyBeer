@@ -47,7 +47,7 @@
     "json-loader": "^0.5.4",
     "style-loader": "^0.16.0",
     "webpack": "^2.3.2",
-    "webpack-dev-server": "^2.4.2",
+    "webpack-dev-server": "^3.1.11",
     "webpack-validator": "^3.0.0"
   },
   "repository": "https://github.com/mapster/WeightyBeer"
