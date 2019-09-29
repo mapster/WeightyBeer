@@ -7,7 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import RemoteData exposing (RemoteData)
 import Time
-import Type.Tap exposing (Brew, Tap, Weight, tapSelection, weightSelection)
+import Type.Tap exposing (Brew, Tap, Weight, tapSelection, toPartial, weightSelection)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Query as Query
 
@@ -116,5 +116,5 @@ tapWithWeight weights tap =
 
 viewTaps : Dict String Weight -> Taps -> Html Msg
 viewTaps weights taps =
-    div [ class "home-page-container" ] <| List.map ((tapWithWeight weights) >> Just >> TapCard.view) taps
+    div [ class "home-page-container" ] <| List.map ((tapWithWeight weights) >> toPartial >> TapCard.view) taps
 

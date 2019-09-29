@@ -4,22 +4,23 @@ import Html exposing (Attribute, Html, div, hr, text)
 
 import Html.Attributes exposing (class, style)
 import String exposing (fromFloat, fromInt)
-import Type.Tap exposing (Brew, Tap)
+import Type.ModifiableValue as Value exposing (Value)
+import Type.Tap exposing (Brew, PartialTap, Tap)
 import Utils exposing (textClass, textEl)
 
-view : Maybe Tap -> Html msg
+view : PartialTap -> Html msg
 view tap =
      div [ class "tap-card" ]
         [ viewTapCardHeader tap
-        , viewTapCardBody <| Maybe.andThen .brew tap
+        , viewTapCardBody <| Value.toMaybe tap.brew
         , viewTapCardFooter tap
         ]
 
-viewTapCardHeader : Maybe Tap -> Html msg
+viewTapCardHeader : PartialTap -> Html msg
 viewTapCardHeader tap =
     div [ class "tap-card-header" ]
         [ div [ class "tap-card-indent"]
-            [ text <| Maybe.withDefault "" <| Maybe.map .name tap]
+            [ text <| Value.toString tap.name]
         ]
 
 viewTapCardBody : Maybe Brew -> Html msg
@@ -43,10 +44,10 @@ abvText brew =
         |> Maybe.withDefault ""
         |> textClass [ "tap-card-indent" ]
 
-viewTapCardFooter : Maybe Tap -> Html msg
+viewTapCardFooter : PartialTap -> Html msg
 viewTapCardFooter tap =
     div [ class "tap-card-footer tap-card-indent" ]
-        <| case Maybe.andThen .brew tap of
+        <| case Value.toMaybe tap.brew of
             Nothing ->
                 [textEl "No brew on tap"]
 
@@ -57,23 +58,27 @@ viewTapCardFooter tap =
                 , viewWeight tap
                 ]
 
-viewWeight : Maybe Tap -> Html msg
-viewWeight maybeTap =
-    textEl (case maybeTap of
-        Just tap ->
-            case tap.weight of
-                Just weight ->
-                    String.concat
-                        [ "Remaining: "
-                        , fromInt weight.percent
-                        , "% ("
-                        , fromFloat <| tap.volume * (toFloat weight.percent) / 100.0
-                        , "/"
-                        , fromFloat tap.volume
-                        , " L)"
-                        ]
-                Nothing ->
-                    "No weight selected for tap"
-        Nothing ->
-            ""
-    )
+viewWeight : PartialTap -> Html msg
+viewWeight tap =
+    textEl
+        (case (Value.toMaybe tap.weight, Value.toMaybe tap.volume) of
+            (Just weight, Just volume) ->
+                String.concat
+                    [ "Remaining: "
+                    , fromInt weight.percent
+                    , "% ("
+                    , fromFloat <| volume * (toFloat weight.percent) / 100.0
+                    , "/"
+                    , fromFloat volume
+                    , " L)"
+                    ]
+
+            (Nothing, Just _) ->
+                "No weight selected for tap"
+
+            (Nothing, Nothing) ->
+                "No weight nor volume selected for tap"
+
+            (Just _, Nothing) ->
+                "No volume selected for tap"
+        )

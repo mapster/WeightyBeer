@@ -1,8 +1,11 @@
 module Page.NewTap exposing (Model, Msg(..), getError, init, subscriptions, update, view)
 
 import Browser.Navigation as Nav
+import Component.EditTap
 import Component.ErrorDetails exposing (ErrorDetails)
 import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
+import Type.Tap exposing (emptyPartial)
 
 
 type alias Model =
@@ -36,4 +39,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [] [ text "New Tap" ]
+    div [ class "edit-tap-page-container" ]
+        [ Html.map mapEditTapMsg <| Component.EditTap.view [] [] emptyPartial
+        ]
+
+mapEditTapMsg : Component.EditTap.Msg -> Msg
+mapEditTapMsg _ =
+    Something

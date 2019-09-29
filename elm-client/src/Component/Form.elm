@@ -3,20 +3,16 @@ module Component.Form exposing (Field, InputType(..), Option, viewButtons, viewF
 import Html exposing (Attribute, Html, button, div, hr, input, label, select, text)
 import Html.Attributes as Attr exposing (class, classList, disabled, for, type_)
 import Html.Events exposing (onClick, onInput)
-import Maybe.Extra
-
+import Type.ModifiableValue as Value exposing (Value)
 
 type InputType
     = Text
     | Number
 
-
 type alias Field =
     { name : String
-    , mutation : Maybe String
-    , original : Maybe String
+    , value : Value String
     }
-
 
 type alias Option =
     { value : String
@@ -24,19 +20,16 @@ type alias Option =
     }
 
 
-
 -- Public
-
-
 viewField : Field -> InputType -> (String -> msg) -> Html msg
 viewField field inputType msg =
     div [ class "field" ]
         [ input
             [ typeAttr inputType
-            , Attr.value (reduceValue field)
-            , Attr.id (fieldId field)
+            , (Value.toString >> Attr.value) field.value
+            , (fieldId >> Attr.id) field
             , onInput msg
-            , classList [ ( "modified", isModified field ) ]
+            , classList [ ( "modified", Value.isModified field.value ) ]
             ]
             []
         , label [ for (fieldId field) ] [ text field.name ]
@@ -50,8 +43,8 @@ viewSelect field options msg =
     div [ class "field" ]
         [ select
             [ onInput msg
-            , Attr.id (fieldId field)
-            , classList [ ( "modified", isModified field ) ]
+            , (fieldId >> Attr.id) field
+            , classList [ ( "modified", Value.isModified field.value ) ]
             ]
             (viewOptions field options)
         , label [ for (fieldId field) ] [ text field.name ]
@@ -94,35 +87,35 @@ viewOption field option =
     Html.option
         [ Attr.value option.value
         , Attr.selected (isSelected field option)
-        , classList [ ( "original", isOriginal field option ) ]
+--        , classList [ ( "original", Value.isOriginal field.value ) ]
         ]
         [ text option.label ]
 
 
 isSelected : Field -> Option -> Bool
 isSelected field option =
-    reduceValue field == option.value
+    Value.toString field.value == option.value
 
 
-isModified : Field -> Bool
-isModified { original, mutation } =
-    Maybe.Extra.isJust mutation && mutation /= original
+--isModified : Field -> Bool
+--isModified { original, mutation } =
+--    Maybe.Extra.isJust mutation && mutation /= original
 
 
-isOriginal : Field -> Option -> Bool
-isOriginal { original } option =
-    case original of
-        Nothing ->
-            String.isEmpty option.value
+--isOriginal : Field -> Option -> Bool
+--isOriginal { original } option =
+--    case original of
+--        Nothing ->
+--            String.isEmpty option.value
+--
+--        Just value ->
+--            option.value == value
 
-        Just value ->
-            option.value == value
 
-
-reduceValue : Field -> String
-reduceValue { original, mutation } =
-    Maybe.Extra.or mutation original
-        |> Maybe.withDefault ""
+--reduceValue : Field -> String
+--reduceValue { original, mutation } =
+--    Maybe.Extra.or mutation original
+--        |> Maybe.withDefault ""
 
 
 fieldId : Field -> String

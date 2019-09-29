@@ -1,10 +1,13 @@
-module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection)
+module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection, PartialTap, TapMutation, toTap, toPartial, emptyPartial)
 
 import Constants exposing (weightyBeerHost)
 import Graphql.Http
 import Graphql.OptionalArgument as OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
+import Maybe
+import Maybe.Extra exposing (andMap)
 import Type.BrewID as BrewID exposing (BrewID)
+import Type.ModifiableValue exposing (Value(..), toMaybe)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Mutation as Mutation
@@ -15,7 +18,6 @@ import WeightyBeer.Object.Tap
 import WeightyBeer.Object.TapMutation exposing (UpdateOptionalArguments, UpdateRequiredArguments)
 import WeightyBeer.Object.Weight
 
-
 type alias Tap =
     { id : TapID
     , name : String
@@ -24,6 +26,58 @@ type alias Tap =
     , brew : Maybe Brew
     , weight : Maybe Weight
     }
+
+type alias PartialTap =
+    { id: Maybe TapID
+    , name : Value String
+    , order : Value Int
+    , volume : Value Float
+    , brew : Value Brew
+    , weight : Value Weight
+    }
+
+type alias TapMutation =
+    { name : String
+    , order : Int
+    , volume : Float
+    , brew : Maybe Brew
+    , weight : Maybe Weight
+    }
+
+toPartial : Tap -> PartialTap
+toPartial {id, name, order, volume, brew, weight} =
+    PartialTap
+        (Just id)
+        (Original name)
+        (Original order)
+        (Original volume)
+        (Maybe.map Original brew |> Maybe.withDefault NoValue)
+        (Maybe.map Original weight |> Maybe.withDefault NoValue)
+
+emptyPartial : PartialTap
+emptyPartial = PartialTap Nothing NoValue NoValue NoValue NoValue NoValue
+
+toTap: PartialTap -> Maybe Tap
+toTap {id, name, order, volume, brew, weight} =
+    Maybe.map Tap id
+        |> andMap (toMaybe name)
+        |> andMap (toMaybe order)
+        |> andMap (toMaybe volume)
+        |> andMap (Just (toMaybe brew))
+        |> andMap (Just (toMaybe weight))
+
+
+--toTapMutation: PartialTap -> Maybe TapMutation
+--toTapMutation {name, order, volume, brew, weight} =
+--    Maybe.map TapMutation name
+--        |> andMap order
+--        |> andMap volume
+--        |> andMap (Just brew)
+--        |> andMap (Just weight)
+--
+--isComplete: TapID -> PartialTap -> Bool
+--isComplete id =
+--    toTap id >> Maybe.Extra.isJust
 
 
 type alias Weight =

@@ -1,7 +1,7 @@
 module Page.EditTap exposing (Model, Msg, getError, init, subscriptions, update, view)
 
 import Browser.Navigation as Nav
-import Component.EditTap exposing (Field(..), TapMutation, applyMutation, emptyMutation)
+import Component.EditTap exposing (Field(..))
 import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
 import Constants exposing (weightyBeerHost)
 import Graphql.Http exposing (RawError(..))
@@ -11,7 +11,8 @@ import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
 import Route
 import Type.BrewID as BrewID exposing (BrewID)
-import Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection)
+import Type.ModifiableValue as Value
+import Type.Tap exposing (Brew, PartialTap, Tap, Weight, brewSelection, tapSelection, toPartial, toTap, updateTapRequest, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Query as Query
@@ -33,7 +34,7 @@ type alias EditModel =
     { original : Tap
     , brews : List Brew
     , weights : List Weight
-    , mutation : TapMutation
+    , mutation : PartialTap
     , error : Maybe ErrorDetails
     }
 
@@ -94,14 +95,17 @@ requestTap id =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> GotResponse)
 
 
-makeUpdateRequest : State -> Cmd Msg
-makeUpdateRequest state =
-    case state of
-        EditTap { mutation, original } ->
-            updateTapRequest (applyMutation original mutation) tapSelection GotSaveResponse
-
+makeUpdateRequest : Model -> (Model, Cmd Msg)
+makeUpdateRequest model =
+    case model.state of
+        EditTap edit ->
+            case toTap edit.mutation of
+                Just tap ->
+                    (model, updateTapRequest tap tapSelection GotSaveResponse)
+                Nothing ->
+                    ({ model | state = EditTap { edit | error = Just (ErrorDetails "Cannot save: incomplete tap" Nothing) } }, Cmd.none)
         _ ->
-            Cmd.none
+            ({ model | state = Error (ErrorDetails "Cannot save: Tap data missing" Nothing)}, Cmd.none)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -117,7 +121,7 @@ update msg model =
             ( { model | state = updateField field value model.state }, Cmd.none )
 
         Save ->
-            ( model, makeUpdateRequest model.state )
+            makeUpdateRequest model
 
         Cancel ->
             ( model, Route.replaceUrl model.navKey Route.Taps )
@@ -137,7 +141,7 @@ updateFromSaveResponse response state =
         Ok data ->
             case ( data, state ) of
                 ( Just tap, EditTap editModel ) ->
-                    EditTap { editModel | original = tap, mutation = emptyMutation, error = Nothing }
+                    EditTap { editModel | original = tap, mutation = toPartial tap, error = Nothing }
 
                 ( Just _, _ ) ->
                     Error <| ErrorDetails "Invalid state: got a save tap response" Nothing
@@ -161,10 +165,10 @@ updateFromResponse response state =
         Ok data ->
             case ( data.tap, state ) of
                 ( Just original, Loading ) ->
-                    EditTap (EditModel original data.brews data.weights emptyMutation Nothing)
+                    EditTap (EditModel original data.brews data.weights (toPartial original) Nothing)
 
                 ( Just original, Error _ ) ->
-                    EditTap (EditModel original data.brews data.weights emptyMutation Nothing)
+                    EditTap (EditModel original data.brews data.weights (toPartial original) Nothing)
 
                 ( Just original, EditTap editModel ) ->
                     EditTap { editModel | original = original, brews = data.brews, weights = data.weights, error = Nothing }
@@ -193,30 +197,20 @@ updateField field value model =
                 updatedMutation =
                     case field of
                         Component.EditTap.Name ->
-                            { mutation | name = justIfChanged original.name value }
+                            { mutation | name = Value.from original.name (Just value) }
 
                         Component.EditTap.Volume ->
-                            { mutation
-                                | volume =
-                                    String.toFloat value
-                                        |> Maybe.withDefault original.volume
-                                        |> justIfChanged original.volume
-                            }
+                            { mutation | volume = Value.from original.volume (String.toFloat value) }
 
                         Component.EditTap.Order ->
-                            { mutation
-                                | order =
-                                    String.toInt value
-                                        |> Maybe.withDefault original.order
-                                        |> justIfChanged original.order
-                            }
+                            { mutation | order = Value.from original.order (String.toInt value) }
 
                         Component.EditTap.Brew ->
                             { mutation
                                 | brew =
                                     List.filter (.id >> BrewID.eq value) brews
                                         |> List.head
-                                        |> justIfChanged original.brew
+                                        |> Value.fromOptional original.brew
                             }
 
                         Component.EditTap.Weight ->
@@ -224,20 +218,10 @@ updateField field value model =
                                 | weight =
                                     List.filter (.id >> WeightID.eq value) weights
                                         |> List.head
-                                        |> justIfChanged original.weight
+                                        |> Value.fromOptional original.weight
                             }
             in
             EditTap (EditModel original brews weights updatedMutation Nothing)
-
-
-justIfChanged : a -> a -> Maybe a
-justIfChanged original value =
-    if original == value then
-        Nothing
-
-    else
-        Just value
-
 
 view : Model -> Html Msg
 view model =
@@ -250,7 +234,7 @@ view model =
 
         EditTap { original, brews, weights, mutation } ->
             div [ class "edit-tap-page-container" ]
-                [ Html.map mapEditTapMsg <| Component.EditTap.view original brews weights mutation
+                [ Html.map mapEditTapMsg <| Component.EditTap.view brews weights mutation
                 ]
 
 
