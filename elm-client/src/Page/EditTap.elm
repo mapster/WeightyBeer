@@ -31,8 +31,7 @@ type State
 
 
 type alias EditModel =
-    { original : Tap
-    , brews : List Brew
+    { brews : List Brew
     , weights : List Weight
     , mutation : PartialTap
     , error : Maybe ErrorDetails
@@ -141,7 +140,7 @@ updateFromSaveResponse response state =
         Ok data ->
             case ( data, state ) of
                 ( Just tap, EditTap editModel ) ->
-                    EditTap { editModel | original = tap, mutation = toPartial tap, error = Nothing }
+                    EditTap { editModel | mutation = toPartial tap, error = Nothing }
 
                 ( Just _, _ ) ->
                     Error <| ErrorDetails "Invalid state: got a save tap response" Nothing
@@ -165,13 +164,13 @@ updateFromResponse response state =
         Ok data ->
             case ( data.tap, state ) of
                 ( Just original, Loading ) ->
-                    EditTap (EditModel original data.brews data.weights (toPartial original) Nothing)
+                    EditTap (EditModel data.brews data.weights (toPartial original) Nothing)
 
                 ( Just original, Error _ ) ->
-                    EditTap (EditModel original data.brews data.weights (toPartial original) Nothing)
+                    EditTap (EditModel data.brews data.weights (toPartial original) Nothing)
 
                 ( Just original, EditTap editModel ) ->
-                    EditTap { editModel | original = original, brews = data.brews, weights = data.weights, error = Nothing }
+                    EditTap { editModel | brews = data.brews, weights = data.weights, error = Nothing }
 
                 ( Nothing, Error error ) ->
                     Error <| { error | message = "Tap doesn't exist" }
@@ -192,36 +191,13 @@ updateField field value model =
         Loading ->
             Error <| ErrorDetails "Cannot edit while loading!" Nothing
 
-        EditTap { original, brews, weights, mutation } ->
+        EditTap { brews, weights, mutation } ->
             let
-                updatedMutation =
-                    case field of
-                        Component.EditTap.Name ->
-                            { mutation | name = Value.from original.name (Just value) }
-
-                        Component.EditTap.Volume ->
-                            { mutation | volume = Value.from original.volume (String.toFloat value) }
-
-                        Component.EditTap.Order ->
-                            { mutation | order = Value.from original.order (String.toInt value) }
-
-                        Component.EditTap.Brew ->
-                            { mutation
-                                | brew =
-                                    List.filter (.id >> BrewID.eq value) brews
-                                        |> List.head
-                                        |> Value.fromOptional original.brew
-                            }
-
-                        Component.EditTap.Weight ->
-                            { mutation
-                                | weight =
-                                    List.filter (.id >> WeightID.eq value) weights
-                                        |> List.head
-                                        |> Value.fromOptional original.weight
-                            }
+                updatedMutation = Component.EditTap.update brews weights mutation field value
             in
-            EditTap (EditModel original brews weights updatedMutation Nothing)
+            EditTap (
+                EditModel brews weights updatedMutation Nothing
+                )
 
 view : Model -> Html Msg
 view model =
@@ -232,7 +208,7 @@ view model =
         Error e ->
             div [] [ text e.message ]
 
-        EditTap { original, brews, weights, mutation } ->
+        EditTap { brews, weights, mutation } ->
             div [ class "edit-tap-page-container" ]
                 [ Html.map mapEditTapMsg <| Component.EditTap.view brews weights mutation
                 ]

@@ -1,4 +1,4 @@
-module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection, PartialTap, TapMutation, toTap, toPartial, emptyPartial)
+module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection, PartialTap, TapMutation, toTap, toPartial, emptyPartial, isModified)
 
 import Constants exposing (weightyBeerHost)
 import Graphql.Http
@@ -7,7 +7,7 @@ import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Maybe
 import Maybe.Extra exposing (andMap)
 import Type.BrewID as BrewID exposing (BrewID)
-import Type.ModifiableValue exposing (Value(..), toMaybe)
+import Type.ModifiableValue as Value exposing (Value(..), toMaybe)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Mutation as Mutation
@@ -51,6 +51,7 @@ toPartial {id, name, order, volume, brew, weight} =
         (Original name)
         (Original order)
         (Original volume)
+        -- TODO: replace with unwrap
         (Maybe.map Original brew |> Maybe.withDefault NoValue)
         (Maybe.map Original weight |> Maybe.withDefault NoValue)
 
@@ -66,6 +67,13 @@ toTap {id, name, order, volume, brew, weight} =
         |> andMap (Just (toMaybe brew))
         |> andMap (Just (toMaybe weight))
 
+isModified : PartialTap -> Bool
+isModified partial =
+    Value.isModified partial.name ||
+    Value.isModified partial.order ||
+    Value.isModified partial.volume ||
+    Value.isModified partial.brew ||
+    Value.isModified partial.weight
 
 --toTapMutation: PartialTap -> Maybe TapMutation
 --toTapMutation {name, order, volume, brew, weight} =

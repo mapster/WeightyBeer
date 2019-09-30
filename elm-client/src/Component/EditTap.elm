@@ -1,4 +1,4 @@
-module Component.EditTap exposing (Field(..), Msg(..), view)
+module Component.EditTap exposing (Field(..), Msg(..), view, update)
 
 import Component.Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
 import Component.TapCard as TapCard
@@ -7,8 +7,8 @@ import Html.Attributes exposing (class)
 import Maybe.Extra
 import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID
-import Type.ModifiableValue as Value
-import Type.Tap exposing (Brew, PartialTap, Tap, TapMutation, Weight)
+import Type.ModifiableValue as Value exposing (Value)
+import Type.Tap exposing (Brew, PartialTap, Tap, TapMutation, Weight, isModified)
 import Type.WeightID as WeightID
 
 
@@ -23,6 +23,28 @@ type Msg
     = Edit Field String
     | Save
     | Cancel
+
+update : List Brew -> List Weight -> PartialTap -> Field -> String -> PartialTap
+update brews weights mutation field value =
+   case field of
+        Name ->
+            { mutation | name = Value.update mutation.name (Just value) }
+        Volume ->
+            { mutation | volume = Value.update mutation.volume (String.toFloat value) }
+        Order ->
+            { mutation | order = Value.update mutation.order (String.toInt value) }
+        Brew ->
+            { mutation | brew =
+                    List.filter (.id >> BrewID.eq value) brews
+                        |> List.head
+                        |> Value.update mutation.brew
+            }
+        Weight ->
+            { mutation | weight =
+                    List.filter (.id >> WeightID.eq value) weights
+                        |> List.head
+                        |> Value.update mutation.weight
+            }
 
 view : List Brew -> List Weight -> PartialTap -> Html Msg
 view brews weights partial =
@@ -66,15 +88,6 @@ viewForm brews weights partial =
         , viewField order Number (Edit Order)
         , viewButtons Save Cancel (isModified partial)
         ]
-
-
-isModified : PartialTap -> Bool
-isModified partial =
-    Value.isModified partial.name ||
-    Value.isModified partial.order ||
-    Value.isModified partial.volume ||
-    Value.isModified partial.brew ||
-    Value.isModified partial.weight
 
 brewOptions : List Brew -> List Option
 brewOptions brews =
