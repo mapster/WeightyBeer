@@ -1,4 +1,4 @@
-module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection, PartialTap, TapMutation, toTap, toPartial, emptyPartial, isModified)
+module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection, PartialTap, toTap, toPartial, emptyPartial, isModified, updateOriginals)
 
 import Constants exposing (weightyBeerHost)
 import Graphql.Http
@@ -36,14 +36,6 @@ type alias PartialTap =
     , weight : Value Weight
     }
 
-type alias TapMutation =
-    { name : String
-    , order : Int
-    , volume : Float
-    , brew : Maybe Brew
-    , weight : Maybe Weight
-    }
-
 toPartial : Tap -> PartialTap
 toPartial {id, name, order, volume, brew, weight} =
     PartialTap
@@ -51,9 +43,8 @@ toPartial {id, name, order, volume, brew, weight} =
         (Original name)
         (Original order)
         (Original volume)
-        -- TODO: replace with unwrap
-        (Maybe.map Original brew |> Maybe.withDefault NoValue)
-        (Maybe.map Original weight |> Maybe.withDefault NoValue)
+        (Maybe.Extra.unwrap NoValue Original brew)
+        (Maybe.Extra.unwrap NoValue Original weight)
 
 emptyPartial : PartialTap
 emptyPartial = PartialTap Nothing NoValue NoValue NoValue NoValue NoValue
@@ -67,6 +58,16 @@ toTap {id, name, order, volume, brew, weight} =
         |> andMap (Just (toMaybe brew))
         |> andMap (Just (toMaybe weight))
 
+updateOriginals : PartialTap -> Tap -> PartialTap
+updateOriginals partial tap =
+    PartialTap
+        partial.id
+        (Value.updateOriginal partial.name <| Just tap.name)
+        (Value.updateOriginal partial.order <| Just tap.order)
+        (Value.updateOriginal partial.volume <| Just tap.volume)
+        (Value.updateOriginal partial.brew tap.brew)
+        (Value.updateOriginal partial.weight tap.weight)
+
 isModified : PartialTap -> Bool
 isModified partial =
     Value.isModified partial.name ||
@@ -75,24 +76,10 @@ isModified partial =
     Value.isModified partial.brew ||
     Value.isModified partial.weight
 
---toTapMutation: PartialTap -> Maybe TapMutation
---toTapMutation {name, order, volume, brew, weight} =
---    Maybe.map TapMutation name
---        |> andMap order
---        |> andMap volume
---        |> andMap (Just brew)
---        |> andMap (Just weight)
---
---isComplete: TapID -> PartialTap -> Bool
---isComplete id =
---    toTap id >> Maybe.Extra.isJust
-
-
 type alias Weight =
     { id : WeightID
     , percent : Int
     }
-
 
 type alias Brew =
     { id : BrewID
@@ -167,8 +154,3 @@ fillInTapOptionals tap _ =
     { brew = fillInOptional tap.brew (.id >> BrewID.toString)
     , weight = fillInOptional tap.weight (.id >> WeightID.toString)
     }
-
-
-
--- with
---  <| optional

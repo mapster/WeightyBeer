@@ -4,11 +4,10 @@ import Component.Form exposing (Field, InputType(..), Option, viewButtons, viewF
 import Component.TapCard as TapCard
 import Html exposing (Html, div, form)
 import Html.Attributes exposing (class)
-import Maybe.Extra
 import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID
 import Type.ModifiableValue as Value exposing (Value)
-import Type.Tap exposing (Brew, PartialTap, Tap, TapMutation, Weight, isModified)
+import Type.Tap exposing (Brew, PartialTap, Tap, Weight, isModified)
 import Type.WeightID as WeightID
 
 

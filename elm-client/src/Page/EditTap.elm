@@ -10,11 +10,8 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
 import Route
-import Type.BrewID as BrewID exposing (BrewID)
-import Type.ModifiableValue as Value
-import Type.Tap exposing (Brew, PartialTap, Tap, Weight, brewSelection, tapSelection, toPartial, toTap, updateTapRequest, weightSelection)
+import Type.Tap exposing (Brew, PartialTap, Tap, Weight, brewSelection, tapSelection, toPartial, toTap, updateOriginals, updateTapRequest, weightSelection)
 import Type.TapID as TapID exposing (TapID)
-import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Query as Query
 
 
@@ -170,7 +167,7 @@ updateFromResponse response state =
                     EditTap (EditModel data.brews data.weights (toPartial original) Nothing)
 
                 ( Just original, EditTap editModel ) ->
-                    EditTap { editModel | brews = data.brews, weights = data.weights, error = Nothing }
+                    EditTap { editModel | mutation = updateOriginals editModel.mutation original, brews = data.brews, weights = data.weights, error = Nothing }
 
                 ( Nothing, Error error ) ->
                     Error <| { error | message = "Tap doesn't exist" }
@@ -195,9 +192,7 @@ updateField field value model =
             let
                 updatedMutation = Component.EditTap.update brews weights mutation field value
             in
-            EditTap (
-                EditModel brews weights updatedMutation Nothing
-                )
+            EditTap (EditModel brews weights updatedMutation Nothing)
 
 view : Model -> Html Msg
 view model =
@@ -219,9 +214,7 @@ mapEditTapMsg msg =
     case msg of
         Component.EditTap.Edit field value ->
             Edit field value
-
         Component.EditTap.Save ->
             Save
-
         Component.EditTap.Cancel ->
             Cancel

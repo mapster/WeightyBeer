@@ -91,33 +91,3 @@ viewErrorDetails showDetails error =
 
         _ ->
             div [] []
-
-
-
---errorToString : Graphql.Http.Error parsedData -> String
---errorToString errorData =
---    case errorData of
---        Graphql.Http.GraphqlError _ graphqlErrors ->
---            graphqlErrors
---                |> List.map graphqlErrorToString
---                |> String.join "\n"
---
---        Graphql.Http.HttpError httpError ->
---            case httpError of
---                Graphql.Http.BadUrl msg ->
---                    "Invalid URL to WeightyBeer API: " ++ msg
---
---                Graphql.Http.Timeout ->
---                    "Request timed out"
---
---                Graphql.Http.NetworkError ->
---                    "Network error: Failed to connect to WeightyBeer API (" ++ weightyBeerHost ++ ")"
---
---                Graphql.Http.BadStatus metadata string ->
---                    "Got bad status response" ++ fromInt metadata.statusCode
---
---                Graphql.Http.BadPayload error ->
---                    Debug.todo ""
---graphqlErrorToString : Graphql.Http.GraphqlError.GraphqlError -> String
---graphqlErrorToString error =
---    error.message

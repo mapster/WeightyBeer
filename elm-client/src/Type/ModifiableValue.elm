@@ -1,4 +1,4 @@
-module Type.ModifiableValue exposing (Value(..), map, toString, isModified, toMaybe, update)
+module Type.ModifiableValue exposing (Value(..), map, toString, isModified, toMaybe, update, updateOriginal)
 
 type Value a
     = Modified a a
@@ -35,6 +35,35 @@ update old new =
                 NoValue ->
                     NoValue
 
+updateOriginal : Value a -> Maybe a -> Value a
+updateOriginal value original =
+    case original of
+        Just origValue ->
+            case value of
+                Modified _ modification ->
+                    Modified origValue modification
+                NewValue modification ->
+                    Modified origValue modification
+                Unset _ ->
+                    Unset origValue
+                Original _ ->
+                    Original origValue
+                NoValue ->
+                    Original origValue
+        Nothing ->
+            case value of
+                Modified _ modification ->
+                    NewValue modification
+                NewValue modification ->
+                    NewValue modification
+                Unset _ ->
+                    NoValue
+                Original _ ->
+                    NoValue
+                NoValue ->
+                    NoValue
+
+
 withOriginal : a -> a -> Value a
 withOriginal original modification =
     if original == modification then
@@ -60,6 +89,7 @@ map mapper on =
         NoValue ->
             NoValue
 
+-- Returns the modified value, or falls back to original
 toMaybe : Value a -> Maybe a
 toMaybe value =
     case value of
