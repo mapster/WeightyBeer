@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Object.TapMutation exposing (CreateRequiredArguments, RemoveRequiredArguments, UpdateOptionalArguments, UpdateRequiredArguments, create, remove, update)
+module WeightyBeer.Object.TapMutation exposing (CreateOptionalArguments, CreateRequiredArguments, RemoveRequiredArguments, UpdateOptionalArguments, UpdateRequiredArguments, create, remove, update)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -19,19 +19,31 @@ import WeightyBeer.ScalarCodecs
 import WeightyBeer.Union
 
 
+type alias CreateOptionalArguments =
+    { weight : OptionalArgument String
+    , brew : OptionalArgument String
+    }
+
+
 type alias CreateRequiredArguments =
     { name : String
     , order : Int
     , volume : Float
     , isActive : Bool
-    , weight : String
-    , brew : String
     }
 
 
-create : CreateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Tap -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.TapMutation
-create requiredArgs object_ =
-    Object.selectionForCompositeField "create" [ Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.int, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool, Argument.required "weight" requiredArgs.weight Encode.string, Argument.required "brew" requiredArgs.brew Encode.string ] object_ (identity >> Decode.nullable)
+create : (CreateOptionalArguments -> CreateOptionalArguments) -> CreateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Tap -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.TapMutation
+create fillInOptionals requiredArgs object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { weight = Absent, brew = Absent }
+
+        optionalArgs =
+            [ Argument.optional "weight" filledInOptionals.weight Encode.string, Argument.optional "brew" filledInOptionals.brew Encode.string ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "create" (optionalArgs ++ [ Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.int, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool ]) object_ (identity >> Decode.nullable)
 
 
 type alias UpdateOptionalArguments =

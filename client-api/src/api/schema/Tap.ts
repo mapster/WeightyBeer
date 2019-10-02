@@ -61,8 +61,8 @@ export class TapMutation {
         @Arg({ type: GraphQLInt }) order: number,
         volume: number,
         isActive: boolean,
-        weight: string,
-        brew: string,
+        @Arg({ isNullable: true }) weight: string,
+        @Arg({ isNullable: true }) brew: string,
     ): Promise<Tap | undefined> {
         return await context.tapRepo.create(name, order, volume, isActive, weight, brew);
     }
