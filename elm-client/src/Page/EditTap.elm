@@ -10,7 +10,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
 import Route
-import Type.Tap exposing (Brew, ExistingTap, PartialTap, Weight, brewSelection, tapSelection, toExistingTap, toPartial, updateOriginals, updateTapRequest, weightSelection)
+import Type.Tap as Tap exposing (Brew, ExistingTap, PartialTap, Weight, brewSelection, tapSelection, toExistingTap, toPartial, updateOriginals, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import WeightyBeer.Query as Query
 
@@ -97,13 +97,18 @@ makeUpdateRequest model =
         EditTap edit ->
             case toExistingTap edit.mutation of
                 Just tap ->
-                    ( model, updateTapRequest tap tapSelection GotSaveResponse )
+                    ( model, Tap.makeMutationRequest (Tap.updateRequest tap tapSelection) GotSaveResponse )
 
                 Nothing ->
                     ( { model | state = EditTap { edit | error = Just (ErrorDetails "Cannot save: incomplete tap" Nothing) } }, Cmd.none )
 
         _ ->
             ( { model | state = Error (ErrorDetails "Cannot save: Tap data missing" Nothing) }, Cmd.none )
+
+
+navigateToTaps : Nav.Key -> Cmd Msg
+navigateToTaps =
+    Route.replaceUrl Route.Taps
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,7 +118,7 @@ update msg model =
             ( { model | state = updateFromResponse response model.state }, Cmd.none )
 
         GotSaveResponse saveResponse ->
-            ( { model | state = updateFromSaveResponse saveResponse model.state }, Cmd.none )
+            updateFromSaveResponse saveResponse model
 
         Edit field value ->
             ( { model | state = updateField field value model.state }, Cmd.none )
@@ -122,36 +127,40 @@ update msg model =
             makeUpdateRequest model
 
         Cancel ->
-            ( model, Route.replaceUrl model.navKey Route.Taps )
+            ( model, navigateToTaps model.navKey )
 
 
-updateFromSaveResponse : SaveResponse -> State -> State
-updateFromSaveResponse response state =
-    case response of
-        Err error ->
-            case state of
-                EditTap editModel ->
-                    EditTap { editModel | error = Just (errorDetails "Failed to update tap" error) }
+updateFromSaveResponse : SaveResponse -> Model -> ( Model, Cmd Msg )
+updateFromSaveResponse response model =
+    let
+        ( newState, cmd ) =
+            case response of
+                Err error ->
+                    case model.state of
+                        EditTap editModel ->
+                            ( EditTap { editModel | error = Just (errorDetails "Failed to update tap" error) }, Cmd.none )
 
-                _ ->
-                    Error <| errorDetails "Invalid state: got a save tap error response" error
+                        _ ->
+                            ( Error <| errorDetails "Invalid state: got a save tap error response" error, Cmd.none )
 
-        Ok data ->
-            case ( data, state ) of
-                ( Just tap, EditTap editModel ) ->
-                    EditTap { editModel | mutation = toPartial tap, error = Nothing }
+                Ok data ->
+                    case ( data, model.state ) of
+                        ( Just tap, EditTap editModel ) ->
+                            ( EditTap { editModel | mutation = toPartial tap, error = Nothing }, navigateToTaps model.navKey )
 
-                ( Just _, _ ) ->
-                    Error <| ErrorDetails "Invalid state: got a save tap response" Nothing
+                        ( Just _, _ ) ->
+                            ( Error <| ErrorDetails "Invalid state: got a save tap response" Nothing, Cmd.none )
 
-                ( Nothing, EditTap editModel ) ->
-                    EditTap { editModel | error = Just (ErrorDetails "Failed to update tap: doesn't exist" Nothing) }
+                        ( Nothing, EditTap editModel ) ->
+                            ( EditTap { editModel | error = Just (ErrorDetails "Failed to update tap: doesn't exist" Nothing) }, Cmd.none )
 
-                ( Nothing, Error _ ) ->
-                    state
+                        ( Nothing, Error _ ) ->
+                            ( model.state, Cmd.none )
 
-                ( Nothing, Loading ) ->
-                    Error <| ErrorDetails "Failed to update tap: doesn't exist" Nothing
+                        ( Nothing, Loading ) ->
+                            ( Error <| ErrorDetails "Failed to update tap: doesn't exist" Nothing, Cmd.none )
+    in
+    ( { model | state = newState }, cmd )
 
 
 updateFromResponse : Response -> State -> State

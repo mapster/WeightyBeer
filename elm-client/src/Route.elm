@@ -63,6 +63,6 @@ routeToString route =
     "/" ++ String.join "/" pieces
 
 
-replaceUrl : Nav.Key -> Route -> Cmd msg
-replaceUrl key route =
+replaceUrl : Route -> Nav.Key -> Cmd msg
+replaceUrl route key =
     Nav.replaceUrl key (routeToString route)

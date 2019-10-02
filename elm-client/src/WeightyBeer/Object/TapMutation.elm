@@ -33,7 +33,7 @@ type alias CreateRequiredArguments =
     }
 
 
-create : (CreateOptionalArguments -> CreateOptionalArguments) -> CreateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Tap -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.TapMutation
+create : (CreateOptionalArguments -> CreateOptionalArguments) -> CreateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Tap -> SelectionSet decodesTo WeightyBeer.Object.TapMutation
 create fillInOptionals requiredArgs object_ =
     let
         filledInOptionals =
@@ -43,7 +43,7 @@ create fillInOptionals requiredArgs object_ =
             [ Argument.optional "weight" filledInOptionals.weight Encode.string, Argument.optional "brew" filledInOptionals.brew Encode.string ]
                 |> List.filterMap identity
     in
-    Object.selectionForCompositeField "create" (optionalArgs ++ [ Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.int, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool ]) object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "create" (optionalArgs ++ [ Argument.required "name" requiredArgs.name Encode.string, Argument.required "order" requiredArgs.order Encode.int, Argument.required "volume" requiredArgs.volume Encode.float, Argument.required "isActive" requiredArgs.isActive Encode.bool ]) object_ identity
 
 
 type alias UpdateOptionalArguments =

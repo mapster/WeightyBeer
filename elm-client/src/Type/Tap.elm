@@ -1,4 +1,4 @@
-module Type.Tap exposing (Brew, ExistingTap(..), PartialTap, Weight, brewSelection, emptyPartial, isModified, tapSelection, toExistingTap, toPartial, updateOriginals, updateTapRequest, weightSelection)
+module Type.Tap exposing (Brew, ExistingTap(..), PartialTap, Weight, brewSelection, createRequest, emptyPartial, isModified, makeMutationRequest, tapSelection, toExistingTap, toPartial, toTap, updateOriginals, updateRequest, weightSelection)
 
 import Constants exposing (weightyBeerHost)
 import Graphql.Http
@@ -147,22 +147,25 @@ weightSelection =
         WeightyBeer.Object.Weight.percent
 
 
-
---createTapRequest : Tap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error ()) (Maybe result) -> msg) -> Cmd msg
---createTapRequest tap resultSelectionSet msg =
---    let
---        required =
---            { name = tap.name
---            , order = tap.order
---            , volume = tap.volume
---            , isActive = True
---            }
---    in
---    WeightyBeer.Object.TapMutation.create (fillInTapOptionals tap) required resultSelectionSet
+type alias MutationRequest result =
+    SelectionSet result WeightyBeer.Object.TapMutation
 
 
-updateTapRequest : ExistingTap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error ()) (Maybe result) -> msg) -> Cmd msg
-updateTapRequest (ExistingTap id tap) resultSelectionSet msg =
+createRequest : Tap -> SelectionSet result WeightyBeer.Object.Tap -> MutationRequest result
+createRequest tap resultSelectionSet =
+    let
+        required =
+            { name = tap.name
+            , order = tap.order
+            , volume = tap.volume
+            , isActive = True
+            }
+    in
+    WeightyBeer.Object.TapMutation.create (fillInTapOptionals tap) required resultSelectionSet
+
+
+updateRequest : ExistingTap -> SelectionSet result WeightyBeer.Object.Tap -> MutationRequest (Maybe result)
+updateRequest (ExistingTap id tap) resultSelectionSet =
     let
         required =
             { id = TapID.toString id
@@ -173,7 +176,11 @@ updateTapRequest (ExistingTap id tap) resultSelectionSet msg =
             }
     in
     WeightyBeer.Object.TapMutation.update (fillInTapOptionals tap) required resultSelectionSet
-        |> Mutation.tap
+
+
+makeMutationRequest : MutationRequest result -> (Result (Graphql.Http.Error ()) result -> msg) -> Cmd msg
+makeMutationRequest request msg =
+    Mutation.tap request
         |> Graphql.Http.mutationRequest weightyBeerHost
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> msg)
 
@@ -183,7 +190,11 @@ fillInOptional arg getter =
     (OptionalArgument.fromMaybe >> OptionalArgument.map getter) arg
 
 
-fillInTapOptionals : Tap -> UpdateOptionalArguments -> UpdateOptionalArguments
+type alias MutationOptionalArguments =
+    { brew : OptionalArgument String, weight : OptionalArgument String }
+
+
+fillInTapOptionals : Tap -> MutationOptionalArguments -> MutationOptionalArguments
 fillInTapOptionals tap _ =
     { brew = fillInOptional tap.brew (.id >> BrewID.toString)
     , weight = fillInOptional tap.weight (.id >> WeightID.toString)

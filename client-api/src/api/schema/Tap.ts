@@ -54,7 +54,7 @@ export class Tap {
 @ObjectType()
 export class TapMutation {
 
-    @Field({ isNullable: true, type: Tap })
+    @Field({ isNullable: false, type: Tap })
     async create(
         @Context context: RepoContext,
         name: string,
@@ -63,7 +63,7 @@ export class TapMutation {
         isActive: boolean,
         @Arg({ isNullable: true }) weight: string,
         @Arg({ isNullable: true }) brew: string,
-    ): Promise<Tap | undefined> {
+    ): Promise<Tap> {
         return await context.tapRepo.create(name, order, volume, isActive, weight, brew);
     }
 

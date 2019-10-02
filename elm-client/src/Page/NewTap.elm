@@ -9,7 +9,7 @@ import Graphql.SelectionSet as SelectionSet
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Route
-import Type.Tap exposing (Brew, PartialTap, Weight, brewSelection, emptyPartial, toExistingTap, weightSelection)
+import Type.Tap as Tap exposing (Brew, ExistingTap, PartialTap, Weight, brewSelection, emptyPartial, toExistingTap, toPartial, toTap, weightSelection)
 import WeightyBeer.Query as Query
 
 
@@ -24,25 +24,29 @@ type alias Model =
 
 type Msg
     = GotResponse Response
+    | GotSaveResponse SaveResponse
     | Edit Field String
     | Save
     | Cancel
-    | Something
 
 
 type alias Response =
-    Result (Graphql.Http.Error ()) ResponseData
+    Result (Graphql.Http.Error ()) BrewsWeightsData
 
 
-type alias ResponseData =
+type alias BrewsWeightsData =
     { brews : List Brew
     , weights : List Weight
     }
 
 
+type alias SaveResponse =
+    Result (Graphql.Http.Error ()) ExistingTap
+
+
 requestBrewsWeights : Cmd Msg
 requestBrewsWeights =
-    SelectionSet.map2 ResponseData
+    SelectionSet.map2 BrewsWeightsData
         (Query.brews brewSelection)
         (Query.weights weightSelection)
         |> Graphql.Http.queryRequest weightyBeerHost
@@ -51,10 +55,9 @@ requestBrewsWeights =
 
 makeSaveRequest : Model -> ( Model, Cmd Msg )
 makeSaveRequest model =
-    case toExistingTap model.mutation of
+    case toTap model.mutation of
         Just tap ->
-            --            createTapRequest
-            ( model, Cmd.none )
+            ( model, Tap.makeMutationRequest (Tap.createRequest tap Tap.tapSelection) GotSaveResponse )
 
         Nothing ->
             ( { model | error = Just (ErrorDetails "Cannot save: incomplete tap" Nothing) }, Cmd.none )
@@ -75,9 +78,17 @@ getError =
     .error
 
 
+navigateToTaps : Nav.Key -> Cmd Msg
+navigateToTaps =
+    Route.replaceUrl Route.Taps
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        GotSaveResponse response ->
+            updateFromSaveResponse model response
+
         GotResponse response ->
             ( updateFromResponse model response, Cmd.none )
 
@@ -85,13 +96,20 @@ update msg model =
             ( { model | mutation = Component.EditTap.update model.brews model.weights model.mutation field value }, Cmd.none )
 
         Cancel ->
-            ( model, Route.replaceUrl model.navKey Route.Taps )
-
-        Something ->
-            ( model, Cmd.none )
+            ( model, navigateToTaps model.navKey )
 
         Save ->
             makeSaveRequest model
+
+
+updateFromSaveResponse : Model -> SaveResponse -> ( Model, Cmd Msg )
+updateFromSaveResponse model response =
+    case response of
+        Err error ->
+            ( { model | error = Just (errorDetails "Failed to save tap" error) }, Cmd.none )
+
+        Ok data ->
+            ( { model | mutation = toPartial data }, navigateToTaps model.navKey )
 
 
 updateFromResponse : Model -> Response -> Model

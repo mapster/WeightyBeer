@@ -32,10 +32,10 @@ export class TapRepository extends RedisRepository {
         isActive: boolean,
         weight: string,
         brew: string,
-    ): Promise<Tap | undefined> {
+    ): Promise<Tap> {
         const id = await this.newId(ID_COUNTER_KEY);
 
-        const success = await this.set(id, {
+        await this.set(id, {
             id,
             name,
             order: `${order}`,
@@ -45,9 +45,7 @@ export class TapRepository extends RedisRepository {
             brew
         });
 
-        if (success) {
-            return new Tap(id, name, order, volume, isActive, weight, brew);
-        }
+        return new Tap(id, name, order, volume, isActive, weight, brew);
     }
 
     async update(
