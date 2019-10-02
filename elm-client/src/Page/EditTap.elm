@@ -10,7 +10,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
 import Route
-import Type.Tap exposing (Brew, PartialTap, Tap, Weight, brewSelection, tapSelection, toPartial, toTap, updateOriginals, updateTapRequest, weightSelection)
+import Type.Tap exposing (Brew, ExistingTap, PartialTap, Weight, brewSelection, tapSelection, toExistingTap, toPartial, updateOriginals, updateTapRequest, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import WeightyBeer.Query as Query
 
@@ -40,11 +40,11 @@ type alias Response =
 
 
 type alias SaveResponse =
-    Result (Graphql.Http.Error ()) (Maybe Tap)
+    Result (Graphql.Http.Error ()) (Maybe ExistingTap)
 
 
 type alias ResponseData =
-    { tap : Maybe Tap
+    { tap : Maybe ExistingTap
     , brews : List Brew
     , weights : List Weight
     }
@@ -91,17 +91,19 @@ requestTap id =
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> GotResponse)
 
 
-makeUpdateRequest : Model -> (Model, Cmd Msg)
+makeUpdateRequest : Model -> ( Model, Cmd Msg )
 makeUpdateRequest model =
     case model.state of
         EditTap edit ->
-            case toTap edit.mutation of
+            case toExistingTap edit.mutation of
                 Just tap ->
-                    (model, updateTapRequest tap tapSelection GotSaveResponse)
+                    ( model, updateTapRequest tap tapSelection GotSaveResponse )
+
                 Nothing ->
-                    ({ model | state = EditTap { edit | error = Just (ErrorDetails "Cannot save: incomplete tap" Nothing) } }, Cmd.none)
+                    ( { model | state = EditTap { edit | error = Just (ErrorDetails "Cannot save: incomplete tap" Nothing) } }, Cmd.none )
+
         _ ->
-            ({ model | state = Error (ErrorDetails "Cannot save: Tap data missing" Nothing)}, Cmd.none)
+            ( { model | state = Error (ErrorDetails "Cannot save: Tap data missing" Nothing) }, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -190,9 +192,11 @@ updateField field value model =
 
         EditTap { brews, weights, mutation } ->
             let
-                updatedMutation = Component.EditTap.update brews weights mutation field value
+                updatedMutation =
+                    Component.EditTap.update brews weights mutation field value
             in
             EditTap (EditModel brews weights updatedMutation Nothing)
+
 
 view : Model -> Html Msg
 view model =
@@ -214,7 +218,9 @@ mapEditTapMsg msg =
     case msg of
         Component.EditTap.Edit field value ->
             Edit field value
+
         Component.EditTap.Save ->
             Save
+
         Component.EditTap.Cancel ->
             Cancel

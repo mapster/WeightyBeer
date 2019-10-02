@@ -1,4 +1,4 @@
-module Component.EditTap exposing (Field(..), Msg(..), view, update)
+module Component.EditTap exposing (Field, Msg(..), update, view)
 
 import Component.Form exposing (Field, InputType(..), Option, viewButtons, viewField, viewSelect)
 import Component.TapCard as TapCard
@@ -7,7 +7,7 @@ import Html.Attributes exposing (class)
 import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID
 import Type.ModifiableValue as Value exposing (Value)
-import Type.Tap exposing (Brew, PartialTap, Tap, Weight, isModified)
+import Type.Tap exposing (Brew, ExistingTap, PartialTap, Weight, isModified)
 import Type.WeightID as WeightID
 
 
@@ -18,32 +18,41 @@ type Field
     | Brew
     | Weight
 
+
 type Msg
     = Edit Field String
     | Save
     | Cancel
 
+
 update : List Brew -> List Weight -> PartialTap -> Field -> String -> PartialTap
 update brews weights mutation field value =
-   case field of
+    case field of
         Name ->
             { mutation | name = Value.update mutation.name (Just value) }
+
         Volume ->
             { mutation | volume = Value.update mutation.volume (String.toFloat value) }
+
         Order ->
             { mutation | order = Value.update mutation.order (String.toInt value) }
+
         Brew ->
-            { mutation | brew =
+            { mutation
+                | brew =
                     List.filter (.id >> BrewID.eq value) brews
                         |> List.head
                         |> Value.update mutation.brew
             }
+
         Weight ->
-            { mutation | weight =
+            { mutation
+                | weight =
                     List.filter (.id >> WeightID.eq value) weights
                         |> List.head
                         |> Value.update mutation.weight
             }
+
 
 view : List Brew -> List Weight -> PartialTap -> Html Msg
 view brews weights partial =
@@ -53,6 +62,7 @@ view brews weights partial =
         , div [ class "column" ]
             (viewTapCardColumn partial)
         ]
+
 
 viewTapCardColumn : PartialTap -> List (Html msg)
 viewTapCardColumn tap =
@@ -87,6 +97,7 @@ viewForm brews weights partial =
         , viewField order Number (Edit Order)
         , viewButtons Save Cancel (isModified partial)
         ]
+
 
 brewOptions : List Brew -> List Option
 brewOptions brews =

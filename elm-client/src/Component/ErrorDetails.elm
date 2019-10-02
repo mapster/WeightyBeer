@@ -37,9 +37,11 @@ viewErrorDetails showDetails error =
             let
                 details =
                     case graphError of
-                        Graphql.Http.GraphqlError possiblyParsedData list ->
-                            Debug.todo "Show a sensible error message for GraphqlError"
-
+                        -- TODO: Might need some sensible error message here
+                        Graphql.Http.GraphqlError _ _ ->
+                            div []
+                                [ p [] [ text "An error occurred!" ]
+                                ]
                         Graphql.Http.HttpError httpError ->
                             case httpError of
                                 Graphql.Http.BadUrl msg ->

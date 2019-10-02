@@ -1,4 +1,4 @@
-module Type.Tap exposing (Brew, Tap, Weight, brewSelection, tapSelection, updateTapRequest, weightSelection, PartialTap, toTap, toPartial, emptyPartial, isModified, updateOriginals)
+module Type.Tap exposing (Brew, ExistingTap(..), PartialTap, Weight, brewSelection, emptyPartial, isModified, tapSelection, toExistingTap, toPartial, updateOriginals, updateTapRequest, weightSelection)
 
 import Constants exposing (weightyBeerHost)
 import Graphql.Http
@@ -18,17 +18,22 @@ import WeightyBeer.Object.Tap
 import WeightyBeer.Object.TapMutation exposing (UpdateOptionalArguments, UpdateRequiredArguments)
 import WeightyBeer.Object.Weight
 
+
 type alias Tap =
-    { id : TapID
-    , name : String
+    { name : String
     , order : Int
     , volume : Float
     , brew : Maybe Brew
     , weight : Maybe Weight
     }
 
+
+type ExistingTap
+    = ExistingTap TapID Tap
+
+
 type alias PartialTap =
-    { id: Maybe TapID
+    { id : Maybe TapID
     , name : Value String
     , order : Value Int
     , volume : Value Float
@@ -36,8 +41,9 @@ type alias PartialTap =
     , weight : Value Weight
     }
 
-toPartial : Tap -> PartialTap
-toPartial {id, name, order, volume, brew, weight} =
+
+toPartial : ExistingTap -> PartialTap
+toPartial (ExistingTap id { name, order, volume, brew, weight }) =
     PartialTap
         (Just id)
         (Original name)
@@ -46,20 +52,29 @@ toPartial {id, name, order, volume, brew, weight} =
         (Maybe.Extra.unwrap NoValue Original brew)
         (Maybe.Extra.unwrap NoValue Original weight)
 
-emptyPartial : PartialTap
-emptyPartial = PartialTap Nothing NoValue NoValue NoValue NoValue NoValue
 
-toTap: PartialTap -> Maybe Tap
-toTap {id, name, order, volume, brew, weight} =
-    Maybe.map Tap id
-        |> andMap (toMaybe name)
+emptyPartial : PartialTap
+emptyPartial =
+    PartialTap Nothing NoValue NoValue NoValue NoValue NoValue
+
+
+toTap : PartialTap -> Maybe Tap
+toTap { name, order, volume, brew, weight } =
+    Maybe.map Tap (toMaybe name)
         |> andMap (toMaybe order)
         |> andMap (toMaybe volume)
         |> andMap (Just (toMaybe brew))
         |> andMap (Just (toMaybe weight))
 
-updateOriginals : PartialTap -> Tap -> PartialTap
-updateOriginals partial tap =
+
+toExistingTap : PartialTap -> Maybe ExistingTap
+toExistingTap partial =
+    Maybe.map ExistingTap partial.id
+        |> andMap (toTap partial)
+
+
+updateOriginals : PartialTap -> ExistingTap -> PartialTap
+updateOriginals partial (ExistingTap _ tap) =
     PartialTap
         partial.id
         (Value.updateOriginal partial.name <| Just tap.name)
@@ -68,18 +83,21 @@ updateOriginals partial tap =
         (Value.updateOriginal partial.brew tap.brew)
         (Value.updateOriginal partial.weight tap.weight)
 
+
 isModified : PartialTap -> Bool
 isModified partial =
-    Value.isModified partial.name ||
-    Value.isModified partial.order ||
-    Value.isModified partial.volume ||
-    Value.isModified partial.brew ||
-    Value.isModified partial.weight
+    Value.isModified partial.name
+        || Value.isModified partial.order
+        || Value.isModified partial.volume
+        || Value.isModified partial.brew
+        || Value.isModified partial.weight
+
 
 type alias Weight =
     { id : WeightID
     , percent : Int
     }
+
 
 type alias Brew =
     { id : BrewID
@@ -92,15 +110,17 @@ type alias Brew =
     }
 
 
-tapSelection : SelectionSet Tap WeightyBeer.Object.Tap
+tapSelection : SelectionSet ExistingTap WeightyBeer.Object.Tap
 tapSelection =
-    SelectionSet.map6 Tap
+    SelectionSet.map2 ExistingTap
         TapID.selection
-        WeightyBeer.Object.Tap.name
-        WeightyBeer.Object.Tap.order
-        WeightyBeer.Object.Tap.volume
-        (WeightyBeer.Object.Tap.brew brewSelection)
-        (WeightyBeer.Object.Tap.weight weightSelection)
+        (SelectionSet.map5 Tap
+            WeightyBeer.Object.Tap.name
+            WeightyBeer.Object.Tap.order
+            WeightyBeer.Object.Tap.volume
+            (WeightyBeer.Object.Tap.brew brewSelection)
+            (WeightyBeer.Object.Tap.weight weightSelection)
+        )
 
 
 brewSelection : SelectionSet Brew WeightyBeer.Object.Brew
@@ -127,11 +147,25 @@ weightSelection =
         WeightyBeer.Object.Weight.percent
 
 
-updateTapRequest : Tap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error ()) (Maybe result) -> msg) -> Cmd msg
-updateTapRequest tap resultSelectionSet msg =
+
+--createTapRequest : Tap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error ()) (Maybe result) -> msg) -> Cmd msg
+--createTapRequest tap resultSelectionSet msg =
+--    let
+--        required =
+--            { name = tap.name
+--            , order = tap.order
+--            , volume = tap.volume
+--            , isActive = True
+--            }
+--    in
+--    WeightyBeer.Object.TapMutation.create (fillInTapOptionals tap) required resultSelectionSet
+
+
+updateTapRequest : ExistingTap -> SelectionSet result WeightyBeer.Object.Tap -> (Result (Graphql.Http.Error ()) (Maybe result) -> msg) -> Cmd msg
+updateTapRequest (ExistingTap id tap) resultSelectionSet msg =
     let
         required =
-            { id = TapID.toString tap.id
+            { id = TapID.toString id
             , name = tap.name
             , order = tap.order
             , volume = tap.volume
