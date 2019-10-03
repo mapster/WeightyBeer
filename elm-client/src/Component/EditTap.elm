@@ -4,11 +4,13 @@ import Component.Form exposing (Field, InputType(..), Option, viewButtons, viewF
 import Component.TapCard as TapCard
 import Html exposing (Html, div, form)
 import Html.Attributes exposing (class)
+import Maybe.Extra exposing (isJust)
 import String exposing (fromFloat, fromInt)
 import Type.BrewID as BrewID
 import Type.ModifiableValue as Value exposing (Value)
-import Type.Tap exposing (Brew, ExistingTap, PartialTap, Weight, isModified)
+import Type.Tap exposing (Brew, ExistingTap, PartialTap, Weight, isModified, toTap)
 import Type.WeightID as WeightID
+import Utils
 
 
 type Field
@@ -29,7 +31,7 @@ update : List Brew -> List Weight -> PartialTap -> Field -> String -> PartialTap
 update brews weights mutation field value =
     case field of
         Name ->
-            { mutation | name = Value.update mutation.name (Just value) }
+            { mutation | name = Value.update mutation.name (Utils.emptyAsNothing value) }
 
         Volume ->
             { mutation | volume = Value.update mutation.volume (String.toFloat value) }
@@ -75,19 +77,19 @@ viewForm : List Brew -> List Weight -> PartialTap -> Html Msg
 viewForm brews weights partial =
     let
         name =
-            Field "Name" partial.name
+            Field "Name" partial.name True
 
         brew =
-            Field "Brew on tap" (Value.map (.id >> BrewID.toString) partial.brew)
+            Field "Brew on tap" (Value.map (.id >> BrewID.toString) partial.brew) False
 
         weight =
-            Field "Keg weight" (Value.map (.id >> WeightID.toString) partial.weight)
+            Field "Keg weight" (Value.map (.id >> WeightID.toString) partial.weight) False
 
         volume =
-            Field "Volume (L)" (Value.map fromFloat partial.volume)
+            Field "Volume (L)" (Value.map fromFloat partial.volume) True
 
         order =
-            Field "Order" (Value.map fromInt partial.order)
+            Field "Order" (Value.map fromInt partial.order) True
     in
     form [ class "form" ]
         [ viewField name Text (Edit Name)
@@ -95,7 +97,7 @@ viewForm brews weights partial =
         , viewSelect weight (weightOptions weights) (Edit Weight)
         , viewField volume Number (Edit Volume)
         , viewField order Number (Edit Order)
-        , viewButtons Save Cancel (isModified partial)
+        , viewButtons Save Cancel (Utils.and isModified (toTap >> isJust) partial)
         ]
 
 

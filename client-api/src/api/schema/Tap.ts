@@ -51,6 +51,8 @@ export class Tap {
     }
 }
 
+// TODO: Do something about empty strings. Redis will interpret empty string as null and it will fail
+
 @ObjectType()
 export class TapMutation {
 

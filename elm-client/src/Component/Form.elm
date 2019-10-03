@@ -4,15 +4,20 @@ import Html exposing (Attribute, Html, button, div, hr, input, label, select, te
 import Html.Attributes as Attr exposing (class, classList, disabled, for, type_)
 import Html.Events exposing (onClick, onInput)
 import Type.ModifiableValue as Value exposing (Value)
+import Utils
+
 
 type InputType
     = Text
     | Number
 
+
 type alias Field =
     { name : String
     , value : Value String
+    , required : Bool
     }
+
 
 type alias Option =
     { value : String
@@ -20,7 +25,10 @@ type alias Option =
     }
 
 
+
 -- Public
+
+
 viewField : Field -> InputType -> (String -> msg) -> Html msg
 viewField field inputType msg =
     div [ class "field" ]
@@ -32,7 +40,7 @@ viewField field inputType msg =
             , classList [ ( "modified", Value.isModified field.value ) ]
             ]
             []
-        , label [ for (fieldId field) ] [ text field.name ]
+        , label [ for (fieldId field) ] [ fieldLabel field ]
         , hr [ class "divider " ] []
         , hr [ class "divider overlay" ] []
         ]
@@ -47,7 +55,7 @@ viewSelect field options msg =
             , classList [ ( "modified", Value.isModified field.value ) ]
             ]
             (viewOptions field options)
-        , label [ for (fieldId field) ] [ text field.name ]
+        , label [ for (fieldId field) ] [ fieldLabel field ]
         , hr [ class "divider" ] []
         , hr [ class "divider overlay" ] []
         ]
@@ -87,7 +95,7 @@ viewOption field option =
     Html.option
         [ Attr.value option.value
         , Attr.selected (isSelected field option)
---        , classList [ ( "original", Value.isOriginal field.value ) ]
+        , classList [ ( "original", Value.isOriginal field.value (Utils.emptyAsNothing option.value) ) ]
         ]
         [ text option.label ]
 
@@ -97,25 +105,15 @@ isSelected field option =
     Value.toString field.value == option.value
 
 
---isModified : Field -> Bool
---isModified { original, mutation } =
---    Maybe.Extra.isJust mutation && mutation /= original
+fieldLabel : Field -> Html msg
+fieldLabel { name, required } =
+    text <|
+        case required of
+            True ->
+                name ++ " *"
 
-
---isOriginal : Field -> Option -> Bool
---isOriginal { original } option =
---    case original of
---        Nothing ->
---            String.isEmpty option.value
---
---        Just value ->
---            option.value == value
-
-
---reduceValue : Field -> String
---reduceValue { original, mutation } =
---    Maybe.Extra.or mutation original
---        |> Maybe.withDefault ""
+            False ->
+                name
 
 
 fieldId : Field -> String
