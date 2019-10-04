@@ -24,6 +24,11 @@ export class QuerySchema {
         return context.imageRepo.get(id)
     }
 
+    @Query({ isNullable: false, type: [Image]})
+    async images(@Context context: RepoContext): Promise<Image[]> {
+        return context.imageRepo.getAll();
+    }
+
     @Query({ isNullable: true, type: Tap })
     async tap(@Context context: RepoContext, id: string): Promise<Tap | undefined> {
         return await context.tapRepo.get(id);

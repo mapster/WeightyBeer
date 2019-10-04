@@ -6,6 +6,8 @@ services:
     expose: 
       - "6379"
     command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - redis-store:/data
 
   weighthub:
     build:
@@ -32,9 +34,16 @@ services:
       - "3000:3000"
     environment:
       - "WEIGHTYBEER_REDIS=redis"
+      - "WEIGHTYBEER_BREW_IMAGE_PATH=/data/brew-images/"
+    volumes:
+      - blob-store:/data
 
   web-client:
     build:
       context: ./elm-client
     ports:
       - "8080:80"
+
+volumes:
+  blob-store:
+  redis-store:
