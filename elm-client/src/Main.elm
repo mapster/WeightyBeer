@@ -5,6 +5,7 @@ import Browser.Navigation as Nav
 import Component.ErrorDetails as ErrorDetails
 import Html exposing (Html, a, div)
 import Html.Attributes exposing (class)
+import Page.Brews as Brews
 import Page.EditTap as EditTap
 import Page.Home as Home
 import Page.NewTap as NewTap
@@ -37,6 +38,7 @@ type PageMsg
     | TapsMsg Taps.Msg
     | NewTapMsg NewTap.Msg
     | EditTapMsg EditTap.Msg
+    | BrewsMsg Brews.Msg
 
 
 type alias Model =
@@ -53,6 +55,7 @@ type Page
     | Taps Taps.Model
     | NewTap NewTap.Model
     | EditTap EditTap.Model
+    | Brews Brews.Model
 
 
 setPage : Model -> Page -> Model
@@ -93,6 +96,16 @@ changeRouteTo navKey maybeRoute =
         Just (Route.EditTap id) ->
             EditTap.init navKey id
                 |> updateWith EditTap EditTapMsg
+
+        Just Route.Brews ->
+            Brews.init
+                |> updateWith Brews BrewsMsg
+
+        Just (Route.EditBrew id) ->
+            ( NotFound, Cmd.none )
+
+        Just Route.NewBrew ->
+            ( NotFound, Cmd.none )
 
 
 updateWith : (srcModel -> targetModel) -> (srcMsg -> targetMsg) -> ( srcModel, Cmd srcMsg ) -> ( targetModel, Cmd targetMsg )
@@ -161,6 +174,15 @@ updatePage msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        BrewsMsg brewsMsg ->
+            case model.page of
+                Brews brews ->
+                    Brews.update brewsMsg brews
+                        |> updateWith (Brews >> setPage model) (BrewsMsg >> ToPage)
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -179,6 +201,9 @@ subscriptions model =
 
         EditTap editTap ->
             Sub.map (EditTapMsg >> ToPage) (EditTap.subscriptions editTap)
+
+        Brews brews ->
+            Sub.map (BrewsMsg >> ToPage) (Brews.subscriptions brews)
 
 
 view : Model -> Html Msg
@@ -210,6 +235,9 @@ viewPage page =
 
             EditTap editTap ->
                 Html.map (EditTapMsg >> ToPage) (EditTap.view editTap)
+
+            Brews brews ->
+                Html.map (BrewsMsg >> ToPage) (Brews.view brews)
         ]
 
 
@@ -232,6 +260,9 @@ viewErrors model =
 
                 EditTap editTapModel ->
                     EditTap.getError editTapModel
+
+                Brews _ ->
+                    Nothing
     in
     case errorDetails of
         Just error ->
@@ -246,7 +277,7 @@ viewMenu =
     div [ class "page-menu" ]
         [ viewMenuEntry "Home" Route.Home
         , viewMenuEntry "Taps" Route.Taps
-        , viewMenuEntry "Brews" Route.Taps
+        , viewMenuEntry "Brews" Route.Brews
         , viewMenuEntry "Weight Hub" Route.Taps
         , div [ class "space" ] []
         ]

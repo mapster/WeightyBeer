@@ -56,7 +56,7 @@ requestTaps =
         |> Graphql.Http.send (RemoteData.fromResult >> GotTapsResponse)
 
 
-tapsQuery : SelectionSet (List Tap) RootQuery
+tapsQuery : SelectionSet Taps RootQuery
 tapsQuery =
     Query.taps tapSelection
 
@@ -105,10 +105,10 @@ view model =
         [ AddButton.view Route.NewTap
         , case model of
             RemoteData.Loading ->
-                text "Loading..."
+                div [] []
 
             RemoteData.NotAsked ->
-                text "Not asked!"
+                div [] []
 
             RemoteData.Failure e ->
                 text "Failed to fetch taps: "
