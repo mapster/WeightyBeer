@@ -10,7 +10,8 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
 import Route
-import Type.Tap as Tap exposing (Brew, ExistingTap, PartialTap, Weight, brewSelection, tapSelection, toExistingTap, toPartial, updateOriginals, weightSelection)
+import Type.Brew exposing (Brew, brewSelection)
+import Type.Tap as Tap exposing (ExistingTap, PartialTap, Weight, tapSelection, toExistingTap, toPartial, updateOriginals, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import WeightyBeer.Query as Query
 

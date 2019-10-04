@@ -3,8 +3,9 @@ module Component.TapCard exposing (view)
 import Html exposing (Attribute, Html, div, hr, text)
 import Html.Attributes exposing (class, style)
 import String exposing (fromFloat, fromInt)
+import Type.Brew exposing (Brew)
 import Type.ModifiableValue as Value exposing (Value)
-import Type.Tap exposing (Brew, ExistingTap, PartialTap)
+import Type.Tap exposing (ExistingTap, PartialTap)
 import Utils exposing (textClass, textEl)
 
 
@@ -35,6 +36,7 @@ tapCardBodyAttrs brew =
     let
         imageUrl =
             Maybe.andThen .image brew
+                |> Maybe.map .url
                 |> Maybe.withDefault "/img/fallback-brew-image.png"
     in
     style "background-image" ("url(" ++ imageUrl ++ ")") :: [ class "tap-card-body" ]

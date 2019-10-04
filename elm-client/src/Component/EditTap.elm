@@ -6,9 +6,10 @@ import Html exposing (Html, div, form)
 import Html.Attributes exposing (class)
 import Maybe.Extra exposing (isJust)
 import String exposing (fromFloat, fromInt)
+import Type.Brew exposing (Brew)
 import Type.BrewID as BrewID
 import Type.ModifiableValue as Value exposing (Value)
-import Type.Tap exposing (Brew, ExistingTap, PartialTap, Weight, isModified, toTap)
+import Type.Tap exposing (ExistingTap, PartialTap, Weight, isModified, toTap)
 import Type.WeightID as WeightID
 import Utils
 

@@ -7,7 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import RemoteData exposing (RemoteData)
 import Time
-import Type.Tap exposing (Brew, ExistingTap(..), Weight, tapSelection, toPartial, weightSelection)
+import Type.Tap exposing (ExistingTap(..), Weight, tapSelection, toPartial, weightSelection)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Query as Query
 

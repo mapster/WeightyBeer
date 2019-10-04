@@ -27,6 +27,8 @@ parser =
         , Parser.map NewTap (s "taps" </> s "_new")
         , Parser.map EditTap (s "taps" </> TapID.urlParser)
         , Parser.map Brews (s "brews")
+        , Parser.map NewBrew (s "brews" </> s "_new")
+        , Parser.map EditBrew (s "brews" </> BrewID.urlParser)
         ]
 
 

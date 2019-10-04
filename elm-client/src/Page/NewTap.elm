@@ -9,7 +9,8 @@ import Graphql.SelectionSet as SelectionSet
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Route
-import Type.Tap as Tap exposing (Brew, ExistingTap, PartialTap, Weight, brewSelection, emptyPartial, toExistingTap, toPartial, toTap, weightSelection)
+import Type.Brew exposing (Brew, brewSelection)
+import Type.Tap as Tap exposing (ExistingTap, PartialTap, Weight, emptyPartial, toExistingTap, toPartial, toTap, weightSelection)
 import WeightyBeer.Query as Query
 
 

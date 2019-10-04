@@ -8,6 +8,7 @@ import Html.Attributes exposing (class)
 import Page.Brews as Brews
 import Page.EditTap as EditTap
 import Page.Home as Home
+import Page.NewBrew as NewBrew
 import Page.NewTap as NewTap
 import Page.Taps as Taps
 import Route exposing (Route, href)
@@ -39,6 +40,7 @@ type PageMsg
     | NewTapMsg NewTap.Msg
     | EditTapMsg EditTap.Msg
     | BrewsMsg Brews.Msg
+    | NewBrewMsg NewBrew.Msg
 
 
 type alias Model =
@@ -56,6 +58,7 @@ type Page
     | NewTap NewTap.Model
     | EditTap EditTap.Model
     | Brews Brews.Model
+    | NewBrew NewBrew.Model
 
 
 setPage : Model -> Page -> Model
@@ -105,7 +108,8 @@ changeRouteTo navKey maybeRoute =
             ( NotFound, Cmd.none )
 
         Just Route.NewBrew ->
-            ( NotFound, Cmd.none )
+            NewBrew.init
+                |> updateWith NewBrew NewBrewMsg
 
 
 updateWith : (srcModel -> targetModel) -> (srcMsg -> targetMsg) -> ( srcModel, Cmd srcMsg ) -> ( targetModel, Cmd targetMsg )
@@ -183,6 +187,15 @@ updatePage msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        NewBrewMsg newBrewMsg ->
+            case model.page of
+                NewBrew newBrew ->
+                    NewBrew.update newBrewMsg newBrew
+                        |> updateWith (NewBrew >> setPage model) (NewBrewMsg >> ToPage)
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -204,6 +217,9 @@ subscriptions model =
 
         Brews brews ->
             Sub.map (BrewsMsg >> ToPage) (Brews.subscriptions brews)
+
+        NewBrew newBrew ->
+            Sub.map (NewBrewMsg >> ToPage) (NewBrew.subscriptions newBrew)
 
 
 view : Model -> Html Msg
@@ -238,6 +254,9 @@ viewPage page =
 
             Brews brews ->
                 Html.map (BrewsMsg >> ToPage) (Brews.view brews)
+
+            NewBrew newBrew ->
+                Html.map (NewBrewMsg >> ToPage) (NewBrew.view newBrew)
         ]
 
 
@@ -263,6 +282,9 @@ viewErrors model =
 
                 Brews _ ->
                     Nothing
+
+                NewBrew newBrewModel ->
+                    NewBrew.getError newBrewModel
     in
     case errorDetails of
         Just error ->

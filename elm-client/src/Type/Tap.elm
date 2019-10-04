@@ -1,4 +1,4 @@
-module Type.Tap exposing (Brew, ExistingTap(..), PartialTap, Weight, brewSelection, createRequest, emptyPartial, isModified, makeMutationRequest, tapSelection, toExistingTap, toPartial, toTap, updateOriginals, updateRequest, weightSelection)
+module Type.Tap exposing (ExistingTap(..), PartialTap, Weight, createRequest, emptyPartial, isModified, makeMutationRequest, tapSelection, toExistingTap, toPartial, toTap, updateOriginals, updateRequest, weightSelection)
 
 import Constants exposing (weightyBeerHost)
 import Graphql.Http
@@ -6,14 +6,13 @@ import Graphql.OptionalArgument as OptionalArgument exposing (OptionalArgument(.
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Maybe
 import Maybe.Extra exposing (andMap)
+import Type.Brew exposing (Brew, brewSelection)
 import Type.BrewID as BrewID exposing (BrewID)
 import Type.ModifiableValue as Value exposing (Value(..), toMaybe)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Mutation as Mutation
 import WeightyBeer.Object
-import WeightyBeer.Object.Brew
-import WeightyBeer.Object.Image
 import WeightyBeer.Object.Tap
 import WeightyBeer.Object.TapMutation exposing (UpdateOptionalArguments, UpdateRequiredArguments)
 import WeightyBeer.Object.Weight
@@ -99,17 +98,6 @@ type alias Weight =
     }
 
 
-type alias Brew =
-    { id : BrewID
-    , brewNumber : Int
-    , name : String
-    , style : String
-    , ibu : Int
-    , abv : Float
-    , image : Maybe String
-    }
-
-
 tapSelection : SelectionSet ExistingTap WeightyBeer.Object.Tap
 tapSelection =
     SelectionSet.map2 ExistingTap
@@ -121,23 +109,6 @@ tapSelection =
             (WeightyBeer.Object.Tap.brew brewSelection)
             (WeightyBeer.Object.Tap.weight weightSelection)
         )
-
-
-brewSelection : SelectionSet Brew WeightyBeer.Object.Brew
-brewSelection =
-    SelectionSet.map7 Brew
-        BrewID.selection
-        WeightyBeer.Object.Brew.brewNumber
-        WeightyBeer.Object.Brew.name
-        WeightyBeer.Object.Brew.style
-        WeightyBeer.Object.Brew.ibu
-        WeightyBeer.Object.Brew.abv
-        (WeightyBeer.Object.Brew.image imageSelection)
-
-
-imageSelection : SelectionSet String WeightyBeer.Object.Image
-imageSelection =
-    WeightyBeer.Object.Image.url
 
 
 weightSelection : SelectionSet Weight WeightyBeer.Object.Weight
