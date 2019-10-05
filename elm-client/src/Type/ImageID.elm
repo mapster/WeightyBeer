@@ -1,6 +1,7 @@
-module Type.ImageID exposing (ImageID, eq, selection, toString, urlParser)
+module Type.ImageID exposing (ImageID, eq, jsonDecode, selection, toString, urlParser)
 
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
+import Json.Decode
 import Url.Parser
 import WeightyBeer.Object
 import WeightyBeer.Object.Image
@@ -28,3 +29,8 @@ urlParser =
 selection : SelectionSet ImageID WeightyBeer.Object.Image
 selection =
     SelectionSet.map ImageID WeightyBeer.Object.Image.id
+
+
+jsonDecode : Json.Decode.Decoder ImageID
+jsonDecode =
+    Json.Decode.map ImageID (Json.Decode.field "id" Json.Decode.string)

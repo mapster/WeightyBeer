@@ -1,8 +1,13 @@
+@import url("common/single-card.css");
+@import url("common/two-column-card.css");
+@import url("common/modal.css");
 @import url("component/table.css");
 @import url("component/tap-card.css");
 @import url("component/form.css");
 @import url("component/error-details.css");
 @import url("component/add-button.css");
+@import url("component/button.css");
+@import url("component/choose-image.css");
 @import url("page/edit-tap.css");
 @import url("page/home.css");
 
@@ -113,4 +118,18 @@ a.symbol-link {
     color: white;
     font-size: 30px;
     font-weight: 1;
+}
+
+button.text-button {
+    font-size: 100%;
+    font-family: inherit;
+    border: 0;
+    padding: 0;
+    margin: 5px;
+    background: none;
+    color: inherit;
+}
+
+button.text-button:focus {
+    outline: none;
 }

@@ -32,10 +32,10 @@ export class BrewRepository extends RedisRepository {
         ibu: number,
         abv: number,
         image: string,
-    ): Promise<Brew | undefined> {
+    ): Promise<Brew> {
         const id = await this.newId(ID_COUNTER_KEY);
 
-        const success = await this.set(id, {
+        await this.set(id, {
             id,
             brewNumber: `${brewNumber}`,
             name,
@@ -45,9 +45,7 @@ export class BrewRepository extends RedisRepository {
             image,
         });
 
-        if (success) {
-            return new Brew(id, brewNumber, name, style, ibu, abv, image);
-        }
+        return new Brew(id, brewNumber, name, style, ibu, abv, image);
     }
 
     async update(

@@ -108,7 +108,7 @@ changeRouteTo navKey maybeRoute =
             ( NotFound, Cmd.none )
 
         Just Route.NewBrew ->
-            NewBrew.init
+            NewBrew.init navKey
                 |> updateWith NewBrew NewBrewMsg
 
 

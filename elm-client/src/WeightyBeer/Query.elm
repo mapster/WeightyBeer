@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Query exposing (BrewRequiredArguments, ImageRequiredArguments, TapRequiredArguments, WeightRequiredArguments, brew, brews, image, tap, taps, weight, weights)
+module WeightyBeer.Query exposing (BrewRequiredArguments, ImageRequiredArguments, TapRequiredArguments, WeightRequiredArguments, brew, brews, image, images, tap, taps, weight, weights)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -40,6 +40,11 @@ type alias ImageRequiredArguments =
 image : ImageRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Image -> SelectionSet (Maybe decodesTo) RootQuery
 image requiredArgs object_ =
     Object.selectionForCompositeField "image" [ Argument.required "id" requiredArgs.id Encode.string ] object_ (identity >> Decode.nullable)
+
+
+images : SelectionSet decodesTo WeightyBeer.Object.Image -> SelectionSet (List decodesTo) RootQuery
+images object_ =
+    Object.selectionForCompositeField "images" [] object_ (identity >> Decode.list)
 
 
 type alias TapRequiredArguments =

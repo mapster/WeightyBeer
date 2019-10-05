@@ -59,7 +59,7 @@ update brews weights mutation field value =
 
 view : List Brew -> List Weight -> PartialTap -> Html Msg
 view brews weights partial =
-    div [ class "edit-tap-card" ]
+    div [ class "two-column-card" ]
         [ div [ class "column" ]
             [ viewForm brews weights partial ]
         , div [ class "column" ]

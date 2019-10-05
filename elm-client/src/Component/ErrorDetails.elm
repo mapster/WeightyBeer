@@ -1,6 +1,6 @@
 module Component.ErrorDetails exposing (ErrorDetails, errorDetails, view)
 
-import Constants exposing (weightyBeerHost)
+import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
 import Html exposing (Html, button, div, p, text)
 import Html.Attributes exposing (class)
@@ -42,6 +42,7 @@ viewErrorDetails showDetails error =
                             div []
                                 [ p [] [ text "An error occurred!" ]
                                 ]
+
                         Graphql.Http.HttpError httpError ->
                             case httpError of
                                 Graphql.Http.BadUrl msg ->
@@ -56,7 +57,7 @@ viewErrorDetails showDetails error =
 
                                 Graphql.Http.NetworkError ->
                                     div []
-                                        [ p [] [ text ("Network error: Are you sure that the WeightyBeer API is running on '" ++ weightyBeerHost ++ "'?") ]
+                                        [ p [] [ text ("Network error: Are you sure that the WeightyBeer API is running on '" ++ weightyBeerGraphql ++ "'?") ]
                                         ]
 
                                 Graphql.Http.BadStatus metadata errorMsg ->
@@ -72,7 +73,7 @@ viewErrorDetails showDetails error =
 
                                         404 ->
                                             div []
-                                                [ p [] [ text ("404 - Not Found: Are you running WeightyBeer API at '" ++ weightyBeerHost ++ "'?") ]
+                                                [ p [] [ text ("404 - Not Found: Are you running WeightyBeer API at '" ++ weightyBeerGraphql ++ "'?") ]
                                                 ]
 
                                         other ->

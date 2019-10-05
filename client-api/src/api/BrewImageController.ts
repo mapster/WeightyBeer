@@ -10,9 +10,9 @@ export default class BrewImageController {
         if (req.files && Object.keys(req.files).length >= 0 && req.files.brewImage && !(req.files.brewImage instanceof Array)) {
             const file = req.files.brewImage;
 
-            const id = await this.imageRepo.create(file);
+            const image = await this.imageRepo.create(file);
 
-            res.status(200).send(id);
+            res.status(200).send(image);
             return;
         }
 

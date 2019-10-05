@@ -1,0 +1,18 @@
+.two-column-card {
+    background-color: #424242;
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-evenly;
+}
+
+.two-column-card .column {
+    flex-grow: 1;
+    margin: 20px;
+    min-width: 300px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}

@@ -12,7 +12,7 @@ export class ImageRepository extends RedisRepository {
         super(redis);
     }
 
-    async create(file: UploadedFile): Promise<string> {
+    async create(file: UploadedFile): Promise<Image> {
         const id = await this.newId(ID_COUNTER_KEY);
         const filename = `${id}_${file.name}`;        
 
@@ -21,7 +21,7 @@ export class ImageRepository extends RedisRepository {
         const imageUpload = {id, filename};
         await this.set(id, imageUpload);
 
-        return id;
+        return ImageRepository.fromFieldValues({id, filename}) as Image;
     }
 
     async get(id: string): Promise<Image | undefined> {
@@ -40,7 +40,11 @@ export class ImageRepository extends RedisRepository {
         const image = ImageRepository.fromFieldValues(fieldValues);
 
         if (image) {
-            fs.unlinkSync(fieldValues.filename);
+            try {
+                fs.unlinkSync(fieldValues.filename);
+            } catch (e) {
+                console.warn(`Couldn remove image file for ${id}: ${e}`);
+            }
             if (await this.del(id) !== 1) {
                 throw "Failed to delete image."
             }

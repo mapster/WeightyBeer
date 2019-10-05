@@ -1,0 +1,45 @@
+.image-gallery {
+    background-color: rgb(48, 48, 48);
+    width: 75%;
+    height: 75%;
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapped-cards-container {
+    width: 98%;
+    height: 87%;
+
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.image-card {
+    margin: 5px;
+    width: 250px;
+    height: 173px;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.image-card .buttons {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.54);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.choose-image-component > .buttons {
+    margin-left: 5px;
+}
+

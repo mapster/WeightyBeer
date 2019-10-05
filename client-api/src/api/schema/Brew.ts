@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID, Context } from 'typegql';
+import { ObjectType, Field, ID, Context, Arg } from 'typegql';
 import { Image } from './Image';
 import { RepoContext } from '../../RepoContext';
 import { BrewRepository } from '../../dao/BrewRepository';
@@ -44,16 +44,16 @@ export class Brew {
 @ObjectType()
 export class BrewMutation {
 
-    @Field({ isNullable: true, type: Brew })
+    @Field({ isNullable: false, type: Brew })
     async create(
         @Context context: RepoContext,
-        brewNumber: number,
+        @Arg({ type: GraphQLInt }) brewNumber: number,
         name: string,
         style: string,
-        ibu: number,
+        @Arg({ type: GraphQLInt }) ibu: number,
         abv: number,
-        image: string,
-    ): Promise<Brew | undefined> {
+        @Arg({ isNullable: true }) image: string,
+    ): Promise<Brew> {
         return await context.brewRepo.create(brewNumber, name, style, ibu, abv, image);
     }
 

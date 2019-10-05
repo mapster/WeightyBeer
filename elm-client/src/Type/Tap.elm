@@ -1,6 +1,6 @@
 module Type.Tap exposing (ExistingTap(..), PartialTap, Weight, createRequest, emptyPartial, isModified, makeMutationRequest, tapSelection, toExistingTap, toPartial, toTap, updateOriginals, updateRequest, weightSelection)
 
-import Constants exposing (weightyBeerHost)
+import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
 import Graphql.OptionalArgument as OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
@@ -11,6 +11,7 @@ import Type.BrewID as BrewID exposing (BrewID)
 import Type.ModifiableValue as Value exposing (Value(..), toMaybe)
 import Type.TapID as TapID exposing (TapID)
 import Type.WeightID as WeightID exposing (WeightID)
+import Utils exposing (fillInOptional)
 import WeightyBeer.Mutation as Mutation
 import WeightyBeer.Object
 import WeightyBeer.Object.Tap
@@ -152,13 +153,8 @@ updateRequest (ExistingTap id tap) resultSelectionSet =
 makeMutationRequest : MutationRequest result -> (Result (Graphql.Http.Error ()) result -> msg) -> Cmd msg
 makeMutationRequest request msg =
     Mutation.tap request
-        |> Graphql.Http.mutationRequest weightyBeerHost
+        |> Graphql.Http.mutationRequest weightyBeerGraphql
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> msg)
-
-
-fillInOptional : Maybe a -> (a -> b) -> OptionalArgument b
-fillInOptional arg getter =
-    (OptionalArgument.fromMaybe >> OptionalArgument.map getter) arg
 
 
 type alias MutationOptionalArguments =

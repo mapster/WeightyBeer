@@ -1,5 +1,6 @@
-module Utils exposing (and, emptyAsNothing, textClass, textEl)
+module Utils exposing (and, emptyAsNothing, fillInOptional, textClass, textEl)
 
+import Graphql.OptionalArgument as OptionalArgument exposing (OptionalArgument)
 import Html exposing (Html, span, text)
 import Html.Attributes exposing (class)
 
@@ -27,3 +28,8 @@ emptyAsNothing str =
 
         False ->
             Just str
+
+
+fillInOptional : Maybe a -> (a -> b) -> OptionalArgument b
+fillInOptional arg getter =
+    (OptionalArgument.fromMaybe >> OptionalArgument.map getter) arg

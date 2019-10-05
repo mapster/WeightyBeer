@@ -3,7 +3,7 @@ module Page.EditTap exposing (Model, Msg, getError, init, subscriptions, update,
 import Browser.Navigation as Nav
 import Component.EditTap exposing (Field(..))
 import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
-import Constants exposing (weightyBeerHost)
+import Constants exposing (weightyBeerGraphql)
 import Graphql.Http exposing (RawError(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html, div, text)
@@ -88,7 +88,7 @@ requestTap id =
         (Query.tap (TapID.toArg id) tapSelection)
         (Query.brews brewSelection)
         (Query.weights weightSelection)
-        |> Graphql.Http.queryRequest weightyBeerHost
+        |> Graphql.Http.queryRequest weightyBeerGraphql
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> GotResponse)
 
 
@@ -218,7 +218,7 @@ view model =
             div [] [ text e.message ]
 
         EditTap { brews, weights, mutation } ->
-            div [ class "edit-tap-page-container" ]
+            div [ class "single-card-page-container", class "edit-tap" ]
                 [ Html.map mapEditTapMsg <| Component.EditTap.view brews weights mutation
                 ]
 
