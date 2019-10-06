@@ -1,4 +1,4 @@
-module Type.Brew exposing (Brew, Image, PartialBrew, brewSelection, createRequest, emptyPartial, imageDecoder, imageSelection, isModified, makeDeleteImageRequest, makeMutationRequest, toNewBrew, toPartial)
+module Type.Brew exposing (Brew, Image, PartialBrew, brewSelection, createRequest, emptyPartial, imageDecoder, imageSelection, isModified, makeDeleteImageRequest, makeMutationRequest, toBrew, toNewBrew, toPartial, updateRequest)
 
 import Constants exposing (weightyBeerGraphql, weightyBeerHost)
 import Graphql.Http
@@ -83,6 +83,17 @@ emptyPartial =
     PartialBrew Nothing NoValue NoValue NoValue NoValue NoValue NoValue
 
 
+toBrew : PartialBrew -> Maybe Brew
+toBrew { id, brewNumber, name, style, ibu, abv, image } =
+    Maybe.map Brew id
+        |> andMap (Value.toMaybe brewNumber)
+        |> andMap (Value.toMaybe name)
+        |> andMap (Value.toMaybe style)
+        |> andMap (Value.toMaybe ibu)
+        |> andMap (Value.toMaybe abv)
+        |> andMap (Just (Value.toMaybe image))
+
+
 toNewBrew : PartialBrew -> Maybe NewBrew
 toNewBrew { brewNumber, name, style, ibu, abv, image } =
     Maybe.map NewBrew (Value.toMaybe brewNumber)
@@ -131,6 +142,21 @@ type alias MutationRequest result =
     SelectionSet result WeightyBeer.Object.BrewMutation
 
 
+updateRequest : Brew -> SelectionSet result WeightyBeer.Object.Brew -> MutationRequest (Maybe result)
+updateRequest brew resultSelectionSet =
+    let
+        required =
+            { id = BrewID.toString brew.id
+            , brewNumber = brew.brewNumber
+            , name = brew.name
+            , style = brew.style
+            , ibu = brew.ibu
+            , abv = brew.abv
+            }
+    in
+    WeightyBeer.Object.BrewMutation.update (fillInBrewOptionals brew) required resultSelectionSet
+
+
 createRequest : NewBrew -> SelectionSet result WeightyBeer.Object.Brew -> MutationRequest result
 createRequest brew resultSelectionSet =
     let
@@ -156,6 +182,6 @@ type alias MutationOptionalArguments =
     { image : OptionalArgument String }
 
 
-fillInBrewOptionals : NewBrew -> MutationOptionalArguments -> MutationOptionalArguments
+fillInBrewOptionals : { a | image : Maybe Image } -> MutationOptionalArguments -> MutationOptionalArguments
 fillInBrewOptionals brew _ =
     { image = fillInOptional brew.image (.id >> ImageID.toString) }

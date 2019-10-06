@@ -61,12 +61,12 @@ export class BrewMutation {
     async update(
         @Context context: RepoContext,
         id: string,
-        brewNumber: number,
+        @Arg({ type: GraphQLInt }) brewNumber: number,
         name: string,
         style: string,
-        ibu: number,
+        @Arg({ type: GraphQLInt }) ibu: number,
         abv: number,
-        image: string,
+        @Arg({ isNullable: true }) image: string,
     ): Promise<Brew | undefined> {
         return context.brewRepo.update(id, brewNumber, name, style, ibu, abv, image);
     }

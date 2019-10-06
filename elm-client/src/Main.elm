@@ -6,6 +6,7 @@ import Component.ErrorDetails as ErrorDetails
 import Html exposing (Html, a, div)
 import Html.Attributes exposing (class)
 import Page.Brews as Brews
+import Page.EditBrew as EditBrew
 import Page.EditTap as EditTap
 import Page.Home as Home
 import Page.NewBrew as NewBrew
@@ -41,6 +42,7 @@ type PageMsg
     | EditTapMsg EditTap.Msg
     | BrewsMsg Brews.Msg
     | NewBrewMsg NewBrew.Msg
+    | EditBrewMsg EditBrew.Msg
 
 
 type alias Model =
@@ -59,6 +61,7 @@ type Page
     | EditTap EditTap.Model
     | Brews Brews.Model
     | NewBrew NewBrew.Model
+    | EditBrew EditBrew.Model
 
 
 setPage : Model -> Page -> Model
@@ -105,7 +108,8 @@ changeRouteTo navKey maybeRoute =
                 |> updateWith Brews BrewsMsg
 
         Just (Route.EditBrew id) ->
-            ( NotFound, Cmd.none )
+            EditBrew.init navKey id
+                |> updateWith EditBrew EditBrewMsg
 
         Just Route.NewBrew ->
             NewBrew.init navKey
@@ -196,6 +200,15 @@ updatePage msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        EditBrewMsg editBrewMsg ->
+            case model.page of
+                EditBrew editBrew ->
+                    EditBrew.update editBrewMsg editBrew
+                        |> updateWith (EditBrew >> setPage model) (EditBrewMsg >> ToPage)
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -220,6 +233,9 @@ subscriptions model =
 
         NewBrew newBrew ->
             Sub.map (NewBrewMsg >> ToPage) (NewBrew.subscriptions newBrew)
+
+        EditBrew editBrew ->
+            Sub.map (EditBrewMsg >> ToPage) (EditBrew.subscriptions editBrew)
 
 
 view : Model -> Html Msg
@@ -257,6 +273,9 @@ viewPage page =
 
             NewBrew newBrew ->
                 Html.map (NewBrewMsg >> ToPage) (NewBrew.view newBrew)
+
+            EditBrew editBrew ->
+                Html.map (EditBrewMsg >> ToPage) (EditBrew.view editBrew)
         ]
 
 
@@ -285,6 +304,9 @@ viewErrors model =
 
                 NewBrew newBrewModel ->
                     NewBrew.getError newBrewModel
+
+                EditBrew editBrewModel ->
+                    EditBrew.getError editBrewModel
     in
     case errorDetails of
         Just error ->

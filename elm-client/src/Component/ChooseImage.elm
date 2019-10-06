@@ -83,11 +83,11 @@ viewButtons =
         ]
 
 
-viewImage : Maybe Image -> Html msg
+viewImage : Maybe Image -> Html Msg
 viewImage maybe =
     case maybe of
         Just image ->
-            div [ class "image-card", style "background-image" ("url(" ++ image.url ++ ")") ] []
+            viewImageCard maybe image
 
         Nothing ->
             div [ class "image-card" ] []

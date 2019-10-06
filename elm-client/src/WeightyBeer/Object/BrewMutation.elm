@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Object.BrewMutation exposing (CreateOptionalArguments, CreateRequiredArguments, RemoveRequiredArguments, UpdateRequiredArguments, create, remove, update)
+module WeightyBeer.Object.BrewMutation exposing (CreateOptionalArguments, CreateRequiredArguments, RemoveRequiredArguments, UpdateOptionalArguments, UpdateRequiredArguments, create, remove, update)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -45,20 +45,31 @@ create fillInOptionals requiredArgs object_ =
     Object.selectionForCompositeField "create" (optionalArgs ++ [ Argument.required "brewNumber" requiredArgs.brewNumber Encode.int, Argument.required "name" requiredArgs.name Encode.string, Argument.required "style" requiredArgs.style Encode.string, Argument.required "ibu" requiredArgs.ibu Encode.int, Argument.required "abv" requiredArgs.abv Encode.float ]) object_ identity
 
 
+type alias UpdateOptionalArguments =
+    { image : OptionalArgument String }
+
+
 type alias UpdateRequiredArguments =
     { id : String
-    , brewNumber : Float
+    , brewNumber : Int
     , name : String
     , style : String
-    , ibu : Float
+    , ibu : Int
     , abv : Float
-    , image : String
     }
 
 
-update : UpdateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Brew -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.BrewMutation
-update requiredArgs object_ =
-    Object.selectionForCompositeField "update" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "brewNumber" requiredArgs.brewNumber Encode.float, Argument.required "name" requiredArgs.name Encode.string, Argument.required "style" requiredArgs.style Encode.string, Argument.required "ibu" requiredArgs.ibu Encode.float, Argument.required "abv" requiredArgs.abv Encode.float, Argument.required "image" requiredArgs.image Encode.string ] object_ (identity >> Decode.nullable)
+update : (UpdateOptionalArguments -> UpdateOptionalArguments) -> UpdateRequiredArguments -> SelectionSet decodesTo WeightyBeer.Object.Brew -> SelectionSet (Maybe decodesTo) WeightyBeer.Object.BrewMutation
+update fillInOptionals requiredArgs object_ =
+    let
+        filledInOptionals =
+            fillInOptionals { image = Absent }
+
+        optionalArgs =
+            [ Argument.optional "image" filledInOptionals.image Encode.string ]
+                |> List.filterMap identity
+    in
+    Object.selectionForCompositeField "update" (optionalArgs ++ [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "brewNumber" requiredArgs.brewNumber Encode.int, Argument.required "name" requiredArgs.name Encode.string, Argument.required "style" requiredArgs.style Encode.string, Argument.required "ibu" requiredArgs.ibu Encode.int, Argument.required "abv" requiredArgs.abv Encode.float ]) object_ (identity >> Decode.nullable)
 
 
 type alias RemoveRequiredArguments =

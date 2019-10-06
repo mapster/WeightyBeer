@@ -1,11 +1,12 @@
 module Page.NewBrew exposing (Model, Msg, getError, init, subscriptions, update, view)
 
 import Browser.Navigation as Nav
-import Component.EditBrew
+import Component.EditBrew exposing (navigateToBrews)
 import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
 import Graphql.Http
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
+import Maybe.Extra
 import Route
 import Type.Brew as Brew exposing (Brew, Image, PartialBrew, emptyPartial, toNewBrew, toPartial)
 
@@ -29,8 +30,8 @@ type alias SaveResponse =
 
 
 getError : Model -> Maybe ErrorDetails
-getError =
-    .error
+getError model =
+    Maybe.Extra.or model.error model.editModel.error
 
 
 subscriptions : Model -> Sub Msg
@@ -85,11 +86,6 @@ updateFromSaveResponse model response =
 
         Ok data ->
             ( { model | editModel = Component.EditBrew.updateMutation model.editModel (toPartial data) }, navigateToBrews model.navKey )
-
-
-navigateToBrews : Nav.Key -> Cmd Msg
-navigateToBrews =
-    Route.replaceUrl Route.Brews
 
 
 view : Model -> Html Msg

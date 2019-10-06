@@ -1,5 +1,6 @@
-module Component.EditBrew exposing (InternalMsg, Model, Msg(..), init, update, updateMutation, uploadImage, view)
+module Component.EditBrew exposing (InternalMsg, Model, Msg(..), init, navigateToBrews, update, updateMutation, uploadImage, view)
 
+import Browser.Navigation as Nav
 import Component.ChooseImage
 import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
 import Component.Form exposing (Field, InputType(..), viewButtons, viewField)
@@ -11,6 +12,7 @@ import Html exposing (Html, div, form)
 import Html.Attributes exposing (class)
 import Http
 import Maybe.Extra exposing (isJust)
+import Route
 import Type.Brew exposing (Image, PartialBrew, imageDecoder, imageSelection, isModified, makeDeleteImageRequest, toNewBrew)
 import Type.ImageID as ImageID exposing (ImageID)
 import Type.ModifiableValue as Value
@@ -241,3 +243,8 @@ uploadImage file =
         , body = Http.multipartBody [ Http.filePart "brewImage" file ]
         , expect = Http.expectJson GotUploadedImageId imageDecoder
         }
+
+
+navigateToBrews : Nav.Key -> Cmd msg
+navigateToBrews =
+    Route.replaceUrl Route.Brews
