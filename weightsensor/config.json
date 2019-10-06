@@ -1,0 +1,27 @@
+{
+    "serialport": "/dev/ttyACM0",
+    "sensors": [
+        {
+            "id": "tap1",
+            "clockPin": 1,
+            "outPin": 0
+        },
+        {
+            "id": "tap2",
+            "clockPin": 3,
+            "outPin": 2
+        },
+        {
+            "id": "tap3",
+            "clockPin": 5,
+            "outPin": 4
+        }
+    ],
+    "publishers": [
+        {
+            "redis": {
+                "channel": "sensors"
+            }
+        }
+    ]
+}
