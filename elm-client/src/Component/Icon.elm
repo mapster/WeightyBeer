@@ -8,6 +8,7 @@ type Icon
     = FavoriteOutline
     | Favorite
     | Delete
+    | Refresh
 
 
 icon : Icon -> Html msg
@@ -28,5 +29,8 @@ class kind =
 
                 Delete ->
                     "delete"
+
+                Refresh ->
+                    "refresh"
     in
     Html.class <| "zmdi zmdi-hc-lg zmdi-" ++ name

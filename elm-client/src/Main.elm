@@ -12,6 +12,7 @@ import Page.Home as Home
 import Page.NewBrew as NewBrew
 import Page.NewTap as NewTap
 import Page.Taps as Taps
+import Page.WeightHub as WeightHub
 import Route exposing (Route, href)
 import Url exposing (Url)
 import Utils exposing (textEl)
@@ -43,6 +44,7 @@ type PageMsg
     | BrewsMsg Brews.Msg
     | NewBrewMsg NewBrew.Msg
     | EditBrewMsg EditBrew.Msg
+    | WeightHubMsg WeightHub.Msg
 
 
 type alias Model =
@@ -62,6 +64,7 @@ type Page
     | Brews Brews.Model
     | NewBrew NewBrew.Model
     | EditBrew EditBrew.Model
+    | WeightHub WeightHub.Model
 
 
 setPage : Model -> Page -> Model
@@ -114,6 +117,10 @@ changeRouteTo navKey maybeRoute =
         Just Route.NewBrew ->
             NewBrew.init navKey
                 |> updateWith NewBrew NewBrewMsg
+
+        Just Route.WeightHub ->
+            WeightHub.init navKey
+                |> updateWith WeightHub WeightHubMsg
 
 
 updateWith : (srcModel -> targetModel) -> (srcMsg -> targetMsg) -> ( srcModel, Cmd srcMsg ) -> ( targetModel, Cmd targetMsg )
@@ -209,6 +216,15 @@ updatePage msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        WeightHubMsg weightHubMsg ->
+            case model.page of
+                WeightHub weightHub ->
+                    WeightHub.update weightHubMsg weightHub
+                        |> updateWith (WeightHub >> setPage model) (WeightHubMsg >> ToPage)
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -236,6 +252,9 @@ subscriptions model =
 
         EditBrew editBrew ->
             Sub.map (EditBrewMsg >> ToPage) (EditBrew.subscriptions editBrew)
+
+        WeightHub weightHub ->
+            Sub.map (WeightHubMsg >> ToPage) (WeightHub.subscriptions weightHub)
 
 
 view : Model -> Html Msg
@@ -276,6 +295,9 @@ viewPage page =
 
             EditBrew editBrew ->
                 Html.map (EditBrewMsg >> ToPage) (EditBrew.view editBrew)
+
+            WeightHub weightHub ->
+                Html.map (WeightHubMsg >> ToPage) (WeightHub.view weightHub)
         ]
 
 
@@ -307,6 +329,9 @@ viewErrors model =
 
                 EditBrew editBrewModel ->
                     EditBrew.getError editBrewModel
+
+                WeightHub weightHubModel ->
+                    WeightHub.getError weightHubModel
     in
     case errorDetails of
         Just error ->
@@ -322,7 +347,7 @@ viewMenu =
         [ viewMenuEntry "Home" Route.Home
         , viewMenuEntry "Taps" Route.Taps
         , viewMenuEntry "Brews" Route.Brews
-        , viewMenuEntry "Weight Hub" Route.Taps
+        , viewMenuEntry "Weight Hub" Route.WeightHub
         , div [ class "space" ] []
         ]
 

@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Object exposing (Brew(..), BrewMutation(..), Image(..), ImageMutation(..), Tap(..), TapMutation(..), Weight(..))
+module WeightyBeer.Object exposing (Brew(..), BrewMutation(..), Image(..), ImageMutation(..), Tap(..), TapMutation(..), Weight(..), WeightMutation(..))
 
 
 type Brew
@@ -31,3 +31,7 @@ type TapMutation
 
 type Weight
     = Weight
+
+
+type WeightMutation
+    = WeightMutation

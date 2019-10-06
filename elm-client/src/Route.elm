@@ -17,6 +17,7 @@ type Route
     | Brews
     | EditBrew BrewID
     | NewBrew
+    | WeightHub
 
 
 parser : Parser (Route -> a) a
@@ -29,6 +30,7 @@ parser =
         , Parser.map Brews (s "brews")
         , Parser.map NewBrew (s "brews" </> s "_new")
         , Parser.map EditBrew (s "brews" </> BrewID.urlParser)
+        , Parser.map WeightHub (s "weighthub")
         ]
 
 
@@ -75,6 +77,9 @@ routeToString route =
 
                 NewBrew ->
                     [ "brews", "_new" ]
+
+                WeightHub ->
+                    [ "weighthub" ]
     in
     "/" ++ String.join "/" pieces
 

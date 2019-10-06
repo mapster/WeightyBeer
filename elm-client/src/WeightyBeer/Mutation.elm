@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Mutation exposing (brew, image, tap)
+module WeightyBeer.Mutation exposing (brew, image, tap, weight)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -32,3 +32,8 @@ brew object_ =
 tap : SelectionSet decodesTo WeightyBeer.Object.TapMutation -> SelectionSet decodesTo RootMutation
 tap object_ =
     Object.selectionForCompositeField "tap" [] object_ identity
+
+
+weight : SelectionSet decodesTo WeightyBeer.Object.WeightMutation -> SelectionSet decodesTo RootMutation
+weight object_ =
+    Object.selectionForCompositeField "weight" [] object_ identity

@@ -133,3 +133,7 @@ button.text-button {
 button.text-button:focus {
     outline: none;
 }
+
+.red-button-text button {
+    color: red;
+}
