@@ -1,5 +1,5 @@
 import { ObjectType, Field, Context } from "typegql";
-import { RepoContext } from "../../RepoContext";
+import { DaoContext } from "../../DaoContext";
 
 @ObjectType()
 export class Image {
@@ -17,7 +17,7 @@ export class Image {
 export class ImageMutation {
 
     @Field({ isNullable: true, type: Image })
-    remove(@Context context: RepoContext, id: string): Promise<Image | undefined> {
+    remove(@Context context: DaoContext, id: string): Promise<Image | undefined> {
         return context.imageRepo.remove(id);
     }
 

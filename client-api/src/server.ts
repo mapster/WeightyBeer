@@ -5,23 +5,26 @@ import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import { compiledSchema } from './api/schema/WeightyBeerSchema';
 import { BrewRepository } from './dao/BrewRepository';
-import { RepoContext } from './RepoContext';
+import { DaoContext } from './DaoContext';
 import { ImageRepository } from './dao/ImageRepository';
 import { TapRepository } from './dao/TapRepository';
 import { WeightRepository } from './dao/WeightRepository';
 import BrewImageController from './api/BrewImageController';
+import { ActionPublisher } from './dao/ActionPublisher';
 
 const REDIS_HOST = process.env.WEIGHTYBEER_REDIS || 'localhost';
 const BREW_IMAGE_PATH = process.env.WEIGHTYBEER_BREW_IMAGE_PATH || '/tmp/brew-images/';
+const ACTION_CHANNEL = process.env.WEIGHTYBEER_ACTION_CHANNEL || 'actions';
 
 const app: express.Application = express();
 const redis = new Redis({ host: REDIS_HOST });
 
-const context: RepoContext = {
+const context: DaoContext = {
     brewRepo: new BrewRepository(redis),
     imageRepo: new ImageRepository(redis, BREW_IMAGE_PATH),
     tapRepo: new TapRepository(redis),
     weightRepo: new WeightRepository(redis),
+    actionPublisher: new ActionPublisher(redis, ACTION_CHANNEL),
 }
 
 app.use(cors());

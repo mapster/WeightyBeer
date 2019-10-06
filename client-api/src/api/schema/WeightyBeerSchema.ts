@@ -1,51 +1,51 @@
 import { Query, SchemaRoot, compileSchema, Context, Mutation } from "typegql";
 import { Brew, BrewMutation } from "./Brew";
-import { RepoContext } from "../../RepoContext";
+import { DaoContext } from "../../DaoContext";
 import { Image, ImageMutation } from "./Image";
 import { Tap, TapMutation } from "./Tap";
-import { Weight } from "./Weight";
+import { Weight, WeightMutation } from "./Weight";
 
 
 @SchemaRoot()
 export class QuerySchema {
 
     @Query({ isNullable: true, type: Brew })
-    async brew(@Context context: RepoContext, id: string): Promise<Brew | undefined> {
+    async brew(@Context context: DaoContext, id: string): Promise<Brew | undefined> {
         return context.brewRepo.get(id);
     }
 
     @Query({ isNullable: false, type: [Brew] })
-    async brews(@Context context: RepoContext): Promise<Brew[]> {
+    async brews(@Context context: DaoContext): Promise<Brew[]> {
         return context.brewRepo.getAll();
     }
 
     @Query({ isNullable: true, type: Image })
-    async image(@Context context: RepoContext, id: string): Promise<Image | undefined> {
+    async image(@Context context: DaoContext, id: string): Promise<Image | undefined> {
         return context.imageRepo.get(id)
     }
 
     @Query({ isNullable: false, type: [Image]})
-    async images(@Context context: RepoContext): Promise<Image[]> {
+    async images(@Context context: DaoContext): Promise<Image[]> {
         return context.imageRepo.getAll();
     }
 
     @Query({ isNullable: true, type: Tap })
-    async tap(@Context context: RepoContext, id: string): Promise<Tap | undefined> {
+    async tap(@Context context: DaoContext, id: string): Promise<Tap | undefined> {
         return await context.tapRepo.get(id);
     }
 
     @Query({ isNullable: false, type: [Tap] })
-    async taps(@Context context: RepoContext): Promise<Tap[] | undefined> {
+    async taps(@Context context: DaoContext): Promise<Tap[] | undefined> {
         return await context.tapRepo.getAll();
     }
 
     @Query({ isNullable: true, type: Weight })
-    async weight(@Context context: RepoContext, id: string): Promise<Weight | undefined> {
+    async weight(@Context context: DaoContext, id: string): Promise<Weight | undefined> {
         return await context.weightRepo.get(id);
     }
 
     @Query({ isNullable: false, type: [Weight] })
-    async weights(@Context context: RepoContext): Promise<Weight[] | undefined> {
+    async weights(@Context context: DaoContext): Promise<Weight[] | undefined> {
         return await context.weightRepo.getAll();
     }
 }
@@ -66,6 +66,11 @@ export class MutationSchema {
     @Mutation({ isNullable: false })
     tap(): TapMutation {
         return new TapMutation();
+    }
+
+    @Mutation({isNullable: false})
+    weight(): WeightMutation {
+        return new WeightMutation();
     }
 }
 

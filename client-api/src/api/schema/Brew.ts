@@ -1,6 +1,6 @@
 import { ObjectType, Field, ID, Context, Arg } from 'typegql';
 import { Image } from './Image';
-import { RepoContext } from '../../RepoContext';
+import { DaoContext } from '../../DaoContext';
 import { BrewRepository } from '../../dao/BrewRepository';
 import { GraphQLInt } from 'graphql';
 
@@ -25,7 +25,7 @@ export class Brew {
     }
 
     @Field({ type: Image })
-    async image(@Context context: RepoContext): Promise<Image | undefined> {
+    async image(@Context context: DaoContext): Promise<Image | undefined> {
         if (this._image) {
             return context.imageRepo.get(this._image);
         }
@@ -46,7 +46,7 @@ export class BrewMutation {
 
     @Field({ isNullable: false, type: Brew })
     async create(
-        @Context context: RepoContext,
+        @Context context: DaoContext,
         @Arg({ type: GraphQLInt }) brewNumber: number,
         name: string,
         style: string,
@@ -59,7 +59,7 @@ export class BrewMutation {
 
     @Field({ isNullable: true, type: Brew })
     async update(
-        @Context context: RepoContext,
+        @Context context: DaoContext,
         id: string,
         @Arg({ type: GraphQLInt }) brewNumber: number,
         name: string,
@@ -72,7 +72,7 @@ export class BrewMutation {
     }
 
     @Field({ isNullable: true, type: Brew })
-    async remove(@Context context: RepoContext, id: string): Promise<Brew | undefined> {
+    async remove(@Context context: DaoContext, id: string): Promise<Brew | undefined> {
         return context.brewRepo.remove(id);
     }
 }

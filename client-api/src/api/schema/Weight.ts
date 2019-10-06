@@ -1,5 +1,6 @@
-import { Field, ObjectType } from "typegql";
-import { GraphQLInt } from "graphql";
+import { Field, ObjectType, Context } from "typegql";
+import { GraphQLInt, GraphQLString } from "graphql";
+import { DaoContext } from "../../DaoContext";
 
 @ObjectType()
 export class Weight {
@@ -36,5 +37,35 @@ export class Weight {
         if (id && !isNaN(currentInt) && !isNaN(percentInt)) {
             return new Weight(id, zeroInt, emptyInt, fullInt, currentInt, percentInt);
         }
+    }
+}
+
+@ObjectType()
+export class WeightMutation {
+    @Field({isNullable: false, type: GraphQLString})
+    async updateZero(
+        @Context context: DaoContext,
+        id: string
+    ) : Promise<string> {
+        await context.actionPublisher.sendAction({id, type: 'calibrate', target: 'zero'});
+        return id;
+    }
+
+    @Field({isNullable: false, type: GraphQLString})
+    async updateEmpty(
+        @Context context: DaoContext,
+        id: string
+    ) : Promise<string> {
+        await context.actionPublisher.sendAction({id, type: 'calibrate', target: 'empty'});
+        return id;
+    }
+
+    @Field({isNullable: false, type: GraphQLString})
+    async updateFull(
+        @Context context: DaoContext,
+        id: string
+    ) : Promise<string> {
+        await context.actionPublisher.sendAction({id, type: 'calibrate', target: 'full'});
+        return id;
     }
 }

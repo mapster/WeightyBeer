@@ -1,5 +1,5 @@
 import { ObjectType, Field, Context, Arg, Int } from "typegql";
-import { RepoContext } from "../../RepoContext";
+import { DaoContext } from "../../DaoContext";
 import { Brew } from "./Brew";
 import { Weight } from "./Weight";
 import { GraphQLInt } from "graphql";
@@ -33,12 +33,12 @@ export class Tap {
     }
 
     @Field({ isNullable: true, type: Brew })
-    async brew(@Context context: RepoContext): Promise<Brew | undefined> {
+    async brew(@Context context: DaoContext): Promise<Brew | undefined> {
         return context.brewRepo.get(this._brew);
     }
 
     @Field({ isNullable: true, type: Weight })
-    async weight(@Context context: RepoContext): Promise<Weight | undefined> {
+    async weight(@Context context: DaoContext): Promise<Weight | undefined> {
         return context.weightRepo.get(this._weight);
     }
 
@@ -58,7 +58,7 @@ export class TapMutation {
 
     @Field({ isNullable: false, type: Tap })
     async create(
-        @Context context: RepoContext,
+        @Context context: DaoContext,
         name: string,
         @Arg({ type: GraphQLInt }) order: number,
         volume: number,
@@ -71,7 +71,7 @@ export class TapMutation {
 
     @Field({ isNullable: true, type: Tap })
     async update(
-        @Context context: RepoContext,
+        @Context context: DaoContext,
         id: string,
         name: string,
         @Arg({ type: GraphQLInt }) order: number,
@@ -84,7 +84,7 @@ export class TapMutation {
     }
 
     @Field({ isNullable: true, type: Tap })
-    async remove(@Context context: RepoContext, id: string): Promise<Tap | undefined> {
+    async remove(@Context context: DaoContext, id: string): Promise<Tap | undefined> {
         return await context.tapRepo.remove(id);
     }
 }
