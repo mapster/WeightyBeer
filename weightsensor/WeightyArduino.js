@@ -16,7 +16,6 @@ module.exports = class WeighthArduino {
   startListening() {
     this.connection = new SerialPort(this.config.serialport, {
       baudRate: 9600,
-      parser: SerialPort.parsers.readline('\n')
     });
 
     this.parser = this.connection.pipe(new Readline({delimiter: '\n'}));
