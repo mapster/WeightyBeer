@@ -1,4 +1,5 @@
 const SerialPort = require("serialport");
+const Readline = require('@serialport/parser-readline');
 
 module.exports = class WeighthArduino {
 
@@ -18,10 +19,13 @@ module.exports = class WeighthArduino {
       parser: SerialPort.parsers.readline('\n')
     });
 
+    this.parser = this.connection.pipe(new Readline({delimiter: '\n'}));
+
     this.connection.on('open', function(){
       console.log('Connected to arduino');
-      this.connection.on('data', this.arduinoListener.bind(this));
-    }.bind(this));
+    });
+    
+    this.parser.on('data', this.arduinoListener.bind(this));
   }
 
   addDataListener(listener) {
