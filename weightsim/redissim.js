@@ -11,7 +11,7 @@ function getRandomInt(min, max) {
 const publisher = redis.createClient({ host: REDIS_HOST });
 
 const id = process.argv[2];
-const INITIAL_BASE = 814124;
+const INITIAL_BASE = 7900000;
 
 let base = INITIAL_BASE;
 
@@ -22,7 +22,7 @@ if (!id) {
 console.log("Simulating weight sensor " + id + " with base " + base);
 
 function generateData() {
-  const value = base + getRandomInt(0, 15);
+  const value = base + getRandomInt(0, 750000);
   publisher.publish('sensors', JSON.stringify({ id, value }))
 }
 

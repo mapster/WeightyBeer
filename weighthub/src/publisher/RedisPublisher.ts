@@ -20,9 +20,11 @@ export class RedisPublisher implements WeightHubPublisher {
 
         const success = await this.client.hmset(this.asDbId(id), data)
             .catch(reason => {
-                console.error(`Redis - Failed to update weight: ${reason}`)
+                console.error(`Redis - Failed to update weight: ${reason}`);
                 return "failed";
             });
+
+        this.client.publish("weightUpdated", id);
 
         return success === "OK";
     }
@@ -39,16 +41,18 @@ export class RedisPublisher implements WeightHubPublisher {
         return success === "OK";
     }
 
-    async getWeight(id: string): Promise<Weight> {
+    async getWeight(id: string): Promise<Weight | undefined> {
         const fieldValues = await this.client.hgetall(this.asDbId(id));
 
-        const zero = parseInt(fieldValues.zero);
-        const empty = parseInt(fieldValues.empty);
-        const full = parseInt(fieldValues.full);
-        const current = parseInt(fieldValues.current);
-        const percent = parseInt(fieldValues.percent);
-
-        return { id, zero, empty, full, current, percent };
+        if (fieldValues.id) {
+            const zero = parseInt(fieldValues.zero);
+            const empty = parseInt(fieldValues.empty);
+            const full = parseInt(fieldValues.full);
+            const current = parseInt(fieldValues.current);
+            const percent = parseInt(fieldValues.percent);
+    
+            return { id, zero, empty, full, current, percent };            
+        }
     }
 
     async set(id: string, field: ActionTarget, value: number): Promise<boolean> {
