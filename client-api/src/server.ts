@@ -29,7 +29,7 @@ const context: DaoContext = {
 
 app.use(cors());
 
-app.use('/graphql', graphqlHTTP({
+app.use('/api/graphql', graphqlHTTP({
     schema: compiledSchema,
     graphiql: true,
     context,
@@ -42,11 +42,11 @@ app.use('/graphql', graphqlHTTP({
 }));
 
 const brewImageController = new BrewImageController(context.imageRepo);
-app.use('/upload', fileUpload({
+app.use('/api/upload', fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
     createParentPath: true,
 }));
-app.post('/upload/image', (req, res) => brewImageController.postImage(req, res));
-app.get('/images/:filename', (req, res) => brewImageController.getImage(req, res));
+app.post('/api/upload/image', (req, res) => brewImageController.postImage(req, res));
+app.get('/api/images/:filename', (req, res) => brewImageController.getImage(req, res));
 
 app.listen(3000, () => console.log('WeightyBeer GraphQL API running on port 3000'));

@@ -5410,6 +5410,8 @@ var author$project$Main$updateWith = F3(
 			modelMap(page),
 			A2(elm$core$Platform$Cmd$map, cmdMap, cmd));
 	});
+var author$project$Constants$weightyBeerHost = '/api';
+var author$project$Constants$weightyBeerGraphql = author$project$Constants$weightyBeerHost + '/graphql';
 var author$project$Page$Brews$GotBrewsResponse = elm$core$Basics$identity;
 var author$project$Page$Brews$Brew = F5(
 	function (id, name, brewNumber, style, imageUrl) {
@@ -7259,7 +7261,7 @@ var krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 var author$project$Page$Brews$requestBrews = A2(
 	dillonkearns$elm_graphql$Graphql$Http$send,
 	A2(elm$core$Basics$composeR, krisajenkins$remotedata$RemoteData$fromResult, elm$core$Basics$identity),
-	A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'http://localhost:3000/graphql', author$project$Page$Brews$brewsQuery));
+	A2(dillonkearns$elm_graphql$Graphql$Http$queryRequest, author$project$Constants$weightyBeerGraphql, author$project$Page$Brews$brewsQuery));
 var krisajenkins$remotedata$RemoteData$Loading = {$: 1};
 var author$project$Page$Brews$init = _Utils_Tuple2(krisajenkins$remotedata$RemoteData$Loading, author$project$Page$Brews$requestBrews);
 var author$project$Component$EditBrew$Model = F4(
@@ -7269,8 +7271,6 @@ var author$project$Component$EditBrew$Model = F4(
 var author$project$Component$EditBrew$GotImagesResponse = function (a) {
 	return {$: 7, a: a};
 };
-var author$project$Constants$weightyBeerHost = '';
-var author$project$Constants$weightyBeerGraphql = author$project$Constants$weightyBeerHost + '/graphql';
 var author$project$Type$Brew$Image = F2(
 	function (id, url) {
 		return {bd: id, bC: url};
@@ -7634,7 +7634,7 @@ var author$project$Page$Home$requestTaps = A2(
 	A2(elm$core$Basics$composeR, krisajenkins$remotedata$RemoteData$fromResult, author$project$Page$Home$GotTapsResponse),
 	A2(
 		dillonkearns$elm_graphql$Graphql$Http$queryRequest,
-		'http://localhost:3000/graphql',
+		author$project$Constants$weightyBeerGraphql,
 		author$project$WeightyBeer$Query$taps(author$project$Type$Tap$tapSelection)));
 var author$project$Page$Home$init = function () {
 	var model = A2(author$project$Page$Home$Model, krisajenkins$remotedata$RemoteData$Loading, elm$core$Dict$empty);
@@ -10076,7 +10076,7 @@ var author$project$Page$Home$requestWeights = A2(
 	A2(elm$core$Basics$composeR, krisajenkins$remotedata$RemoteData$fromResult, author$project$Page$Home$GotWeightsResponse),
 	A2(
 		dillonkearns$elm_graphql$Graphql$Http$queryRequest,
-		'http://localhost:3000/graphql',
+		author$project$Constants$weightyBeerGraphql,
 		author$project$WeightyBeer$Query$weights(author$project$Type$Tap$weightSelection)));
 var author$project$Page$Home$updateWeights = function (response) {
 	if (response.$ === 3) {
