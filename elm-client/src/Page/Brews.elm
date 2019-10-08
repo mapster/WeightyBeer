@@ -2,6 +2,7 @@ module Page.Brews exposing (Model, Msg, init, subscriptions, update, view)
 
 import Component.AddButton as AddButton
 import Component.Table exposing (viewTable)
+import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
@@ -45,7 +46,7 @@ type alias BrewsResponse =
 requestBrews : Cmd Msg
 requestBrews =
     brewsQuery
-        |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
+        |> Graphql.Http.queryRequest weightyBeerGraphql
         |> Graphql.Http.send (RemoteData.fromResult >> GotBrewsResponse)
 
 

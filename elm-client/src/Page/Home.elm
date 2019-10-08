@@ -1,6 +1,7 @@
 module Page.Home exposing (Model, Msg, init, subscriptions, update, view)
 
 import Component.TapCard as TapCard
+import Constants exposing (weightyBeerGraphql)
 import Dict exposing (Dict)
 import Graphql.Http
 import Html exposing (..)
@@ -56,14 +57,14 @@ init =
 requestTaps : Cmd Msg
 requestTaps =
     Query.taps tapSelection
-        |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
+        |> Graphql.Http.queryRequest weightyBeerGraphql
         |> Graphql.Http.send (RemoteData.fromResult >> GotTapsResponse)
 
 
 requestWeights : Cmd Msg
 requestWeights =
     Query.weights weightSelection
-        |> Graphql.Http.queryRequest "http://localhost:3000/graphql"
+        |> Graphql.Http.queryRequest weightyBeerGraphql
         |> Graphql.Http.send (RemoteData.fromResult >> GotWeightsResponse)
 
 
