@@ -22,7 +22,7 @@ export class TapRepository extends RedisRepository {
     async getAll(): Promise<Tap[]> {
         const keys = await this.scanKeys("tap:*");
         const taps = await Promise.all(keys.map(key => this.get(this.fromDbId(key))));
-        return taps as Tap[];
+        return taps.filter(it => !!it) as Tap[];
     }
 
     async create(

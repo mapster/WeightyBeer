@@ -22,7 +22,7 @@ export class BrewRepository extends RedisRepository {
     async getAll(): Promise<Brew[]> {
         const keys = await this.scanKeys("brew:*");
         const brews = await Promise.all(keys.map(key => this.get(this.fromDbId(key))));
-        return brews as Brew[];
+        return brews.filter(it => !!it) as Brew[];
     }
 
     async create(

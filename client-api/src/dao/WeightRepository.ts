@@ -22,7 +22,7 @@ export class WeightRepository extends RedisRepository {
     async getAll(): Promise<Weight[]> {
         const keys = await this.scanKeys("weight:*");
         const weights = await Promise.all(keys.map(key => this.get(this.fromDbId(key))));
-        return weights as Weight[];
+        return weights.filter(it => !!it) as Weight[];
     }
 
 }

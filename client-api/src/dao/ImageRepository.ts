@@ -32,7 +32,7 @@ export class ImageRepository extends RedisRepository {
     async getAll(): Promise<Image[]> {
         const keys = await this.scanKeys("image:*");
         const images = await Promise.all(keys.map(key => this.get(this.fromDbId(key))));
-        return images as Image[];
+        return images.filter(it => !!it) as Image[];
     }
 
     async remove(id: string): Promise<Image | undefined> {
