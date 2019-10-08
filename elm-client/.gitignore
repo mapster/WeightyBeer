@@ -2,4 +2,6 @@ elm-client.iml
 node_modules/
 .idea
 elm-stuff
-elm.js
+dist/style
+dist/index.html
+/elm.js

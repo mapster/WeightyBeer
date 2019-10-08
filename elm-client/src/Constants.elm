@@ -2,7 +2,7 @@ module Constants exposing (weightyBeerGraphql, weightyBeerHost, weightyBeerImage
 
 
 weightyBeerHost =
-    "http://localhost:3000"
+    ""
 
 
 weightyBeerGraphql =
