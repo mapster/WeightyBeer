@@ -4,6 +4,9 @@ import { DaoContext } from "../../DaoContext";
 import { Image, ImageMutation } from "./Image";
 import { Tap, TapMutation } from "./Tap";
 import { Weight, WeightMutation } from "./Weight";
+import { addSubscriptions } from "./Subscriptions";
+import { PubSub } from "graphql-subscriptions";
+import { GraphQLSchema } from "graphql";
 
 
 @SchemaRoot()
@@ -74,4 +77,6 @@ export class MutationSchema {
     }
 }
 
-export const compiledSchema = compileSchema({ roots: [QuerySchema, MutationSchema] });
+export function createSchema(pubsub: PubSub): GraphQLSchema {
+    return addSubscriptions(pubsub, compileSchema({ roots: [QuerySchema, MutationSchema] }));
+};

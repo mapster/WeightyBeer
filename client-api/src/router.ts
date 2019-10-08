@@ -1,25 +1,23 @@
+import * as http from 'http';
 import Router from 'express';
-import graphqlHTTP from 'express-graphql';
-import { compiledSchema } from './api/schema/WeightyBeerSchema';
 import { DaoContext } from './DaoContext';
 import BrewImageController from './api/BrewImageController';
 import fileUpload from 'express-fileupload';
+import { PubSub } from 'apollo-server';
+import { ApolloServer } from 'apollo-server-express';
+import { createSchema } from './api/schema/WeightyBeerSchema';
 
-export default function(context: DaoContext): Router.Router {
+export default function(context: DaoContext, httpServer: http.Server): Router.Router {
     const router = Router();
 
-    router.use('/graphql', graphqlHTTP({
-        schema: compiledSchema,
-        graphiql: true,
+    const pubsub = new PubSub();
+    const apollo = new ApolloServer({
         context,
-        customFormatErrorFn: error => ({
-            message: error.message,
-            locations: error.locations,
-            stack: error.stack ? error.stack.split('\n') : [],
-            path: error.path
-        })
-    }));
-    
+        schema: createSchema(pubsub),
+    })
+    apollo.applyMiddleware({ app: router });
+    apollo.installSubscriptionHandlers(httpServer);
+
     const brewImageController = new BrewImageController(context.imageRepo);
     router.use('/upload', fileUpload({
         limits: { fileSize: 50 * 1024 * 1024 },
@@ -30,3 +28,5 @@ export default function(context: DaoContext): Router.Router {
     
     return router; 
 }
+
+
