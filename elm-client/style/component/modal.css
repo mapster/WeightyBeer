@@ -13,3 +13,7 @@
     justify-content: space-evenly;
     align-items: center;
 }
+
+.modal .modal-container {
+    display: contents;
+}

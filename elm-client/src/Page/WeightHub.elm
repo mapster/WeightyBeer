@@ -4,26 +4,35 @@ import Browser.Navigation as Nav
 import Component.Button as Button
 import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
 import Component.Icon exposing (Icon(..), icon)
+import Component.Modal as Modal
 import Component.Table exposing (viewTable)
 import Graphql.Http
-import Html exposing (Html, div, span, text)
+import Html exposing (Html, div, h2, i, p, span, text)
 import Html.Attributes exposing (class)
+import Type.ModifiableValue exposing (Value)
 import Type.Weight exposing (Weight, makeUpdateRequest, requestWeights, updateEmptyRequest, updateFullRequest, updateZeroRequest)
 import Type.WeightID as WeightID exposing (WeightID)
 
 
 type Msg
     = GotWeightsResponse WeightsResponse
-    | RequestSetZero WeightID
-    | RequestSetEmptyKeg WeightID
-    | RequestSetFullKeg WeightID
     | GotUpdateResponse UpdateResponse
+    | ConfirmRequest Calibrate WeightID
+    | CancelRequest
+    | CalibrateRequest Calibrate WeightID
+
+
+type Calibrate
+    = Zero
+    | EmptyKeg
+    | FullKeg
 
 
 type alias Model =
     { navKey : Nav.Key
     , weights : List Weight
     , error : Maybe ErrorDetails
+    , confirm : Maybe ( Calibrate, WeightID )
     }
 
 
@@ -45,21 +54,67 @@ subscriptions _ =
     Sub.none
 
 
+emptyModel : Nav.Key -> Model
+emptyModel navKey =
+    Model navKey [] Nothing Nothing
+
+
 init : Nav.Key -> ( Model, Cmd Msg )
 init navKey =
-    ( Model navKey [] Nothing, requestWeights GotWeightsResponse )
+    ( emptyModel navKey, requestWeights GotWeightsResponse )
 
 
 view : Model -> Html Msg
 view model =
-    viewTable
-        [ ( "ID", .id >> WeightID.toString >> text )
-        , ( "Current", viewCurrent )
-        , ( "Nothing", viewNothing )
-        , ( "Empty Keg", viewEmpty )
-        , ( "Full Keg", viewFull )
-        ]
-        model.weights
+    let
+        confirmModal =
+            case model.confirm of
+                Just confirm ->
+                    [ viewConfirm confirm ]
+
+                Nothing ->
+                    []
+    in
+    div []
+        ([ viewTable
+            [ ( "ID", .id >> WeightID.toString >> text )
+            , ( "Current", viewCurrent )
+            , ( "Nothing", viewNothing )
+            , ( "Empty Keg", viewEmpty )
+            , ( "Full Keg", viewFull )
+            ]
+            model.weights
+         ]
+            ++ confirmModal
+        )
+
+
+viewConfirm : ( Calibrate, WeightID ) -> Html Msg
+viewConfirm ( target, id ) =
+    let
+        targetName =
+            case target of
+                Zero ->
+                    "Nothing"
+
+                EmptyKeg ->
+                    "Empty Keg"
+
+                FullKeg ->
+                    "Full Keg"
+    in
+    Modal.view CancelRequest <|
+        div [ class "confirm-modal" ]
+            [ h2 [] [ text "Confirm calibration" ]
+            , p [] [ text <| "Are you sure you wish to (irreversibly) calibrate the '" ++ targetName ++ "' setting of weight '" ++ WeightID.toString id ++ "'?" ]
+            , i [] [ text "(Note that calibration uses longer smoothening than the current value and will not be equal)" ]
+            , Button.view (CalibrateRequest target id) "OK"
+            ]
+
+
+viewRequestButton : Calibrate -> WeightID -> Html Msg
+viewRequestButton msg id =
+    Button.withIcon (ConfirmRequest msg id) Refresh
 
 
 viewFull : Weight -> Html Msg
@@ -72,7 +127,7 @@ viewFull { id, full } =
     in
     div [ class "red-button-text" ]
         [ span [] [ str ]
-        , Button.withIcon (RequestSetFullKeg id) Refresh
+        , viewRequestButton FullKeg id
         ]
 
 
@@ -86,7 +141,7 @@ viewEmpty { id, empty } =
     in
     div [ class "red-button-text" ]
         [ span [] [ str ]
-        , Button.withIcon (RequestSetEmptyKeg id) Refresh
+        , viewRequestButton EmptyKeg id
         ]
 
 
@@ -100,7 +155,7 @@ viewNothing { id, zero } =
     in
     div [ class "red-button-text" ]
         [ span [] [ str ]
-        , Button.withIcon (RequestSetZero id) Refresh
+        , viewRequestButton Zero id
         ]
 
 
@@ -119,18 +174,30 @@ update msg model =
         GotWeightsResponse weightsResponse ->
             ( updateFromWeightsResponse model weightsResponse, Cmd.none )
 
-        RequestSetZero id ->
-            ( model, updateZeroRequest id |> makeUpdateRequest GotUpdateResponse )
+        ConfirmRequest target id ->
+            ( { model | confirm = Just ( target, id ) }, Cmd.none )
 
-        RequestSetEmptyKeg id ->
-            ( model, updateEmptyRequest id |> makeUpdateRequest GotUpdateResponse )
-
-        RequestSetFullKeg id ->
-            ( model, updateFullRequest id |> makeUpdateRequest GotUpdateResponse )
+        CancelRequest ->
+            ( { model | confirm = Nothing }, Cmd.none )
 
         -- TODO: Add some kind of notification of done
         GotUpdateResponse updateResponse ->
-            ( model, Cmd.none )
+            ( model, requestWeights GotWeightsResponse )
+
+        CalibrateRequest calibrate id ->
+            let
+                request =
+                    case calibrate of
+                        Zero ->
+                            updateZeroRequest id
+
+                        EmptyKeg ->
+                            updateEmptyRequest id
+
+                        FullKeg ->
+                            updateFullRequest id
+            in
+            ( model, makeUpdateRequest GotUpdateResponse request )
 
 
 updateFromWeightsResponse : Model -> WeightsResponse -> Model

@@ -2,6 +2,7 @@ module Component.ChooseImage exposing (Msg(..), view)
 
 import Component.Button as Button
 import Component.Icon exposing (Icon(..), icon)
+import Component.Modal as Modal
 import Html exposing (Html, button, div, h2, text)
 import Html.Attributes exposing (class, style, type_)
 import Html.Events exposing (onClick, stopPropagationOn)
@@ -39,13 +40,12 @@ view images current showGallery =
 
 viewGallery : List Image -> Maybe Image -> Html Msg
 viewGallery images current =
-    div [ class "modal", onClick ToggleGallery ]
-        [ div [ class "image-gallery", stopPropagationOn "click" (Json.Decode.succeed ( ToggleGallery, False )) ]
+    Modal.view ToggleGallery <|
+        div [ class "image-gallery" ]
             [ h2 [] [ text "Image gallery" ]
             , viewImages images current
             , Button.view ToggleGallery "Done"
             ]
-        ]
 
 
 viewImages : List Image -> Maybe Image -> Html Msg

@@ -1,6 +1,6 @@
 @import url("common/single-card.css");
 @import url("common/two-column-card.css");
-@import url("common/modal.css");
+@import url("component/modal.css");
 @import url("component/table.css");
 @import url("component/tap-card.css");
 @import url("component/form.css");
@@ -136,4 +136,12 @@ button.text-button:focus {
 
 .red-button-text button {
     color: red;
+}
+
+.modal .confirm-modal {
+    background-color: rgb(48, 48, 48);
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
 }
