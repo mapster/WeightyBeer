@@ -2,8 +2,6 @@ import { RedisRepository } from "./RedisRepository";
 import { Redis } from "ioredis";
 import { Weight } from "../api/schema/Weight";
 
-const ID_COUNTER_KEY = 'counter:weight';
-
 export class WeightRepository extends RedisRepository {
 
     constructor(redis: Redis) {

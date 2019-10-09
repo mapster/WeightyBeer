@@ -33,7 +33,7 @@ export class Weight {
         const emptyInt = parseInt(empty);
         const fullInt = parseInt(full);
         const currentInt = parseInt(current);
-        const percentInt = parseInt(percent);
+        const percentInt = parseInt(percent) || 0;
         if (id && !isNaN(currentInt) && !isNaN(percentInt)) {
             return new Weight(id, zeroInt, emptyInt, fullInt, currentInt, percentInt);
         }
