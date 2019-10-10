@@ -12,7 +12,7 @@ export class RedisPublisher implements WeightHubPublisher {
         this.client = new Redis(redisConfig);
     }
 
-    async updateWeight(id: string, current: number, percent: number): Promise<boolean> {
+    async updateWeight(id: string, current: number, percent: number, notify: boolean = false): Promise<boolean> {
         const data = {
             current,
             percent,
@@ -24,7 +24,9 @@ export class RedisPublisher implements WeightHubPublisher {
                 return "failed";
             });
 
-        this.client.publish("weightUpdated", id);
+        if (notify) {
+            this.client.publish("weightUpdated", id);
+        }
 
         return success === "OK";
     }
@@ -50,8 +52,8 @@ export class RedisPublisher implements WeightHubPublisher {
             const full = parseInt(fieldValues.full);
             const current = parseInt(fieldValues.current);
             const percent = parseInt(fieldValues.percent);
-    
-            return { id, zero, empty, full, current, percent };            
+
+            return { id, zero, empty, full, current, percent };
         }
     }
 

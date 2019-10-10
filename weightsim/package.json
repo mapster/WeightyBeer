@@ -5,7 +5,8 @@
   "main": "redissim.js",
   "scripts": {
     "start:firebase": "node firebasesim.js",
-    "start:redis": "node redissim.js"
+    "start:redis": "node redissim.js",
+    "start:file": "node fromFileRedis.js"
   },
   "dependencies": {
     "firebase": "^3.6.4",

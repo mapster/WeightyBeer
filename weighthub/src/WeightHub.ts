@@ -38,7 +38,7 @@ const TARGET_WINDOW = 100;
 const TARGET_CALIBRATE_WINDOW = 2000;
 
 export class WeightHub {
-    private data: {[key: string]: SensorData} = {};
+    private data: { [key: string]: SensorData } = {};
 
     constructor(
         private sensorSource: SensorSource,
@@ -49,7 +49,7 @@ export class WeightHub {
     run() {
         this.sensorSource.start(this);
         this.actionSource.start(this);
-        
+
         console.log("Weighthub successfully started");
     }
 
@@ -65,22 +65,23 @@ export class WeightHub {
                 sum: quantized
             }
         }
-        
+
         console.log(`Registered sensor: ${reading.id}`)
     }
 
     async updateSensor(reading: SensorReading): Promise<void> {
         const avg = this.addReadingAndCalculateMean(reading);
         const data = this.data[reading.id];
-        
+
         const updatedWeight = {
-            ...data.weight, 
+            ...data.weight,
             current: avg,
             percent: this.calculatePercent(data.weight.full, data.weight.empty, avg),
         };
+        const notify = data.weight.percent !== updatedWeight.percent;
         data.weight = updatedWeight;
 
-        const success = await this.weightHubPublisher.updateWeight(reading.id, updatedWeight.current, updatedWeight.percent);
+        const success = await this.weightHubPublisher.updateWeight(reading.id, updatedWeight.current, updatedWeight.percent, notify);
         if (!success) {
             console.error(`Failed to update weight data: ${reading.id}`);
         }
@@ -90,13 +91,13 @@ export class WeightHub {
         const one = full - empty;
         const part = current - empty || 1;
         const percent = Math.min(100, Math.floor((part / one) * 100));
-        
+
         return percent;
     }
 
     private addReadingAndCalculateMean(reading: SensorReading): number {
         const data = this.data[reading.id];
-        
+
         // TODO: Concider some action if length > TARGET_WINDOW
         if (data.readings.length >= TARGET_WINDOW) {
             const removed = data.readings.shift() as number;
@@ -109,7 +110,7 @@ export class WeightHub {
         }
 
         const quantized = quantize(reading.value);
-        
+
         data.readings.push(quantized);
         data.sum += quantized;
 
@@ -135,7 +136,7 @@ export class WeightHub {
         if (!weight) {
             await this.weightHubPublisher.createWeight(reading.id, quantize(reading.value));
             return {
-                id: reading.id, 
+                id: reading.id,
                 zero: 0,
                 empty: 0,
                 full: 0,
