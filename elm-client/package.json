@@ -2,7 +2,7 @@
     "name": "weightybeer-elm-graphql",
     "version": "0.0.1",
     "scripts": {
-        "api": "elm-graphql http://localhost:3000/graphql --base WeightyBeer",
+        "api": "elm-graphql http://localhost:3000/api/graphql --base WeightyBeer",
         "dev": "elm-live src/Main.elm --open -u --proxy-prefix=/api --proxy-host=http://localhost:3000/api -- --debug --output=elm.js ",
         "build": "elm make src/Main.elm --optimize --output=dist/elm.js",
         "resources": "cp -v index.html dist/ && cp -rv style dist/",

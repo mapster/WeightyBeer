@@ -3,36 +3,29 @@ module Page.WeightHub exposing (Model, Msg, getError, init, subscriptions, updat
 import Browser.Navigation as Nav
 import Component.Button as Button
 import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
-import Component.Icon exposing (Icon(..), icon)
+import Component.Icon exposing (Icon(..))
 import Component.Modal as Modal
 import Component.Table exposing (viewTable)
 import Graphql.Http
 import Html exposing (Html, div, h2, i, p, span, text)
 import Html.Attributes exposing (class)
-import Type.ModifiableValue exposing (Value)
-import Type.Weight exposing (Weight, makeUpdateRequest, requestWeights, updateEmptyRequest, updateFullRequest, updateZeroRequest)
+import Type.Weight exposing (CalibrationTarget(..), Weight, calibrateRequest, makeCalibrateRequest, requestWeights)
 import Type.WeightID as WeightID exposing (WeightID)
 
 
 type Msg
     = GotWeightsResponse WeightsResponse
     | GotUpdateResponse UpdateResponse
-    | ConfirmRequest Calibrate WeightID
+    | ConfirmRequest CalibrationTarget WeightID
     | CancelRequest
-    | CalibrateRequest Calibrate WeightID
-
-
-type Calibrate
-    = Zero
-    | EmptyKeg
-    | FullKeg
+    | CalibrateRequest CalibrationTarget WeightID
 
 
 type alias Model =
     { navKey : Nav.Key
     , weights : List Weight
     , error : Maybe ErrorDetails
-    , confirm : Maybe ( Calibrate, WeightID )
+    , confirm : Maybe ( CalibrationTarget, WeightID )
     }
 
 
@@ -89,7 +82,7 @@ view model =
         )
 
 
-viewConfirm : ( Calibrate, WeightID ) -> Html Msg
+viewConfirm : ( CalibrationTarget, WeightID ) -> Html Msg
 viewConfirm ( target, id ) =
     let
         targetName =
@@ -97,10 +90,10 @@ viewConfirm ( target, id ) =
                 Zero ->
                     "Nothing"
 
-                EmptyKeg ->
+                Empty ->
                     "Empty Keg"
 
-                FullKeg ->
+                Full ->
                     "Full Keg"
     in
     Modal.view CancelRequest <|
@@ -112,7 +105,7 @@ viewConfirm ( target, id ) =
             ]
 
 
-viewRequestButton : Calibrate -> WeightID -> Html Msg
+viewRequestButton : CalibrationTarget -> WeightID -> Html Msg
 viewRequestButton msg id =
     Button.withIcon (ConfirmRequest msg id) Refresh
 
@@ -127,7 +120,7 @@ viewFull { id, full } =
     in
     div [ class "red-button-text" ]
         [ span [] [ str ]
-        , viewRequestButton FullKeg id
+        , viewRequestButton Full id
         ]
 
 
@@ -141,7 +134,7 @@ viewEmpty { id, empty } =
     in
     div [ class "red-button-text" ]
         [ span [] [ str ]
-        , viewRequestButton EmptyKeg id
+        , viewRequestButton Empty id
         ]
 
 
@@ -184,20 +177,8 @@ update msg model =
         GotUpdateResponse updateResponse ->
             ( model, requestWeights GotWeightsResponse )
 
-        CalibrateRequest calibrate id ->
-            let
-                request =
-                    case calibrate of
-                        Zero ->
-                            updateZeroRequest id
-
-                        EmptyKeg ->
-                            updateEmptyRequest id
-
-                        FullKeg ->
-                            updateFullRequest id
-            in
-            ( model, makeUpdateRequest GotUpdateResponse request )
+        CalibrateRequest target id ->
+            ( model, calibrateRequest id target |> makeCalibrateRequest GotUpdateResponse )
 
 
 updateFromWeightsResponse : Model -> WeightsResponse -> Model

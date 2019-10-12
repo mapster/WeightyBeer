@@ -1,6 +1,13 @@
-import { Field, ObjectType, Context } from "typegql";
+import { Field, ObjectType, Context, registerEnum } from "typegql";
 import { GraphQLInt, GraphQLString } from "graphql";
 import { DaoContext } from "../../DaoContext";
+
+export enum CalibrationTarget {
+    zero = 'zero', 
+    empty = 'empty', 
+    full = 'full'
+}
+registerEnum(CalibrationTarget, {name: 'CalibrationTarget'});
 
 @ObjectType()
 export class Weight {
@@ -42,30 +49,25 @@ export class Weight {
 
 @ObjectType()
 export class WeightMutation {
+
     @Field({isNullable: false, type: GraphQLString})
-    async updateZero(
+    async calibrate(
         @Context context: DaoContext,
-        id: string
+        id: string,
+        target: CalibrationTarget
     ) : Promise<string> {
-        await context.actionPublisher.sendAction({id, type: 'calibrate', target: 'zero'});
+        await context.actionPublisher.sendAction({id, type: 'calibrate', target});
         return id;
     }
 
     @Field({isNullable: false, type: GraphQLString})
-    async updateEmpty(
+    async customCalibration(
         @Context context: DaoContext,
-        id: string
+        id: string,
+        target: CalibrationTarget,
+        value: number
     ) : Promise<string> {
-        await context.actionPublisher.sendAction({id, type: 'calibrate', target: 'empty'});
-        return id;
-    }
-
-    @Field({isNullable: false, type: GraphQLString})
-    async updateFull(
-        @Context context: DaoContext,
-        id: string
-    ) : Promise<string> {
-        await context.actionPublisher.sendAction({id, type: 'calibrate', target: 'full'});
+        await context.actionPublisher.sendAction({id, type: 'customCalibration', target, value});
         return id;
     }
 }

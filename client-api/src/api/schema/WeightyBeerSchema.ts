@@ -1,4 +1,4 @@
-import { Query, SchemaRoot, compileSchema, Context, Mutation } from "typegql";
+import { Query, SchemaRoot, compileSchema, Context, Mutation, registerEnum } from "typegql";
 import { Brew, BrewMutation } from "./Brew";
 import { DaoContext } from "../../DaoContext";
 import { Image, ImageMutation } from "./Image";
@@ -7,7 +7,6 @@ import { Weight, WeightMutation } from "./Weight";
 import { addSubscriptions } from "./Subscriptions";
 import { PubSub } from "graphql-subscriptions";
 import { GraphQLSchema } from "graphql";
-
 
 @SchemaRoot()
 export class QuerySchema {

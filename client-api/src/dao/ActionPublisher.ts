@@ -1,9 +1,11 @@
 import { Redis } from "ioredis";
+import { CalibrationTarget } from "../api/schema/Weight";
 
 export interface Action {
     id: string;
-    type: 'calibrate';
-    target: 'zero' | 'empty' | 'full';
+    type: 'calibrate' | 'customCalibration';
+    target: CalibrationTarget;
+    value?: number;
 }
 
 export class ActionPublisher {
