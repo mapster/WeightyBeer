@@ -72,9 +72,9 @@ view model =
         ([ viewTable
             [ ( "ID", .id >> WeightID.toString >> text )
             , ( "Current", viewCurrent )
-            , ( "Nothing", viewNothing )
-            , ( "Empty Keg", viewEmpty )
-            , ( "Full Keg", viewFull )
+            , ( "Nothing", viewTarget Zero )
+            , ( "Empty Keg", viewTarget Empty )
+            , ( "Full Keg", viewTarget Full )
             ]
             model.weights
          ]
@@ -110,45 +110,28 @@ viewRequestButton msg id =
     Button.withIcon (ConfirmRequest msg id) Refresh
 
 
-viewFull : Weight -> Html Msg
-viewFull { id, full } =
-    let
-        str =
-            Maybe.map String.fromInt full
+targetValue : Weight -> CalibrationTarget -> Maybe Int
+targetValue weight target =
+    case target of
+        Zero ->
+            weight.zero
+
+        Empty ->
+            weight.empty
+
+        Full ->
+            weight.full
+
+
+viewTarget : CalibrationTarget -> Weight -> Html Msg
+viewTarget target weight =
+    div [ class "red-button-text" ]
+        [ span []
+            [ Maybe.map String.fromInt (targetValue weight target)
                 |> Maybe.withDefault "_"
                 |> text
-    in
-    div [ class "red-button-text" ]
-        [ span [] [ str ]
-        , viewRequestButton Full id
-        ]
-
-
-viewEmpty : Weight -> Html Msg
-viewEmpty { id, empty } =
-    let
-        str =
-            Maybe.map String.fromInt empty
-                |> Maybe.withDefault "_"
-                |> text
-    in
-    div [ class "red-button-text" ]
-        [ span [] [ str ]
-        , viewRequestButton Empty id
-        ]
-
-
-viewNothing : Weight -> Html Msg
-viewNothing { id, zero } =
-    let
-        str =
-            Maybe.map String.fromInt zero
-                |> Maybe.withDefault "_"
-                |> text
-    in
-    div [ class "red-button-text" ]
-        [ span [] [ str ]
-        , viewRequestButton Zero id
+            ]
+        , viewRequestButton target weight.id
         ]
 
 
