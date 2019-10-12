@@ -20,8 +20,9 @@ export interface SensorReading {
 export type ActionTarget = 'zero' | 'full' | 'empty';
 export interface Action {
     id: string;
-    type: 'calibrate';
+    type: 'calibrate' | 'customCalibration';
     target: ActionTarget;
+    value?: number
 }
 
 interface SensorData {
@@ -125,6 +126,9 @@ export class WeightHub {
             case 'calibrate':
                 await this.calibrate(action);
                 break;
+            case 'customCalibration':
+                await this.customCalibration(action);
+                break;
             default:
                 console.error(`Unknown action.type requested: '${action.type}'`);
         }
@@ -148,14 +152,38 @@ export class WeightHub {
         return weight;
     }
 
+    private async customCalibration({id, target, value}: Action): Promise<void> {
+        if (!id) {
+            console.error(`Invalid/missing action.id: ${id}`);
+            return;
+        }
+        if (!value) {
+            console.error(`Invalid/missing value for customCalibration of ${id}: ${target}`);
+            return;
+        }
+
+        const { weight } = this.data[id];
+
+        if (['zero', 'empty', 'full'].includes(target)) {
+            weight[target] = value as number;
+            console.log(`Setting '${target}' of '${id}' to: ${value}`);
+
+            const success = await this.weightHubPublisher.set(id, target, value);
+            if (!success) {
+                console.error(`Failed to set '${target}' of '${id}' to: ${value}`);
+            }
+        } else {
+            console.error(`Unknown customCalibration target: '${target}'`);
+        }
+    }
+
     private async calibrate({ id, target }: Action): Promise<void> {
         if (!id) {
             console.error(`Invalid/missing action.id: ${id}`);
             return;
         }
 
-        const weight = this.data[id].weight;
-        const calibrate = this.data[id].calibrate;
+        const {weight, calibrate} = this.data[id];
 
         if (['zero', 'empty', 'full'].includes(target)) {
             const average = Math.floor(calibrate.sum / calibrate.readings.length);
