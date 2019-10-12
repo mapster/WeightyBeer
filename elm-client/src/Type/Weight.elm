@@ -1,9 +1,10 @@
-module Type.Weight exposing (CalibrationTarget(..), Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection)
+module Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection)
 
 import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Type.WeightID as WeightID exposing (WeightID)
+import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget)
 import WeightyBeer.Mutation as Mutation
 import WeightyBeer.Object
 import WeightyBeer.Object.Weight
@@ -43,27 +44,9 @@ type alias MutationRequest =
     SelectionSet WeightID WeightyBeer.Object.WeightMutation
 
 
-type CalibrationTarget
-    = Zero
-    | Empty
-    | Full
-
-
 calibrateRequest : WeightID -> CalibrationTarget -> MutationRequest
 calibrateRequest id target =
-    let
-        targetStr =
-            case target of
-                Zero ->
-                    "zero"
-
-                Empty ->
-                    "empty"
-
-                Full ->
-                    "full"
-    in
-    WeightyBeer.Object.WeightMutation.calibrate { id = WeightID.toString id, target = targetStr }
+    WeightyBeer.Object.WeightMutation.calibrate { id = WeightID.toString id, target = target }
         |> WeightID.stringSelection
 
 

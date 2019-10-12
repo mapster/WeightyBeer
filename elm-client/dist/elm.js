@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.am.bi === region.av.bi)
+	if (region.an.bj === region.aw.bj)
 	{
-		return 'on line ' + region.am.bi;
+		return 'on line ' + region.an.bj;
 	}
-	return 'on lines ' + region.am.bi + ' through ' + region.av.bi;
+	return 'on lines ' + region.an.bj + ' through ' + region.aw.bj;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bh,
-		impl.bB,
-		impl.by,
+		impl.bi,
+		impl.bD,
+		impl.bz,
 		function() { return function() {} }
 	);
 });
@@ -2358,25 +2358,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.a7.a(response)));
+			callback(toTask(request.a8.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done(elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done(elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.a7.b, xhr)); });
-		elm$core$Maybe$isJust(request.aX) && _Http_track(router, xhr, request.aX.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.a8.b, xhr)); });
+		elm$core$Maybe$isJust(request.aY) && _Http_track(router, xhr, request.aY.a);
 
 		try {
-			xhr.open(request.p, request.bC, true);
+			xhr.open(request.p, request.bE, true);
 		} catch (e) {
-			return done(elm$http$Http$BadUrl_(request.bC));
+			return done(elm$http$Http$BadUrl_(request.bE));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.a$.a && xhr.setRequestHeader('Content-Type', request.a$.a);
-		xhr.send(request.a$.b);
+		request.a0.a && xhr.setRequestHeader('Content-Type', request.a0.a);
+		xhr.send(request.a0.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -2392,7 +2392,7 @@ function _Http_configureRequest(xhr, request)
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
 	xhr.timeout = request.h.a || 0;
-	xhr.responseType = request.a7.d;
+	xhr.responseType = request.a8.d;
 	xhr.withCredentials = request.B;
 }
 
@@ -2414,9 +2414,9 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		bC: xhr.responseURL,
-		bv: xhr.status,
-		bw: xhr.statusText,
+		bE: xhr.responseURL,
+		bw: xhr.status,
+		bx: xhr.statusText,
 		d: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
@@ -2512,15 +2512,15 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Sending({
-			bu: event.loaded,
-			al: event.total
+			bv: event.loaded,
+			am: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2(elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, elm$http$Http$Receiving({
-			bp: event.loaded,
-			al: event.lengthComputable ? elm$core$Maybe$Just(event.total) : elm$core$Maybe$Nothing
+			bq: event.loaded,
+			am: event.lengthComputable ? elm$core$Maybe$Just(event.total) : elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -2532,8 +2532,8 @@ var _Regex_never = /.^/;
 var _Regex_fromStringWith = F2(function(options, string)
 {
 	var flags = 'g';
-	if (options.aF) { flags += 'm'; }
-	if (options.as) { flags += 'i'; }
+	if (options.aG) { flags += 'm'; }
+	if (options.at) { flags += 'i'; }
 
 	try
 	{
@@ -3035,9 +3035,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		aD: func(record.aD),
-		an: record.an,
-		aj: record.aj
+		aE: func(record.aE),
+		ao: record.ao,
+		ak: record.ak
 	}
 });
 
@@ -3305,11 +3305,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.aD;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.an;
+		var message = !tag ? value : tag < 3 ? value.a : value.aE;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.ao;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.aj) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.ak) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -4259,11 +4259,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bh,
-		impl.bB,
-		impl.by,
+		impl.bi,
+		impl.bD,
+		impl.bz,
 		function(sendToApp, initialModel) {
-			var view = impl.bD;
+			var view = impl.bF;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -4295,12 +4295,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bh,
-		impl.bB,
-		impl.by,
+		impl.bi,
+		impl.bD,
+		impl.bz,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.Q && impl.Q(sendToApp)
-			var view = impl.bD;
+			var view = impl.bF;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -4308,12 +4308,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.a$);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.a0);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.bz) && (_VirtualDom_doc.title = title = doc.bz);
+				(title !== doc.bB) && (_VirtualDom_doc.title = title = doc.bB);
 			});
 		}
 	);
@@ -4369,8 +4369,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.bm;
-	var onUrlRequest = impl.bn;
+	var onUrlChange = impl.bn;
+	var onUrlRequest = impl.bo;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4390,9 +4390,9 @@ function _Browser_application(impl)
 					var next = elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.aN === next.aN
-							&& curr.az === next.az
-							&& curr.aK.a === next.aK.a
+							&& curr.aO === next.aO
+							&& curr.aA === next.aA
+							&& curr.aL.a === next.aL.a
 						)
 							? elm$browser$Browser$Internal(next)
 							: elm$browser$Browser$External(href)
@@ -4400,13 +4400,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		bh: function(flags)
+		bi: function(flags)
 		{
-			return A3(impl.bh, flags, _Browser_getUrl(), key);
+			return A3(impl.bi, flags, _Browser_getUrl(), key);
 		},
+		bF: impl.bF,
 		bD: impl.bD,
-		bB: impl.bB,
-		by: impl.by
+		bz: impl.bz
 	});
 }
 
@@ -4472,17 +4472,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { bc: 'hidden', a0: 'visibilitychange' }
+		? { bd: 'hidden', a1: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { bc: 'mozHidden', a0: 'mozvisibilitychange' }
+		? { bd: 'mozHidden', a1: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { bc: 'msHidden', a0: 'msvisibilitychange' }
+		? { bd: 'msHidden', a1: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { bc: 'webkitHidden', a0: 'webkitvisibilitychange' }
-		: { bc: 'hidden', a0: 'visibilitychange' };
+		? { bd: 'webkitHidden', a1: 'webkitvisibilitychange' }
+		: { bd: 'hidden', a1: 'visibilitychange' };
 }
 
 
@@ -4563,10 +4563,10 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		aT: _Browser_getScene(),
-		aY: {
-			Y: _Browser_window.pageXOffset,
-			Z: _Browser_window.pageYOffset,
+		aU: _Browser_getScene(),
+		aZ: {
+			Z: _Browser_window.pageXOffset,
+			_: _Browser_window.pageYOffset,
 			M: _Browser_doc.documentElement.clientWidth,
 			F: _Browser_doc.documentElement.clientHeight
 		}
@@ -4602,13 +4602,13 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			aT: {
+			aU: {
 				M: node.scrollWidth,
 				F: node.scrollHeight
 			},
-			aY: {
-				Y: node.scrollLeft,
-				Z: node.scrollTop,
+			aZ: {
+				Z: node.scrollLeft,
+				_: node.scrollTop,
 				M: node.clientWidth,
 				F: node.clientHeight
 			}
@@ -4640,16 +4640,16 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			aT: _Browser_getScene(),
-			aY: {
-				Y: x,
-				Z: y,
+			aU: _Browser_getScene(),
+			aZ: {
+				Z: x,
+				_: y,
 				M: _Browser_doc.documentElement.clientWidth,
 				F: _Browser_doc.documentElement.clientHeight
 			},
-			a4: {
-				Y: x + rect.left,
-				Z: y + rect.top,
+			a5: {
+				Z: x + rect.left,
+				_: y + rect.top,
 				M: rect.width,
 				F: rect.height
 			}
@@ -4872,7 +4872,7 @@ var author$project$Main$ClickedLink = function (a) {
 };
 var author$project$Main$Model = F4(
 	function (navKey, route, page, showErrorDetails) {
-		return {ag: navKey, g: page, bt: route, W: showErrorDetails};
+		return {ah: navKey, g: page, bu: route, X: showErrorDetails};
 	});
 var author$project$Main$ToPage = function (a) {
 	return {$: 2, a: a};
@@ -5415,7 +5415,7 @@ var author$project$Constants$weightyBeerGraphql = author$project$Constants$weigh
 var author$project$Page$Brews$GotBrewsResponse = elm$core$Basics$identity;
 var author$project$Page$Brews$Brew = F5(
 	function (id, name, brewNumber, style, imageUrl) {
-		return {ab: brewNumber, bd: id, be: imageUrl, af: name, ao: style};
+		return {ac: brewNumber, be: id, bf: imageUrl, ag: name, ap: style};
 	});
 var author$project$Type$BrewID$BrewID = elm$core$Basics$identity;
 var Skinney$murmur3$Murmur3$HashData = F4(
@@ -5650,8 +5650,8 @@ var dillonkearns$elm_graphql$Graphql$Document$Field$maybeAliasHash = function (f
 				return elm$core$List$isEmpty(_arguments) ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(
 					dillonkearns$elm_graphql$Graphql$Document$Argument$serialize(_arguments));
 			} else {
-				var typeString = field.a.bA;
-				var fieldName = field.a.ax;
+				var typeString = field.a.bC;
+				var fieldName = field.a.ay;
 				var _arguments = field.b;
 				return (fieldName === '__typename') ? elm$core$Maybe$Nothing : elm$core$Maybe$Just(
 					elm$core$String$concat(
@@ -5671,8 +5671,8 @@ var dillonkearns$elm_graphql$Graphql$RawField$name = function (field) {
 		var fieldList = field.c;
 		return fieldName;
 	} else {
-		var typeString = field.a.bA;
-		var fieldName = field.a.ax;
+		var typeString = field.a.bC;
+		var fieldName = field.a.ay;
 		var argumentList = field.b;
 		return fieldName;
 	}
@@ -5719,7 +5719,7 @@ var dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField =
 	function (typeString, fieldName, args, decoder) {
 		var newLeaf = A2(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$leaf,
-			{ax: fieldName, bA: typeString},
+			{ay: fieldName, bC: typeString},
 			args);
 		return A2(
 			dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
@@ -5853,8 +5853,8 @@ var dillonkearns$elm_graphql$Graphql$Http$queryRequest = F2(
 	function (baseUrl, query) {
 		return {
 			O: baseUrl,
-			V: A2(dillonkearns$elm_graphql$Graphql$Http$Query, elm$core$Maybe$Nothing, query),
-			a7: dillonkearns$elm_graphql$Graphql$Document$decoder(query),
+			W: A2(dillonkearns$elm_graphql$Graphql$Http$Query, elm$core$Maybe$Nothing, query),
+			a8: dillonkearns$elm_graphql$Graphql$Document$decoder(query),
 			d: _List_Nil,
 			x: _List_Nil,
 			h: elm$core$Maybe$Nothing,
@@ -6499,7 +6499,7 @@ var dillonkearns$elm_graphql$Graphql$Http$expectJson = F2(
 	});
 var dillonkearns$elm_graphql$Graphql$RawField$typename = A2(
 	dillonkearns$elm_graphql$Graphql$RawField$Leaf,
-	{ax: '__typename', bA: ''},
+	{ay: '__typename', bC: ''},
 	_List_Nil);
 var dillonkearns$elm_graphql$Graphql$Document$Field$nonemptyChildren = function (children) {
 	return elm$core$List$isEmpty(children) ? A2(elm$core$List$cons, dillonkearns$elm_graphql$Graphql$RawField$typename, children) : children;
@@ -6571,7 +6571,7 @@ var dillonkearns$elm_graphql$Graphql$Document$Field$serialize = F3(
 								children)))) + ('\n' + (dillonkearns$elm_graphql$Graphql$Document$Indent$generate(indentationLevel) + '}')));
 					}
 				} else {
-					var fieldName = field.a.ax;
+					var fieldName = field.a.ay;
 					var args = field.b;
 					return elm$core$Maybe$Just(
 						_Utils_ap(
@@ -6646,7 +6646,7 @@ var elm$core$Array$fromList = function (list) {
 };
 var elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
-		return {bg: index, bk: match, bl: number, bx: submatches};
+		return {bh: index, bl: match, bm: number, by: submatches};
 	});
 var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
 var elm$core$Array$bitMask = 4294967295 >>> (32 - elm$core$Array$shiftStep);
@@ -6722,7 +6722,7 @@ var elm$core$String$dropRight = F2(
 var elm$core$String$toInt = _String_toInt;
 var lukewestby$elm_string_interpolate$String$Interpolate$applyInterpolation = F2(
 	function (replacements, _n0) {
-		var match = _n0.bk;
+		var match = _n0.bl;
 		var ordinalString = A2(
 			elm$core$Basics$composeL,
 			elm$core$String$dropLeft(1),
@@ -6741,7 +6741,7 @@ var elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var elm$regex$Regex$fromString = function (string) {
 	return A2(
 		elm$regex$Regex$fromStringWith,
-		{as: false, aF: false},
+		{at: false, aG: false},
 		string);
 };
 var elm$regex$Regex$never = _Regex_never;
@@ -6779,11 +6779,11 @@ var dillonkearns$elm_graphql$Graphql$Document$serializeMutation = function (_n0)
 };
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$GraphqlError = F3(
 	function (message, locations, details) {
-		return {V: details, bj: locations, aD: message};
+		return {W: details, bk: locations, aE: message};
 	});
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location = F2(
 	function (line, column) {
-		return {a1: column, bi: line};
+		return {a2: column, bj: line};
 	});
 var elm$json$Json$Decode$map2 = _Json_map2;
 var dillonkearns$elm_graphql$Graphql$Http$GraphqlError$locationDecoder = A3(
@@ -6967,7 +6967,7 @@ var dillonkearns$elm_graphql$Graphql$Http$QueryHelper$build = F4(
 			dillonkearns$elm_graphql$Graphql$Http$QueryHelper$maxLength) > -1) && (!_Utils_eq(
 			forceMethod,
 			elm$core$Maybe$Just(0))))) ? {
-			a$: elm$http$Http$jsonBody(
+			a0: elm$http$Http$jsonBody(
 				elm$json$Json$Encode$object(
 					_List_fromArray(
 						[
@@ -6977,12 +6977,12 @@ var dillonkearns$elm_graphql$Graphql$Http$QueryHelper$build = F4(
 								dillonkearns$elm_graphql$Graphql$Document$serializeQuery(queryDocument)))
 						]))),
 			p: 1,
-			bC: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, _List_Nil, url)
-		} : {a$: elm$http$Http$emptyBody, p: 0, bC: urlForGetRequest};
+			bE: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, _List_Nil, url)
+		} : {a0: elm$http$Http$emptyBody, p: 0, bE: urlForGetRequest};
 	});
 var dillonkearns$elm_graphql$Graphql$Http$toReadyRequest = function (_n0) {
 	var request = _n0;
-	var _n1 = request.V;
+	var _n1 = request.W;
 	if (!_n1.$) {
 		var forcedRequestMethod = _n1.a;
 		var querySelectionSet = _n1.b;
@@ -7005,8 +7005,8 @@ var dillonkearns$elm_graphql$Graphql$Http$toReadyRequest = function (_n0) {
 			request.x,
 			querySelectionSet);
 		return {
-			a$: queryRequestDetails.a$,
-			a3: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.a7),
+			a0: queryRequestDetails.a0,
+			a4: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.a8),
 			d: request.d,
 			p: function () {
 				var _n2 = queryRequestDetails.p;
@@ -7017,12 +7017,12 @@ var dillonkearns$elm_graphql$Graphql$Http$toReadyRequest = function (_n0) {
 				}
 			}(),
 			h: request.h,
-			bC: queryRequestDetails.bC
+			bE: queryRequestDetails.bE
 		};
 	} else {
 		var mutationSelectionSet = _n1.a;
 		return {
-			a$: elm$http$Http$jsonBody(
+			a0: elm$http$Http$jsonBody(
 				elm$json$Json$Encode$object(
 					_List_fromArray(
 						[
@@ -7031,11 +7031,11 @@ var dillonkearns$elm_graphql$Graphql$Http$toReadyRequest = function (_n0) {
 							elm$json$Json$Encode$string(
 								dillonkearns$elm_graphql$Graphql$Document$serializeMutation(mutationSelectionSet)))
 						]))),
-			a3: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.a7),
+			a4: dillonkearns$elm_graphql$Graphql$Http$decoderOrError(request.a8),
 			d: request.d,
 			p: 'POST',
 			h: request.h,
-			bC: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, request.x, request.O)
+			bE: A2(dillonkearns$elm_graphql$Graphql$Http$QueryParams$urlWithQueryParams, request.x, request.O)
 		};
 	}
 };
@@ -7044,16 +7044,16 @@ var dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord = F2(
 		var request = fullRequest;
 		return function (readyRequest) {
 			return {
-				a$: readyRequest.a$,
-				a7: A2(
+				a0: readyRequest.a0,
+				a8: A2(
 					dillonkearns$elm_graphql$Graphql$Http$expectJson,
 					A2(elm$core$Basics$composeR, dillonkearns$elm_graphql$Graphql$Http$convertResult, resultToMessage),
-					readyRequest.a3),
+					readyRequest.a4),
 				d: readyRequest.d,
 				p: readyRequest.p,
 				h: readyRequest.h,
-				aX: elm$core$Maybe$Nothing,
-				bC: readyRequest.bC
+				aY: elm$core$Maybe$Nothing,
+				bE: readyRequest.bE
 			};
 		}(
 			dillonkearns$elm_graphql$Graphql$Http$toReadyRequest(fullRequest));
@@ -7064,7 +7064,7 @@ var elm$http$Http$Request = function (a) {
 var elm$core$Task$succeed = _Scheduler_succeed;
 var elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {aQ: reqs, aU: subs};
+		return {aR: reqs, aV: subs};
 	});
 var elm$http$Http$init = elm$core$Task$succeed(
 	A2(elm$http$Http$State, elm$core$Dict$empty, _List_Nil));
@@ -7109,7 +7109,7 @@ var elm$http$Http$updateReqs = F3(
 					return A2(
 						elm$core$Task$andThen,
 						function (pid) {
-							var _n4 = req.aX;
+							var _n4 = req.aY;
 							if (_n4.$ === 1) {
 								return A3(elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -7139,7 +7139,7 @@ var elm$http$Http$onEffects = F4(
 				return elm$core$Task$succeed(
 					A2(elm$http$Http$State, reqs, subs));
 			},
-			A3(elm$http$Http$updateReqs, router, cmds, state.aQ));
+			A3(elm$http$Http$updateReqs, router, cmds, state.aR));
 	});
 var elm$core$Task$map2 = F3(
 	function (func, taskA, taskB) {
@@ -7186,7 +7186,7 @@ var elm$http$Http$onSelfMsg = F3(
 				A2(
 					elm$core$List$filterMap,
 					A3(elm$http$Http$maybeSend, router, tracker, progress),
-					state.aU)));
+					state.aV)));
 	});
 var elm$http$Http$Cancel = function (a) {
 	return {$: 0, a: a};
@@ -7201,13 +7201,13 @@ var elm$http$Http$cmdMap = F2(
 			return elm$http$Http$Request(
 				{
 					B: r.B,
-					a$: r.a$,
-					a7: A2(_Http_mapExpect, func, r.a7),
+					a0: r.a0,
+					a8: A2(_Http_mapExpect, func, r.a8),
 					d: r.d,
 					p: r.p,
 					h: r.h,
-					aX: r.aX,
-					bC: r.bC
+					aY: r.aY,
+					bE: r.bE
 				});
 		}
 	});
@@ -7230,12 +7230,12 @@ var elm$http$Http$subscription = _Platform_leaf('Http');
 var elm$http$Http$request = function (r) {
 	return elm$http$Http$command(
 		elm$http$Http$Request(
-			{B: false, a$: r.a$, a7: r.a7, d: r.d, p: r.p, h: r.h, aX: r.aX, bC: r.bC}));
+			{B: false, a0: r.a0, a8: r.a8, d: r.d, p: r.p, h: r.h, aY: r.aY, bE: r.bE}));
 };
 var elm$http$Http$riskyRequest = function (r) {
 	return elm$http$Http$command(
 		elm$http$Http$Request(
-			{B: true, a$: r.a$, a7: r.a7, d: r.d, p: r.p, h: r.h, aX: r.aX, bC: r.bC}));
+			{B: true, a0: r.a0, a8: r.a8, d: r.d, p: r.p, h: r.h, aY: r.aY, bE: r.bE}));
 };
 var dillonkearns$elm_graphql$Graphql$Http$send = F2(
 	function (resultToMessage, fullRequest) {
@@ -7266,14 +7266,14 @@ var krisajenkins$remotedata$RemoteData$Loading = {$: 1};
 var author$project$Page$Brews$init = _Utils_Tuple2(krisajenkins$remotedata$RemoteData$Loading, author$project$Page$Brews$requestBrews);
 var author$project$Component$EditBrew$Model = F4(
 	function (images, mutation, showGallery, error) {
-		return {P: error, G: images, v: mutation, X: showGallery};
+		return {P: error, G: images, v: mutation, Y: showGallery};
 	});
 var author$project$Component$EditBrew$GotImagesResponse = function (a) {
 	return {$: 7, a: a};
 };
 var author$project$Type$Brew$Image = F2(
 	function (id, url) {
-		return {bd: id, bC: url};
+		return {be: id, bE: url};
 	});
 var author$project$Type$ImageID$ImageID = elm$core$Basics$identity;
 var author$project$WeightyBeer$Object$Image$id = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'id', _List_Nil, elm$json$Json$Decode$string);
@@ -7366,14 +7366,14 @@ var author$project$Page$EditBrew$EditBrewMsg = function (a) {
 };
 var author$project$Page$EditBrew$Model = F3(
 	function (navKey, editModel, error) {
-		return {j: editModel, P: error, ag: navKey};
+		return {j: editModel, P: error, ah: navKey};
 	});
 var author$project$Page$EditBrew$GotGetResponse = function (a) {
 	return {$: 3, a: a};
 };
 var author$project$Type$Brew$Brew = F7(
 	function (id, brewNumber, name, style, ibu, abv, image) {
-		return {_: abv, ab: brewNumber, ac: ibu, bd: id, ad: image, af: name, ao: style};
+		return {aa: abv, ac: brewNumber, ad: ibu, be: id, ae: image, ag: name, ap: style};
 	});
 var elm$json$Json$Decode$float = _Json_decodeFloat;
 var author$project$WeightyBeer$Object$Brew$abv = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Float', 'abv', _List_Nil, elm$json$Json$Decode$float);
@@ -7418,7 +7418,7 @@ var author$project$Type$BrewID$toString = function (_n0) {
 };
 var author$project$Type$BrewID$toArg = function (id) {
 	return {
-		bd: author$project$Type$BrewID$toString(id)
+		be: author$project$Type$BrewID$toString(id)
 	};
 };
 var dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
@@ -7446,7 +7446,7 @@ var author$project$WeightyBeer$Query$brew = F2(
 			'brew',
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.be, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]),
 			object_,
 			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
@@ -7465,7 +7465,7 @@ var author$project$Page$EditBrew$requestBrew = function (id) {
 };
 var author$project$Type$Brew$PartialBrew = F7(
 	function (id, brewNumber, name, style, ibu, abv, image) {
-		return {_: abv, ab: brewNumber, ac: ibu, bd: id, ad: image, af: name, ao: style};
+		return {aa: abv, ac: brewNumber, ad: ibu, be: id, ae: image, ag: name, ap: style};
 	});
 var author$project$Type$ModifiableValue$NoValue = {$: 4};
 var author$project$Type$Brew$emptyPartial = A7(author$project$Type$Brew$PartialBrew, elm$core$Maybe$Nothing, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue);
@@ -7487,14 +7487,14 @@ var author$project$Page$EditBrew$init = F2(
 var author$project$Page$EditTap$Loading = {$: 2};
 var author$project$Page$EditTap$Model = F2(
 	function (navKey, state) {
-		return {ag: navKey, e: state};
+		return {ah: navKey, e: state};
 	});
 var author$project$Page$EditTap$GotResponse = function (a) {
 	return {$: 0, a: a};
 };
 var author$project$Page$EditTap$ResponseData = F3(
 	function (tap, brews, weights) {
-		return {o: brews, aW: tap, s: weights};
+		return {o: brews, aX: tap, s: weights};
 	});
 var author$project$Type$Tap$ExistingTap = F2(
 	function (a, b) {
@@ -7502,11 +7502,11 @@ var author$project$Type$Tap$ExistingTap = F2(
 	});
 var author$project$Type$Tap$Tap = F5(
 	function (name, order, volume, brew, weight) {
-		return {aa: brew, af: name, ai: order, ap: volume, aq: weight};
+		return {ab: brew, ag: name, aj: order, aq: volume, ar: weight};
 	});
 var author$project$Type$Tap$Weight = F2(
 	function (id, percent) {
-		return {bd: id, aI: percent};
+		return {be: id, aJ: percent};
 	});
 var author$project$Type$WeightID$WeightID = elm$core$Basics$identity;
 var author$project$WeightyBeer$Object$Weight$id = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'id', _List_Nil, elm$json$Json$Decode$string);
@@ -7553,7 +7553,7 @@ var author$project$Type$TapID$toString = function (_n0) {
 };
 var author$project$Type$TapID$toArg = function (id) {
 	return {
-		bd: author$project$Type$TapID$toString(id)
+		be: author$project$Type$TapID$toString(id)
 	};
 };
 var author$project$WeightyBeer$Query$tap = F2(
@@ -7563,7 +7563,7 @@ var author$project$WeightyBeer$Query$tap = F2(
 			'tap',
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.be, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]),
 			object_,
 			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
@@ -7616,7 +7616,7 @@ var author$project$Page$EditTap$init = F2(
 	});
 var author$project$Page$Home$Model = F2(
 	function (receivedTaps, weights) {
-		return {ak: receivedTaps, s: weights};
+		return {al: receivedTaps, s: weights};
 	});
 var author$project$Page$Home$GotTapsResponse = function (a) {
 	return {$: 0, a: a};
@@ -7645,7 +7645,7 @@ var author$project$Page$NewBrew$EditBrewMsg = function (a) {
 };
 var author$project$Page$NewBrew$Model = F3(
 	function (navKey, editModel, error) {
-		return {j: editModel, P: error, ag: navKey};
+		return {j: editModel, P: error, ah: navKey};
 	});
 var author$project$Page$NewBrew$init = function (navKey) {
 	var _n0 = author$project$Component$EditBrew$init(author$project$Type$Brew$emptyPartial);
@@ -7657,7 +7657,7 @@ var author$project$Page$NewBrew$init = function (navKey) {
 };
 var author$project$Page$NewTap$Model = F5(
 	function (navKey, mutation, brews, weights, error) {
-		return {o: brews, P: error, v: mutation, ag: navKey, s: weights};
+		return {o: brews, P: error, v: mutation, ah: navKey, s: weights};
 	});
 var author$project$Page$NewTap$BrewsWeightsData = F2(
 	function (brews, weights) {
@@ -7679,7 +7679,7 @@ var author$project$Page$NewTap$requestBrewsWeights = A2(
 			author$project$WeightyBeer$Query$weights(author$project$Type$Tap$weightSelection))));
 var author$project$Type$Tap$PartialTap = F6(
 	function (id, name, order, volume, brew, weight) {
-		return {aa: brew, bd: id, af: name, ai: order, ap: volume, aq: weight};
+		return {ab: brew, be: id, ag: name, aj: order, aq: volume, ar: weight};
 	});
 var author$project$Type$Tap$emptyPartial = A6(author$project$Type$Tap$PartialTap, elm$core$Maybe$Nothing, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue, author$project$Type$ModifiableValue$NoValue);
 var author$project$Page$NewTap$init = function (navKey) {
@@ -7690,11 +7690,11 @@ var author$project$Page$NewTap$init = function (navKey) {
 var author$project$Page$Taps$GotTapsResponse = elm$core$Basics$identity;
 var author$project$Page$Taps$Tap = F5(
 	function (id, name, brew, weight, isActive) {
-		return {aa: brew, bd: id, aA: isActive, af: name, aq: weight};
+		return {ab: brew, be: id, aB: isActive, ag: name, ar: weight};
 	});
 var author$project$Page$Taps$Brew = F2(
 	function (brewNumber, name) {
-		return {ab: brewNumber, af: name};
+		return {ac: brewNumber, ag: name};
 	});
 var author$project$Page$Taps$brewSelection = A3(dillonkearns$elm_graphql$Graphql$SelectionSet$map2, author$project$Page$Taps$Brew, author$project$WeightyBeer$Object$Brew$brewNumber, author$project$WeightyBeer$Object$Brew$name);
 var author$project$Page$Taps$weightSelection = author$project$WeightyBeer$Object$Weight$id;
@@ -7717,13 +7717,16 @@ var author$project$Page$Taps$init = _Utils_Tuple2(krisajenkins$remotedata$Remote
 var author$project$Page$WeightHub$GotWeightsResponse = function (a) {
 	return {$: 0, a: a};
 };
-var author$project$Page$WeightHub$Model = F3(
-	function (navKey, weights, error) {
-		return {P: error, ag: navKey, s: weights};
+var author$project$Page$WeightHub$Model = F4(
+	function (navKey, weights, error, confirm) {
+		return {V: confirm, P: error, ah: navKey, s: weights};
 	});
+var author$project$Page$WeightHub$emptyModel = function (navKey) {
+	return A4(author$project$Page$WeightHub$Model, navKey, _List_Nil, elm$core$Maybe$Nothing, elm$core$Maybe$Nothing);
+};
 var author$project$Type$Weight$Weight = F6(
 	function (id, zero, empty, full, current, percent) {
-		return {a2: current, a5: empty, ba: full, bd: id, aI: percent, bF: zero};
+		return {a3: current, a6: empty, bb: full, be: id, aJ: percent, bH: zero};
 	});
 var author$project$WeightyBeer$Object$Weight$current = A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'Int', 'current', _List_Nil, elm$json$Json$Decode$int);
 var author$project$WeightyBeer$Object$Weight$empty = A4(
@@ -7778,7 +7781,7 @@ var author$project$Type$Weight$requestWeights = function (msg) {
 };
 var author$project$Page$WeightHub$init = function (navKey) {
 	return _Utils_Tuple2(
-		A3(author$project$Page$WeightHub$Model, navKey, _List_Nil, elm$core$Maybe$Nothing),
+		author$project$Page$WeightHub$emptyModel(navKey),
 		author$project$Type$Weight$requestWeights(author$project$Page$WeightHub$GotWeightsResponse));
 };
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
@@ -8134,9 +8137,9 @@ var elm$url$Url$Parser$parse = F2(
 				A5(
 					elm$url$Url$Parser$State,
 					_List_Nil,
-					elm$url$Url$Parser$preparePath(url.aH),
-					elm$url$Url$Parser$prepareQuery(url.aO),
-					url.ay,
+					elm$url$Url$Parser$preparePath(url.aI),
+					elm$url$Url$Parser$prepareQuery(url.aP),
+					url.az,
 					elm$core$Basics$identity)));
 	});
 var author$project$Route$fromUrl = function (url) {
@@ -8170,7 +8173,7 @@ var elm$time$Time$Every = F2(
 	});
 var elm$time$Time$State = F2(
 	function (taggers, processes) {
-		return {aM: processes, aV: taggers};
+		return {aN: processes, aW: taggers};
 	});
 var elm$time$Time$init = elm$core$Task$succeed(
 	A2(elm$time$Time$State, elm$core$Dict$empty, elm$core$Dict$empty));
@@ -8317,7 +8320,7 @@ var elm$time$Time$spawnHelp = F3(
 	});
 var elm$time$Time$onEffects = F3(
 	function (router, subs, _n0) {
-		var processes = _n0.aM;
+		var processes = _n0.aN;
 		var rightStep = F3(
 			function (_n6, id, _n7) {
 				var spawns = _n7.a;
@@ -8386,7 +8389,7 @@ var elm$time$Time$millisToPosix = elm$core$Basics$identity;
 var elm$time$Time$now = _Time_now(elm$time$Time$millisToPosix);
 var elm$time$Time$onSelfMsg = F3(
 	function (router, interval, state) {
-		var _n0 = A2(elm$core$Dict$get, interval, state.aV);
+		var _n0 = A2(elm$core$Dict$get, interval, state.aW);
 		if (_n0.$ === 1) {
 			return elm$core$Task$succeed(state);
 		} else {
@@ -8644,7 +8647,7 @@ var elm$core$String$left = F2(
 var elm$core$String$contains = _String_contains;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {ay: fragment, az: host, aH: path, aK: port_, aN: protocol, aO: query};
+		return {az: fragment, aA: host, aI: path, aL: port_, aO: protocol, aP: query};
 	});
 var elm$url$Url$chompBeforePath = F5(
 	function (protocol, path, params, frag, str) {
@@ -8765,7 +8768,7 @@ var author$project$Component$EditBrew$UploadImage = function (a) {
 };
 var author$project$Component$ErrorDetails$ErrorDetails = F2(
 	function (message, error) {
-		return {P: error, aD: message};
+		return {P: error, aE: message};
 	});
 var author$project$Component$ErrorDetails$errorDetails = F2(
 	function (message, error) {
@@ -8896,61 +8899,61 @@ var author$project$Component$EditBrew$updateMutationField = F4(
 				return _Utils_update(
 					mutation,
 					{
-						ab: A2(
+						ac: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.ab,
+							mutation.ac,
 							elm$core$String$toInt(value))
 					});
 			case 1:
 				return _Utils_update(
 					mutation,
 					{
-						af: A2(
+						ag: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.af,
+							mutation.ag,
 							author$project$Utils$emptyAsNothing(value))
 					});
 			case 2:
 				return _Utils_update(
 					mutation,
 					{
-						ao: A2(
+						ap: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.ao,
+							mutation.ap,
 							author$project$Utils$emptyAsNothing(value))
 					});
 			case 3:
 				return _Utils_update(
 					mutation,
 					{
-						_: A2(
+						aa: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation._,
+							mutation.aa,
 							elm$core$String$toFloat(value))
 					});
 			case 4:
 				return _Utils_update(
 					mutation,
 					{
-						ac: A2(
+						ad: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.ac,
+							mutation.ad,
 							elm$core$String$toInt(value))
 					});
 			default:
 				return _Utils_update(
 					mutation,
 					{
-						ad: A2(
+						ae: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.ad,
+							mutation.ae,
 							elm$core$List$head(
 								A2(
 									elm$core$List$filter,
 									A2(
 										elm$core$Basics$composeR,
 										function ($) {
-											return $.bd;
+											return $.be;
 										},
 										author$project$Type$ImageID$eq(value)),
 									images)))
@@ -8971,7 +8974,7 @@ var author$project$Component$EditBrew$updateFromUploadedImage = F2(
 				images,
 				model.v,
 				5,
-				author$project$Type$ImageID$toString(image.bd));
+				author$project$Type$ImageID$toString(image.be));
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
@@ -9046,7 +9049,7 @@ var elm$http$Http$resolve = F2(
 			case 3:
 				var metadata = response.a;
 				return elm$core$Result$Err(
-					elm$http$Http$BadStatus(metadata.bv));
+					elm$http$Http$BadStatus(metadata.bw));
 			default:
 				var body = response.b;
 				return A2(
@@ -9077,18 +9080,18 @@ var elm$http$Http$multipartBody = function (parts) {
 };
 var elm$http$Http$post = function (r) {
 	return elm$http$Http$request(
-		{a$: r.a$, a7: r.a7, d: _List_Nil, p: 'POST', h: elm$core$Maybe$Nothing, aX: elm$core$Maybe$Nothing, bC: r.bC});
+		{a0: r.a0, a8: r.a8, d: _List_Nil, p: 'POST', h: elm$core$Maybe$Nothing, aY: elm$core$Maybe$Nothing, bE: r.bE});
 };
 var author$project$Component$EditBrew$uploadImage = function (file) {
 	return elm$http$Http$post(
 		{
-			a$: elm$http$Http$multipartBody(
+			a0: elm$http$Http$multipartBody(
 				_List_fromArray(
 					[
 						A2(elm$http$Http$filePart, 'brewImage', file)
 					])),
-			a7: A2(elm$http$Http$expectJson, author$project$Component$EditBrew$GotUploadedImageId, author$project$Type$Brew$imageDecoder),
-			bC: author$project$Constants$weightyBeerImageUpload
+			a8: A2(elm$http$Http$expectJson, author$project$Component$EditBrew$GotUploadedImageId, author$project$Type$Brew$imageDecoder),
+			bE: author$project$Constants$weightyBeerImageUpload
 		});
 };
 var author$project$WeightyBeer$Mutation$image = function (object_) {
@@ -9101,7 +9104,7 @@ var author$project$WeightyBeer$Object$ImageMutation$remove = F2(
 			'remove',
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.be, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]),
 			object_,
 			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
@@ -9113,8 +9116,8 @@ var dillonkearns$elm_graphql$Graphql$Http$mutationRequest = F2(
 	function (baseUrl, mutationSelectionSet) {
 		return {
 			O: baseUrl,
-			V: dillonkearns$elm_graphql$Graphql$Http$Mutation(mutationSelectionSet),
-			a7: dillonkearns$elm_graphql$Graphql$Document$decoder(mutationSelectionSet),
+			W: dillonkearns$elm_graphql$Graphql$Http$Mutation(mutationSelectionSet),
+			a8: dillonkearns$elm_graphql$Graphql$Document$decoder(mutationSelectionSet),
 			d: _List_Nil,
 			x: _List_Nil,
 			h: elm$core$Maybe$Nothing,
@@ -9133,7 +9136,7 @@ var author$project$Type$Brew$makeDeleteImageRequest = F2(
 					A2(
 						author$project$WeightyBeer$Object$ImageMutation$remove,
 						{
-							bd: author$project$Type$ImageID$toString(id)
+							be: author$project$Type$ImageID$toString(id)
 						},
 						author$project$Type$Brew$imageSelection))));
 	});
@@ -9162,7 +9165,7 @@ var author$project$Component$EditBrew$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{X: !model.X}),
+						{Y: !model.Y}),
 					elm$core$Platform$Cmd$none);
 			case 2:
 				return _Utils_Tuple2(
@@ -9245,13 +9248,13 @@ var elm$core$Maybe$map2 = F3(
 	});
 var elm_community$maybe_extra$Maybe$Extra$andMap = elm$core$Maybe$map2(elm$core$Basics$apR);
 var author$project$Type$Brew$toBrew = function (_n0) {
-	var id = _n0.bd;
-	var brewNumber = _n0.ab;
-	var name = _n0.af;
-	var style = _n0.ao;
-	var ibu = _n0.ac;
-	var abv = _n0._;
-	var image = _n0.ad;
+	var id = _n0.be;
+	var brewNumber = _n0.ac;
+	var name = _n0.ag;
+	var style = _n0.ap;
+	var ibu = _n0.ad;
+	var abv = _n0.aa;
+	var image = _n0.ae;
 	return A2(
 		elm_community$maybe_extra$Maybe$Extra$andMap,
 		elm$core$Maybe$Just(
@@ -9309,13 +9312,13 @@ var author$project$Utils$fillInOptional = F2(
 var author$project$Type$Brew$fillInBrewOptionals = F2(
 	function (brew, _n0) {
 		return {
-			ad: A2(
+			ae: A2(
 				author$project$Utils$fillInOptional,
-				brew.ad,
+				brew.ae,
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.bd;
+						return $.be;
 					},
 					author$project$Type$ImageID$toString))
 		};
@@ -9352,13 +9355,13 @@ var dillonkearns$elm_graphql$Graphql$Internal$Encode$int = function (value) {
 var author$project$WeightyBeer$Object$BrewMutation$update = F3(
 	function (fillInOptionals, requiredArgs, object_) {
 		var filledInOptionals = fillInOptionals(
-			{ad: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
+			{ae: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
 		var optionalArgs = A2(
 			elm$core$List$filterMap,
 			elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'image', filledInOptionals.ad, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'image', filledInOptionals.ae, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]));
 		return A4(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
@@ -9367,12 +9370,12 @@ var author$project$WeightyBeer$Object$BrewMutation$update = F3(
 				optionalArgs,
 				_List_fromArray(
 					[
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'brewNumber', requiredArgs.ab, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.af, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'style', requiredArgs.ao, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'ibu', requiredArgs.ac, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'abv', requiredArgs._, dillonkearns$elm_graphql$Graphql$Internal$Encode$float)
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.be, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'brewNumber', requiredArgs.ac, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.ag, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'style', requiredArgs.ap, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'ibu', requiredArgs.ad, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'abv', requiredArgs.aa, dillonkearns$elm_graphql$Graphql$Internal$Encode$float)
 					])),
 			object_,
 			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
@@ -9380,12 +9383,12 @@ var author$project$WeightyBeer$Object$BrewMutation$update = F3(
 var author$project$Type$Brew$updateRequest = F2(
 	function (brew, resultSelectionSet) {
 		var required = {
-			_: brew._,
-			ab: brew.ab,
+			aa: brew.aa,
 			ac: brew.ac,
-			bd: author$project$Type$BrewID$toString(brew.bd),
-			af: brew.af,
-			ao: brew.ao
+			ad: brew.ad,
+			be: author$project$Type$BrewID$toString(brew.be),
+			ag: brew.ag,
+			ap: brew.ap
 		};
 		return A3(
 			author$project$WeightyBeer$Object$BrewMutation$update,
@@ -9430,13 +9433,13 @@ var elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
 		}
 	});
 var author$project$Type$Brew$toPartial = function (_n0) {
-	var id = _n0.bd;
-	var brewNumber = _n0.ab;
-	var name = _n0.af;
-	var style = _n0.ao;
-	var ibu = _n0.ac;
-	var abv = _n0._;
-	var image = _n0.ad;
+	var id = _n0.be;
+	var brewNumber = _n0.ac;
+	var name = _n0.ag;
+	var style = _n0.ap;
+	var ibu = _n0.ad;
+	var abv = _n0.aa;
+	var image = _n0.ae;
 	return A7(
 		author$project$Type$Brew$PartialBrew,
 		elm$core$Maybe$Just(id),
@@ -9494,7 +9497,7 @@ var author$project$Page$EditBrew$updateFromSaveResponse = F2(
 								model.j,
 								author$project$Type$Brew$toPartial(brew))
 						}),
-					author$project$Component$EditBrew$navigateToBrews(model.ag));
+					author$project$Component$EditBrew$navigateToBrews(model.ah));
 			} else {
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -9525,7 +9528,7 @@ var author$project$Page$EditBrew$update = F2(
 			case 1:
 				return _Utils_Tuple2(
 					model,
-					author$project$Component$EditBrew$navigateToBrews(model.ag));
+					author$project$Component$EditBrew$navigateToBrews(model.ah));
 			case 2:
 				var editMsg = msg.a;
 				var _n1 = A2(author$project$Component$EditBrew$update, editMsg, model.j);
@@ -9569,11 +9572,11 @@ var author$project$Type$Tap$makeMutationRequest = F2(
 				author$project$WeightyBeer$Mutation$tap(request)));
 	});
 var author$project$Type$Tap$toTap = function (_n0) {
-	var name = _n0.af;
-	var order = _n0.ai;
-	var volume = _n0.ap;
-	var brew = _n0.aa;
-	var weight = _n0.aq;
+	var name = _n0.ag;
+	var order = _n0.aj;
+	var volume = _n0.aq;
+	var brew = _n0.ab;
+	var weight = _n0.ar;
 	return A2(
 		elm_community$maybe_extra$Maybe$Extra$andMap,
 		elm$core$Maybe$Just(
@@ -9597,7 +9600,7 @@ var author$project$Type$Tap$toExistingTap = function (partial) {
 	return A2(
 		elm_community$maybe_extra$Maybe$Extra$andMap,
 		author$project$Type$Tap$toTap(partial),
-		A2(elm$core$Maybe$map, author$project$Type$Tap$ExistingTap, partial.bd));
+		A2(elm$core$Maybe$map, author$project$Type$Tap$ExistingTap, partial.be));
 };
 var author$project$Type$WeightID$toString = function (_n0) {
 	var id = _n0;
@@ -9606,22 +9609,22 @@ var author$project$Type$WeightID$toString = function (_n0) {
 var author$project$Type$Tap$fillInTapOptionals = F2(
 	function (tap, _n0) {
 		return {
-			aa: A2(
+			ab: A2(
 				author$project$Utils$fillInOptional,
-				tap.aa,
+				tap.ab,
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.bd;
+						return $.be;
 					},
 					author$project$Type$BrewID$toString)),
-			aq: A2(
+			ar: A2(
 				author$project$Utils$fillInOptional,
-				tap.aq,
+				tap.ar,
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.bd;
+						return $.be;
 					},
 					author$project$Type$WeightID$toString))
 		};
@@ -9634,14 +9637,14 @@ var dillonkearns$elm_graphql$Graphql$Internal$Encode$bool = function (value) {
 var author$project$WeightyBeer$Object$TapMutation$update = F3(
 	function (fillInOptionals, requiredArgs, object_) {
 		var filledInOptionals = fillInOptionals(
-			{aa: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, aq: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
+			{ab: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, ar: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
 		var optionalArgs = A2(
 			elm$core$List$filterMap,
 			elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'weight', filledInOptionals.aq, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'brew', filledInOptionals.aa, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'weight', filledInOptionals.ar, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'brew', filledInOptionals.ab, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]));
 		return A4(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
@@ -9650,11 +9653,11 @@ var author$project$WeightyBeer$Object$TapMutation$update = F3(
 				optionalArgs,
 				_List_fromArray(
 					[
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.af, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'order', requiredArgs.ai, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'volume', requiredArgs.ap, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'isActive', requiredArgs.aA, dillonkearns$elm_graphql$Graphql$Internal$Encode$bool)
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.be, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.ag, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'order', requiredArgs.aj, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'volume', requiredArgs.aq, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'isActive', requiredArgs.aB, dillonkearns$elm_graphql$Graphql$Internal$Encode$bool)
 					])),
 			object_,
 			A2(elm$core$Basics$composeR, elm$core$Basics$identity, elm$json$Json$Decode$nullable));
@@ -9664,11 +9667,11 @@ var author$project$Type$Tap$updateRequest = F2(
 		var id = _n0.a;
 		var tap = _n0.b;
 		var required = {
-			bd: author$project$Type$TapID$toString(id),
-			aA: true,
-			af: tap.af,
-			ai: tap.ai,
-			ap: tap.ap
+			be: author$project$Type$TapID$toString(id),
+			aB: true,
+			ag: tap.ag,
+			aj: tap.aj,
+			aq: tap.aq
 		};
 		return A3(
 			author$project$WeightyBeer$Object$TapMutation$update,
@@ -9729,43 +9732,43 @@ var author$project$Component$EditTap$update = F5(
 				return _Utils_update(
 					mutation,
 					{
-						af: A2(
+						ag: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.af,
+							mutation.ag,
 							author$project$Utils$emptyAsNothing(value))
 					});
 			case 1:
 				return _Utils_update(
 					mutation,
 					{
-						ap: A2(
+						aq: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.ap,
+							mutation.aq,
 							elm$core$String$toFloat(value))
 					});
 			case 2:
 				return _Utils_update(
 					mutation,
 					{
-						ai: A2(
+						aj: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.ai,
+							mutation.aj,
 							elm$core$String$toInt(value))
 					});
 			case 3:
 				return _Utils_update(
 					mutation,
 					{
-						aa: A2(
+						ab: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.aa,
+							mutation.ab,
 							elm$core$List$head(
 								A2(
 									elm$core$List$filter,
 									A2(
 										elm$core$Basics$composeR,
 										function ($) {
-											return $.bd;
+											return $.be;
 										},
 										author$project$Type$BrewID$eq(value)),
 									brews)))
@@ -9774,16 +9777,16 @@ var author$project$Component$EditTap$update = F5(
 				return _Utils_update(
 					mutation,
 					{
-						aq: A2(
+						ar: A2(
 							author$project$Type$ModifiableValue$update,
-							mutation.aq,
+							mutation.ar,
 							elm$core$List$head(
 								A2(
 									elm$core$List$filter,
 									A2(
 										elm$core$Basics$composeR,
 										function ($) {
-											return $.bd;
+											return $.be;
 										},
 										author$project$Type$WeightID$eq(value)),
 									weights)))
@@ -9813,11 +9816,11 @@ var author$project$Page$EditTap$updateField = F3(
 	});
 var author$project$Type$Tap$toPartial = function (_n0) {
 	var id = _n0.a;
-	var name = _n0.b.af;
-	var order = _n0.b.ai;
-	var volume = _n0.b.ap;
-	var brew = _n0.b.aa;
-	var weight = _n0.b.aq;
+	var name = _n0.b.ag;
+	var order = _n0.b.aj;
+	var volume = _n0.b.aq;
+	var brew = _n0.b.ab;
+	var weight = _n0.b.ar;
 	return A6(
 		author$project$Type$Tap$PartialTap,
 		elm$core$Maybe$Just(id),
@@ -9867,21 +9870,21 @@ var author$project$Type$Tap$updateOriginals = F2(
 		var tap = _n0.b;
 		return A6(
 			author$project$Type$Tap$PartialTap,
-			partial.bd,
+			partial.be,
 			A2(
 				author$project$Type$ModifiableValue$updateOriginal,
-				partial.af,
-				elm$core$Maybe$Just(tap.af)),
+				partial.ag,
+				elm$core$Maybe$Just(tap.ag)),
 			A2(
 				author$project$Type$ModifiableValue$updateOriginal,
-				partial.ai,
-				elm$core$Maybe$Just(tap.ai)),
+				partial.aj,
+				elm$core$Maybe$Just(tap.aj)),
 			A2(
 				author$project$Type$ModifiableValue$updateOriginal,
-				partial.ap,
-				elm$core$Maybe$Just(tap.ap)),
-			A2(author$project$Type$ModifiableValue$updateOriginal, partial.aa, tap.aa),
-			A2(author$project$Type$ModifiableValue$updateOriginal, partial.aq, tap.aq));
+				partial.aq,
+				elm$core$Maybe$Just(tap.aq)),
+			A2(author$project$Type$ModifiableValue$updateOriginal, partial.ab, tap.ab),
+			A2(author$project$Type$ModifiableValue$updateOriginal, partial.ar, tap.ar));
 	});
 var author$project$Page$EditTap$updateFromResponse = F2(
 	function (response, state) {
@@ -9891,7 +9894,7 @@ var author$project$Page$EditTap$updateFromResponse = F2(
 				A2(author$project$Component$ErrorDetails$errorDetails, 'Failed to fetch data from WeightyBeer API', error));
 		} else {
 			var data = response.a;
-			var _n1 = _Utils_Tuple2(data.aW, state);
+			var _n1 = _Utils_Tuple2(data.aX, state);
 			if (!_n1.a.$) {
 				switch (_n1.b.$) {
 					case 2:
@@ -9934,7 +9937,7 @@ var author$project$Page$EditTap$updateFromResponse = F2(
 						return author$project$Page$EditTap$Error(
 							_Utils_update(
 								error,
-								{aD: 'Tap doesn\'t exist'}));
+								{aE: 'Tap doesn\'t exist'}));
 					case 2:
 						var _n4 = _n1.a;
 						var _n5 = _n1.b;
@@ -9992,7 +9995,7 @@ var author$project$Page$EditTap$updateFromSaveResponse = F2(
 										P: elm$core$Maybe$Nothing,
 										v: author$project$Type$Tap$toPartial(tap)
 									})),
-							author$project$Page$EditTap$navigateToTaps(model.ag));
+							author$project$Page$EditTap$navigateToTaps(model.ah));
 					} else {
 						return _Utils_Tuple2(
 							author$project$Page$EditTap$Error(
@@ -10065,7 +10068,7 @@ var author$project$Page$EditTap$update = F2(
 			default:
 				return _Utils_Tuple2(
 					model,
-					author$project$Page$EditTap$navigateToTaps(model.ag));
+					author$project$Page$EditTap$navigateToTaps(model.ah));
 		}
 	});
 var author$project$Page$Home$GotWeightsResponse = function (a) {
@@ -10086,7 +10089,7 @@ var author$project$Page$Home$updateWeights = function (response) {
 				elm$core$List$map,
 				function (w) {
 					return _Utils_Tuple2(
-						author$project$Type$WeightID$toString(w.bd),
+						author$project$Type$WeightID$toString(w.be),
 						w);
 				},
 				weights));
@@ -10102,7 +10105,7 @@ var author$project$Page$Home$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{ak: response}),
+						{al: response}),
 					elm$core$Platform$Cmd$none);
 			case 1:
 				var response = msg.a;
@@ -10123,13 +10126,13 @@ var author$project$Page$NewBrew$GotSaveResponse = function (a) {
 var author$project$WeightyBeer$Object$BrewMutation$create = F3(
 	function (fillInOptionals, requiredArgs, object_) {
 		var filledInOptionals = fillInOptionals(
-			{ad: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
+			{ae: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
 		var optionalArgs = A2(
 			elm$core$List$filterMap,
 			elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'image', filledInOptionals.ad, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'image', filledInOptionals.ae, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]));
 		return A4(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
@@ -10138,18 +10141,18 @@ var author$project$WeightyBeer$Object$BrewMutation$create = F3(
 				optionalArgs,
 				_List_fromArray(
 					[
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'brewNumber', requiredArgs.ab, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.af, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'style', requiredArgs.ao, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'ibu', requiredArgs.ac, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'abv', requiredArgs._, dillonkearns$elm_graphql$Graphql$Internal$Encode$float)
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'brewNumber', requiredArgs.ac, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.ag, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'style', requiredArgs.ap, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'ibu', requiredArgs.ad, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'abv', requiredArgs.aa, dillonkearns$elm_graphql$Graphql$Internal$Encode$float)
 					])),
 			object_,
 			elm$core$Basics$identity);
 	});
 var author$project$Type$Brew$createRequest = F2(
 	function (brew, resultSelectionSet) {
-		var required = {_: brew._, ab: brew.ab, ac: brew.ac, af: brew.af, ao: brew.ao};
+		var required = {aa: brew.aa, ac: brew.ac, ad: brew.ad, ag: brew.ag, ap: brew.ap};
 		return A3(
 			author$project$WeightyBeer$Object$BrewMutation$create,
 			author$project$Type$Brew$fillInBrewOptionals(brew),
@@ -10158,15 +10161,15 @@ var author$project$Type$Brew$createRequest = F2(
 	});
 var author$project$Type$Brew$NewBrew = F6(
 	function (brewNumber, name, style, ibu, abv, image) {
-		return {_: abv, ab: brewNumber, ac: ibu, ad: image, af: name, ao: style};
+		return {aa: abv, ac: brewNumber, ad: ibu, ae: image, ag: name, ap: style};
 	});
 var author$project$Type$Brew$toNewBrew = function (_n0) {
-	var brewNumber = _n0.ab;
-	var name = _n0.af;
-	var style = _n0.ao;
-	var ibu = _n0.ac;
-	var abv = _n0._;
-	var image = _n0.ad;
+	var brewNumber = _n0.ac;
+	var name = _n0.ag;
+	var style = _n0.ap;
+	var ibu = _n0.ad;
+	var abv = _n0.aa;
+	var image = _n0.ae;
 	return A2(
 		elm_community$maybe_extra$Maybe$Extra$andMap,
 		elm$core$Maybe$Just(
@@ -10232,7 +10235,7 @@ var author$project$Page$NewBrew$updateFromSaveResponse = F2(
 							model.j,
 							author$project$Type$Brew$toPartial(data))
 					}),
-				author$project$Component$EditBrew$navigateToBrews(model.ag));
+				author$project$Component$EditBrew$navigateToBrews(model.ah));
 		}
 	});
 var author$project$Page$NewBrew$update = F2(
@@ -10246,7 +10249,7 @@ var author$project$Page$NewBrew$update = F2(
 			case 1:
 				return _Utils_Tuple2(
 					model,
-					author$project$Component$EditBrew$navigateToBrews(model.ag));
+					author$project$Component$EditBrew$navigateToBrews(model.ah));
 			default:
 				var editMsg = msg.a;
 				var _n1 = A2(author$project$Component$EditBrew$update, editMsg, model.j);
@@ -10265,14 +10268,14 @@ var author$project$Page$NewTap$GotSaveResponse = function (a) {
 var author$project$WeightyBeer$Object$TapMutation$create = F3(
 	function (fillInOptionals, requiredArgs, object_) {
 		var filledInOptionals = fillInOptionals(
-			{aa: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, aq: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
+			{ab: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, ar: dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
 		var optionalArgs = A2(
 			elm$core$List$filterMap,
 			elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'weight', filledInOptionals.aq, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'brew', filledInOptionals.aa, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'weight', filledInOptionals.ar, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+					A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'brew', filledInOptionals.ab, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
 				]));
 		return A4(
 			dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
@@ -10281,17 +10284,17 @@ var author$project$WeightyBeer$Object$TapMutation$create = F3(
 				optionalArgs,
 				_List_fromArray(
 					[
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.af, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'order', requiredArgs.ai, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'volume', requiredArgs.ap, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
-						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'isActive', requiredArgs.aA, dillonkearns$elm_graphql$Graphql$Internal$Encode$bool)
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'name', requiredArgs.ag, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'order', requiredArgs.aj, dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'volume', requiredArgs.aq, dillonkearns$elm_graphql$Graphql$Internal$Encode$float),
+						A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'isActive', requiredArgs.aB, dillonkearns$elm_graphql$Graphql$Internal$Encode$bool)
 					])),
 			object_,
 			elm$core$Basics$identity);
 	});
 var author$project$Type$Tap$createRequest = F2(
 	function (tap, resultSelectionSet) {
-		var required = {aA: true, af: tap.af, ai: tap.ai, ap: tap.ap};
+		var required = {aB: true, ag: tap.ag, aj: tap.aj, aq: tap.aq};
 		return A3(
 			author$project$WeightyBeer$Object$TapMutation$create,
 			author$project$Type$Tap$fillInTapOptionals(tap),
@@ -10357,7 +10360,7 @@ var author$project$Page$NewTap$updateFromSaveResponse = F2(
 					{
 						v: author$project$Type$Tap$toPartial(data)
 					}),
-				author$project$Page$NewTap$navigateToTaps(model.ag));
+				author$project$Page$NewTap$navigateToTaps(model.ah));
 		}
 	});
 var author$project$Page$NewTap$update = F2(
@@ -10384,7 +10387,7 @@ var author$project$Page$NewTap$update = F2(
 			case 4:
 				return _Utils_Tuple2(
 					model,
-					author$project$Page$NewTap$navigateToTaps(model.ag));
+					author$project$Page$NewTap$navigateToTaps(model.ah));
 			default:
 				return author$project$Page$NewTap$makeSaveRequest(model);
 		}
@@ -10395,7 +10398,7 @@ var author$project$Page$Taps$update = F2(
 		return _Utils_Tuple2(response, elm$core$Platform$Cmd$none);
 	});
 var author$project$Page$WeightHub$GotUpdateResponse = function (a) {
-	return {$: 4, a: a};
+	return {$: 1, a: a};
 };
 var author$project$Page$WeightHub$updateFromWeightsResponse = F2(
 	function (model, response) {
@@ -10414,10 +10417,54 @@ var author$project$Page$WeightHub$updateFromWeightsResponse = F2(
 				});
 		}
 	});
+var author$project$Type$WeightID$stringSelection = dillonkearns$elm_graphql$Graphql$SelectionSet$map(elm$core$Basics$identity);
+var author$project$WeightyBeer$Enum$CalibrationTarget$toString = function (_enum) {
+	switch (_enum) {
+		case 0:
+			return 'zero';
+		case 1:
+			return 'empty';
+		default:
+			return 'full';
+	}
+};
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$EnumValue = function (a) {
+	return {$: 0, a: a};
+};
+var dillonkearns$elm_graphql$Graphql$Internal$Encode$enum = F2(
+	function (enumToString, value) {
+		return dillonkearns$elm_graphql$Graphql$Internal$Encode$EnumValue(
+			enumToString(value));
+	});
+var author$project$WeightyBeer$Object$WeightMutation$calibrate = function (requiredArgs) {
+	return A4(
+		dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+		'String',
+		'calibrate',
+		_List_fromArray(
+			[
+				A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.be, dillonkearns$elm_graphql$Graphql$Internal$Encode$string),
+				A3(
+				dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required,
+				'target',
+				requiredArgs.bA,
+				dillonkearns$elm_graphql$Graphql$Internal$Encode$enum(author$project$WeightyBeer$Enum$CalibrationTarget$toString))
+			]),
+		elm$json$Json$Decode$string);
+};
+var author$project$Type$Weight$calibrateRequest = F2(
+	function (id, target) {
+		return author$project$Type$WeightID$stringSelection(
+			author$project$WeightyBeer$Object$WeightMutation$calibrate(
+				{
+					be: author$project$Type$WeightID$toString(id),
+					bA: target
+				}));
+	});
 var author$project$WeightyBeer$Mutation$weight = function (object_) {
 	return A4(dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField, 'weight', _List_Nil, object_, elm$core$Basics$identity);
 };
-var author$project$Type$Weight$makeUpdateRequest = F2(
+var author$project$Type$Weight$makeCalibrateRequest = F2(
 	function (msg, request) {
 		return A2(
 			dillonkearns$elm_graphql$Graphql$Http$send,
@@ -10427,61 +10474,6 @@ var author$project$Type$Weight$makeUpdateRequest = F2(
 				author$project$Constants$weightyBeerGraphql,
 				author$project$WeightyBeer$Mutation$weight(request)));
 	});
-var author$project$Type$WeightID$stringSelection = dillonkearns$elm_graphql$Graphql$SelectionSet$map(elm$core$Basics$identity);
-var author$project$WeightyBeer$Object$WeightMutation$updateEmpty = function (requiredArgs) {
-	return A4(
-		dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
-		'String',
-		'updateEmpty',
-		_List_fromArray(
-			[
-				A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
-			]),
-		elm$json$Json$Decode$string);
-};
-var author$project$Type$Weight$updateEmptyRequest = function (id) {
-	return author$project$Type$WeightID$stringSelection(
-		author$project$WeightyBeer$Object$WeightMutation$updateEmpty(
-			{
-				bd: author$project$Type$WeightID$toString(id)
-			}));
-};
-var author$project$WeightyBeer$Object$WeightMutation$updateFull = function (requiredArgs) {
-	return A4(
-		dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
-		'String',
-		'updateFull',
-		_List_fromArray(
-			[
-				A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
-			]),
-		elm$json$Json$Decode$string);
-};
-var author$project$Type$Weight$updateFullRequest = function (id) {
-	return author$project$Type$WeightID$stringSelection(
-		author$project$WeightyBeer$Object$WeightMutation$updateFull(
-			{
-				bd: author$project$Type$WeightID$toString(id)
-			}));
-};
-var author$project$WeightyBeer$Object$WeightMutation$updateZero = function (requiredArgs) {
-	return A4(
-		dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
-		'String',
-		'updateZero',
-		_List_fromArray(
-			[
-				A3(dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'id', requiredArgs.bd, dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
-			]),
-		elm$json$Json$Decode$string);
-};
-var author$project$Type$Weight$updateZeroRequest = function (id) {
-	return author$project$Type$WeightID$stringSelection(
-		author$project$WeightyBeer$Object$WeightMutation$updateZero(
-			{
-				bd: author$project$Type$WeightID$toString(id)
-			}));
-};
 var author$project$Page$WeightHub$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -10490,33 +10482,37 @@ var author$project$Page$WeightHub$update = F2(
 				return _Utils_Tuple2(
 					A2(author$project$Page$WeightHub$updateFromWeightsResponse, model, weightsResponse),
 					elm$core$Platform$Cmd$none);
-			case 1:
-				var id = msg.a;
-				return _Utils_Tuple2(
-					model,
-					A2(
-						author$project$Type$Weight$makeUpdateRequest,
-						author$project$Page$WeightHub$GotUpdateResponse,
-						author$project$Type$Weight$updateZeroRequest(id)));
 			case 2:
-				var id = msg.a;
+				var target = msg.a;
+				var id = msg.b;
 				return _Utils_Tuple2(
-					model,
-					A2(
-						author$project$Type$Weight$makeUpdateRequest,
-						author$project$Page$WeightHub$GotUpdateResponse,
-						author$project$Type$Weight$updateEmptyRequest(id)));
+					_Utils_update(
+						model,
+						{
+							V: elm$core$Maybe$Just(
+								_Utils_Tuple2(target, id))
+						}),
+					elm$core$Platform$Cmd$none);
 			case 3:
-				var id = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{V: elm$core$Maybe$Nothing}),
+					elm$core$Platform$Cmd$none);
+			case 1:
+				var updateResponse = msg.a;
+				return _Utils_Tuple2(
+					model,
+					author$project$Type$Weight$requestWeights(author$project$Page$WeightHub$GotWeightsResponse));
+			default:
+				var target = msg.a;
+				var id = msg.b;
 				return _Utils_Tuple2(
 					model,
 					A2(
-						author$project$Type$Weight$makeUpdateRequest,
+						author$project$Type$Weight$makeCalibrateRequest,
 						author$project$Page$WeightHub$GotUpdateResponse,
-						author$project$Type$Weight$updateFullRequest(id)));
-			default:
-				var updateResponse = msg.a;
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+						A2(author$project$Type$Weight$calibrateRequest, id, target)));
 		}
 	});
 var author$project$Main$updatePage = F2(
@@ -10676,7 +10672,7 @@ var elm$url$Url$addPrefixed = F3(
 	});
 var elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _n0 = url.aN;
+		var _n0 = url.aO;
 		if (!_n0) {
 			return 'http://';
 		} else {
@@ -10686,17 +10682,17 @@ var elm$url$Url$toString = function (url) {
 	return A3(
 		elm$url$Url$addPrefixed,
 		'#',
-		url.ay,
+		url.az,
 		A3(
 			elm$url$Url$addPrefixed,
 			'?',
-			url.aO,
+			url.aP,
 			_Utils_ap(
 				A2(
 					elm$url$Url$addPort,
-					url.aK,
-					_Utils_ap(http, url.az)),
-				url.aH)));
+					url.aL,
+					_Utils_ap(http, url.aA)),
+				url.aI)));
 };
 var author$project$Main$update = F2(
 	function (msg, model) {
@@ -10709,7 +10705,7 @@ var author$project$Main$update = F2(
 						model,
 						A2(
 							elm$browser$Browser$Navigation$pushUrl,
-							model.ag,
+							model.ah,
 							elm$url$Url$toString(url)));
 				} else {
 					var href = urlRequest.a;
@@ -10725,7 +10721,7 @@ var author$project$Main$update = F2(
 					author$project$Main$ToPage,
 					A2(
 						author$project$Main$changeRouteTo,
-						model.ag,
+						model.ah,
 						author$project$Route$fromUrl(url)));
 			case 2:
 				var pageMsg = msg.a;
@@ -10734,7 +10730,7 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{W: !model.W}),
+						{X: !model.X}),
 					elm$core$Platform$Cmd$none);
 		}
 	});
@@ -10819,7 +10815,7 @@ var author$project$Component$ErrorDetails$viewErrorDetails = F2(
 						case 3:
 							var metadata = httpError.a;
 							var errorMsg = httpError.b;
-							var _n3 = metadata.bv;
+							var _n3 = metadata.bw;
 							switch (_n3) {
 								case 400:
 									return A2(
@@ -10963,7 +10959,7 @@ var author$project$Component$ErrorDetails$view = F3(
 						[
 							elm$html$Html$text('⚠')
 						])),
-					author$project$Utils$textEl(error.aD),
+					author$project$Utils$textEl(error.aE),
 					A2(author$project$Component$ErrorDetails$viewErrorDetails, showDetails, error)
 				]));
 	});
@@ -11034,7 +11030,7 @@ var author$project$Main$viewErrors = function (model) {
 	}();
 	if (!errorDetails.$) {
 		var error = errorDetails.a;
-		return A3(author$project$Component$ErrorDetails$view, author$project$Main$ShowErrorDetails, model.W, error);
+		return A3(author$project$Component$ErrorDetails$view, author$project$Main$ShowErrorDetails, model.X, error);
 	} else {
 		return A2(elm$html$Html$div, _List_Nil, _List_Nil);
 	}
@@ -11223,7 +11219,7 @@ var author$project$Page$Brews$viewBrews = function (brews) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.ab;
+						return $.ac;
 					},
 					A2(
 						elm$core$Basics$composeR,
@@ -11237,7 +11233,7 @@ var author$project$Page$Brews$viewBrews = function (brews) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.af;
+						return $.ag;
 					},
 					elm$html$Html$text)),
 				_Utils_Tuple2(
@@ -11245,7 +11241,7 @@ var author$project$Page$Brews$viewBrews = function (brews) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.ao;
+						return $.ap;
 					},
 					elm$html$Html$text)),
 				_Utils_Tuple2(
@@ -11253,7 +11249,7 @@ var author$project$Page$Brews$viewBrews = function (brews) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.bd;
+						return $.be;
 					},
 					author$project$Page$Brews$viewEditLink))
 			]),
@@ -11301,7 +11297,7 @@ var author$project$Component$EditBrew$Save = {$: 0};
 var author$project$Component$EditBrew$Style = 2;
 var author$project$Component$Form$Field = F3(
 	function (name, value, required) {
-		return {af: name, aS: required, l: value};
+		return {ag: name, aT: required, l: value};
 	});
 var author$project$Component$Form$Number = 1;
 var author$project$Component$Form$Text = 0;
@@ -11371,12 +11367,12 @@ var author$project$Component$Form$viewButtons = F3(
 				]));
 	});
 var author$project$Component$Form$fieldId = function (_n0) {
-	var name = _n0.af;
+	var name = _n0.ag;
 	return 'field-' + name;
 };
 var author$project$Component$Form$fieldLabel = function (_n0) {
-	var name = _n0.af;
-	var required = _n0.aS;
+	var name = _n0.ag;
+	var required = _n0.aT;
 	return elm$html$Html$text(
 		function () {
 			if (required) {
@@ -11498,12 +11494,12 @@ var author$project$Component$Form$viewField = F3(
 				]));
 	});
 var author$project$Type$Brew$isModified = function (_n0) {
-	var brewNumber = _n0.ab;
-	var name = _n0.af;
-	var style = _n0.ao;
-	var ibu = _n0.ac;
-	var abv = _n0._;
-	var image = _n0.ad;
+	var brewNumber = _n0.ac;
+	var name = _n0.ag;
+	var style = _n0.ap;
+	var ibu = _n0.ad;
+	var abv = _n0.aa;
+	var image = _n0.ae;
 	return author$project$Type$ModifiableValue$isModified(brewNumber) || (author$project$Type$ModifiableValue$isModified(name) || (author$project$Type$ModifiableValue$isModified(style) || (author$project$Type$ModifiableValue$isModified(ibu) || (author$project$Type$ModifiableValue$isModified(abv) || author$project$Type$ModifiableValue$isModified(image)))));
 };
 var author$project$Type$ModifiableValue$map = F2(
@@ -11543,22 +11539,22 @@ var elm_community$maybe_extra$Maybe$Extra$isJust = function (m) {
 	}
 };
 var author$project$Component$EditBrew$viewForm = function (partial) {
-	var style = A3(author$project$Component$Form$Field, 'Style', partial.ao, true);
+	var style = A3(author$project$Component$Form$Field, 'Style', partial.ap, true);
 	var number = A3(
 		author$project$Component$Form$Field,
 		'Brew #',
-		A2(author$project$Type$ModifiableValue$map, elm$core$String$fromInt, partial.ab),
+		A2(author$project$Type$ModifiableValue$map, elm$core$String$fromInt, partial.ac),
 		true);
-	var name = A3(author$project$Component$Form$Field, 'Name', partial.af, true);
+	var name = A3(author$project$Component$Form$Field, 'Name', partial.ag, true);
 	var ibu = A3(
 		author$project$Component$Form$Field,
 		'IBU',
-		A2(author$project$Type$ModifiableValue$map, elm$core$String$fromInt, partial.ac),
+		A2(author$project$Type$ModifiableValue$map, elm$core$String$fromInt, partial.ad),
 		true);
 	var abv = A3(
 		author$project$Component$Form$Field,
 		'ABV',
-		A2(author$project$Type$ModifiableValue$map, elm$core$String$fromFloat, partial._),
+		A2(author$project$Type$ModifiableValue$map, elm$core$String$fromFloat, partial.aa),
 		true);
 	return A2(
 		elm$html$Html$form,
@@ -11714,7 +11710,7 @@ var author$project$Component$ChooseImage$viewImageCard = F2(
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$class('image-card'),
-					A2(elm$html$Html$Attributes$style, 'background-image', 'url(' + (image.bC + ')'))
+					A2(elm$html$Html$Attributes$style, 'background-image', 'url(' + (image.bE + ')'))
 				]),
 			_List_fromArray(
 				[
@@ -11733,7 +11729,7 @@ var author$project$Component$ChooseImage$viewImageCard = F2(
 									elm$html$Html$Attributes$class('text-button'),
 									elm$html$Html$Attributes$type_('button'),
 									elm$html$Html$Events$onClick(
-									author$project$Component$ChooseImage$DeleteImage(image.bd))
+									author$project$Component$ChooseImage$DeleteImage(image.be))
 								]),
 							_List_fromArray(
 								[
@@ -11767,15 +11763,14 @@ var author$project$Component$ChooseImage$viewImages = F2(
 				author$project$Component$ChooseImage$viewImageCard(current),
 				images));
 	});
-var elm$html$Html$h2 = _VirtualDom_node('h2');
-var author$project$Component$ChooseImage$viewGallery = F2(
-	function (images, current) {
+var author$project$Component$Modal$view = F2(
+	function (msg, children) {
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$class('modal'),
-					elm$html$Html$Events$onClick(author$project$Component$ChooseImage$ToggleGallery)
+					elm$html$Html$Events$onClick(msg)
 				]),
 			_List_fromArray(
 				[
@@ -11783,26 +11778,41 @@ var author$project$Component$ChooseImage$viewGallery = F2(
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('image-gallery'),
+							elm$html$Html$Attributes$class('modal-container'),
 							A2(
 							elm$html$Html$Events$stopPropagationOn,
 							'click',
 							elm$json$Json$Decode$succeed(
-								_Utils_Tuple2(author$project$Component$ChooseImage$ToggleGallery, false)))
+								_Utils_Tuple2(msg, false)))
 						]),
 					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$h2,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text('Image gallery')
-								])),
-							A2(author$project$Component$ChooseImage$viewImages, images, current),
-							A2(author$project$Component$Button$view, author$project$Component$ChooseImage$ToggleGallery, 'Done')
-						]))
+						[children]))
 				]));
+	});
+var elm$html$Html$h2 = _VirtualDom_node('h2');
+var author$project$Component$ChooseImage$viewGallery = F2(
+	function (images, current) {
+		return A2(
+			author$project$Component$Modal$view,
+			author$project$Component$ChooseImage$ToggleGallery,
+			A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('image-gallery')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Image gallery')
+							])),
+						A2(author$project$Component$ChooseImage$viewImages, images, current),
+						A2(author$project$Component$Button$view, author$project$Component$ChooseImage$ToggleGallery, 'Done')
+					])));
 	});
 var author$project$Component$ChooseImage$viewImage = function (maybe) {
 	if (!maybe.$) {
@@ -11858,7 +11868,7 @@ var author$project$Component$EditBrew$mapChooseImageMsg = function (msg) {
 			return A2(
 				author$project$Component$EditBrew$Edit,
 				5,
-				author$project$Type$ImageID$toString(image.bd));
+				author$project$Type$ImageID$toString(image.be));
 		case 2:
 			return A2(author$project$Component$EditBrew$Edit, 5, '');
 		case 3:
@@ -11883,7 +11893,7 @@ var author$project$Component$EditBrew$viewImage = F3(
 var author$project$Component$EditBrew$view = function (_n0) {
 	var images = _n0.G;
 	var mutation = _n0.v;
-	var showGallery = _n0.X;
+	var showGallery = _n0.Y;
 	return A2(
 		elm$html$Html$div,
 		_List_fromArray(
@@ -11913,7 +11923,7 @@ var author$project$Component$EditBrew$view = function (_n0) {
 						A3(
 						author$project$Component$EditBrew$viewImage,
 						images,
-						author$project$Type$ModifiableValue$toMaybe(mutation.ad),
+						author$project$Type$ModifiableValue$toMaybe(mutation.ae),
 						showGallery)
 					]))
 			]));
@@ -11959,7 +11969,7 @@ var author$project$Component$EditTap$Volume = 1;
 var author$project$Component$EditTap$Weight = 4;
 var author$project$Component$Form$Option = F2(
 	function (value, label) {
-		return {aC: label, l: value};
+		return {aD: label, l: value};
 	});
 var author$project$Component$EditTap$brewOptions = function (brews) {
 	return A2(
@@ -11967,8 +11977,8 @@ var author$project$Component$EditTap$brewOptions = function (brews) {
 		function (brew) {
 			return A2(
 				author$project$Component$Form$Option,
-				author$project$Type$BrewID$toString(brew.bd),
-				'#' + (elm$core$String$fromInt(brew.ab) + (' ' + brew.af)));
+				author$project$Type$BrewID$toString(brew.be),
+				'#' + (elm$core$String$fromInt(brew.ac) + (' ' + brew.ag)));
 		},
 		brews);
 };
@@ -11984,7 +11994,7 @@ var author$project$Component$EditTap$weightOptions = function (weights) {
 			A2(
 				elm$core$List$map,
 				function ($) {
-					return $.bd;
+					return $.be;
 				},
 				weights)));
 };
@@ -12057,7 +12067,7 @@ var author$project$Component$Form$viewOption = F2(
 				]),
 			_List_fromArray(
 				[
-					elm$html$Html$text(option.aC)
+					elm$html$Html$text(option.aD)
 				]));
 	});
 var author$project$Component$Form$viewOptions = F2(
@@ -12126,7 +12136,7 @@ var author$project$Component$Form$viewSelect = F3(
 				]));
 	});
 var author$project$Type$Tap$isModified = function (partial) {
-	return author$project$Type$ModifiableValue$isModified(partial.af) || (author$project$Type$ModifiableValue$isModified(partial.ai) || (author$project$Type$ModifiableValue$isModified(partial.ap) || (author$project$Type$ModifiableValue$isModified(partial.aa) || author$project$Type$ModifiableValue$isModified(partial.aq))));
+	return author$project$Type$ModifiableValue$isModified(partial.ag) || (author$project$Type$ModifiableValue$isModified(partial.aj) || (author$project$Type$ModifiableValue$isModified(partial.aq) || (author$project$Type$ModifiableValue$isModified(partial.ab) || author$project$Type$ModifiableValue$isModified(partial.ar))));
 };
 var author$project$Component$EditTap$viewForm = F3(
 	function (brews, weights, partial) {
@@ -12138,22 +12148,22 @@ var author$project$Component$EditTap$viewForm = F3(
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.bd;
+						return $.be;
 					},
 					author$project$Type$WeightID$toString),
-				partial.aq),
+				partial.ar),
 			false);
 		var volume = A3(
 			author$project$Component$Form$Field,
 			'Volume (L)',
-			A2(author$project$Type$ModifiableValue$map, elm$core$String$fromFloat, partial.ap),
+			A2(author$project$Type$ModifiableValue$map, elm$core$String$fromFloat, partial.aq),
 			true);
 		var order = A3(
 			author$project$Component$Form$Field,
 			'Order',
-			A2(author$project$Type$ModifiableValue$map, elm$core$String$fromInt, partial.ai),
+			A2(author$project$Type$ModifiableValue$map, elm$core$String$fromInt, partial.aj),
 			true);
-		var name = A3(author$project$Component$Form$Field, 'Name', partial.af, true);
+		var name = A3(author$project$Component$Form$Field, 'Name', partial.ag, true);
 		var brew = A3(
 			author$project$Component$Form$Field,
 			'Brew on tap',
@@ -12162,10 +12172,10 @@ var author$project$Component$EditTap$viewForm = F3(
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.bd;
+						return $.be;
 					},
 					author$project$Type$BrewID$toString),
-				partial.aa),
+				partial.ab),
 			false);
 		return A2(
 			elm$html$Html$form,
@@ -12230,7 +12240,7 @@ var author$project$Component$TapCard$abvText = function (brew) {
 					A2(
 						elm$core$Maybe$map,
 						function ($) {
-							return $._;
+							return $.aa;
 						},
 						brew)))));
 };
@@ -12241,12 +12251,12 @@ var author$project$Component$TapCard$tapCardBodyAttrs = function (brew) {
 		A2(
 			elm$core$Maybe$map,
 			function ($) {
-				return $.bC;
+				return $.bE;
 			},
 			A2(
 				elm$core$Maybe$andThen,
 				function ($) {
-					return $.ad;
+					return $.ae;
 				},
 				brew)));
 	return A2(
@@ -12279,8 +12289,8 @@ var author$project$Component$TapCard$viewWeight = function (tap) {
 	return author$project$Utils$textEl(
 		function () {
 			var _n0 = _Utils_Tuple2(
-				author$project$Type$ModifiableValue$toMaybe(tap.aq),
-				author$project$Type$ModifiableValue$toMaybe(tap.ap));
+				author$project$Type$ModifiableValue$toMaybe(tap.ar),
+				author$project$Type$ModifiableValue$toMaybe(tap.aq));
 			if (_n0.a.$ === 1) {
 				if (!_n0.b.$) {
 					var _n1 = _n0.a;
@@ -12298,9 +12308,9 @@ var author$project$Component$TapCard$viewWeight = function (tap) {
 						_List_fromArray(
 							[
 								'Remaining: ',
-								elm$core$String$fromInt(weight.aI),
+								elm$core$String$fromInt(weight.aJ),
 								'% (',
-								elm$core$String$fromFloat((volume * weight.aI) / 100.0),
+								elm$core$String$fromFloat((volume * weight.aJ) / 100.0),
 								'/',
 								elm$core$String$fromFloat(volume),
 								' L)'
@@ -12320,7 +12330,7 @@ var author$project$Component$TapCard$viewTapCardFooter = function (tap) {
 				elm$html$Html$Attributes$class('tap-card-footer tap-card-indent')
 			]),
 		function () {
-			var _n0 = author$project$Type$ModifiableValue$toMaybe(tap.aa);
+			var _n0 = author$project$Type$ModifiableValue$toMaybe(tap.ab);
 			if (_n0.$ === 1) {
 				return _List_fromArray(
 					[
@@ -12334,12 +12344,12 @@ var author$project$Component$TapCard$viewTapCardFooter = function (tap) {
 						author$project$Utils$textClass,
 						_List_fromArray(
 							['title']),
-						brew.af),
+						brew.ag),
 						A2(
 						author$project$Utils$textClass,
 						_List_fromArray(
 							['subtitle']),
-						'Brew #' + (elm$core$String$fromInt(brew.ab) + (' - ' + brew.ao))),
+						'Brew #' + (elm$core$String$fromInt(brew.ac) + (' - ' + brew.ap))),
 						A2(
 						elm$html$Html$hr,
 						_List_fromArray(
@@ -12370,7 +12380,7 @@ var author$project$Component$TapCard$viewTapCardHeader = function (tap) {
 				_List_fromArray(
 					[
 						elm$html$Html$text(
-						author$project$Type$ModifiableValue$toString(tap.af))
+						author$project$Type$ModifiableValue$toString(tap.ag))
 					]))
 			]));
 };
@@ -12385,7 +12395,7 @@ var author$project$Component$TapCard$view = function (tap) {
 			[
 				author$project$Component$TapCard$viewTapCardHeader(tap),
 				author$project$Component$TapCard$viewTapCardBody(
-				author$project$Type$ModifiableValue$toMaybe(tap.aa)),
+				author$project$Type$ModifiableValue$toMaybe(tap.ab)),
 				author$project$Component$TapCard$viewTapCardFooter(tap)
 			]));
 };
@@ -12470,7 +12480,7 @@ var author$project$Page$EditTap$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						elm$html$Html$text(e.aD)
+						elm$html$Html$text(e.aE)
 					]));
 		default:
 			var brews = _n0.a.o;
@@ -12498,7 +12508,7 @@ var author$project$Page$Home$tapWithWeight = F2(
 		var tap = _n0.b;
 		var weight = A2(
 			elm$core$Maybe$withDefault,
-			tap.aq,
+			tap.ar,
 			A2(
 				elm$core$Maybe$map,
 				function (id) {
@@ -12510,15 +12520,15 @@ var author$project$Page$Home$tapWithWeight = F2(
 					A2(
 						elm$core$Maybe$map,
 						function ($) {
-							return $.bd;
+							return $.be;
 						},
-						tap.aq))));
+						tap.ar))));
 		return A2(
 			author$project$Type$Tap$ExistingTap,
 			tapId,
 			_Utils_update(
 				tap,
-				{aq: weight}));
+				{ar: weight}));
 	});
 var author$project$Page$Home$viewTaps = F2(
 	function (weights, taps) {
@@ -12537,7 +12547,7 @@ var author$project$Page$Home$viewTaps = F2(
 				taps));
 	});
 var author$project$Page$Home$view = function (model) {
-	var _n0 = model.ak;
+	var _n0 = model.al;
 	switch (_n0.$) {
 		case 1:
 			return elm$html$Html$text('Loading...');
@@ -12619,7 +12629,7 @@ var author$project$Page$Taps$viewBrew = function (maybeBrew) {
 	} else {
 		var brew = maybeBrew.a;
 		return elm$html$Html$text(
-			'#' + (elm$core$String$fromInt(brew.ab) + (' - ' + brew.af)));
+			'#' + (elm$core$String$fromInt(brew.ac) + (' - ' + brew.ag)));
 	}
 };
 var author$project$Page$Taps$viewEditLink = function (id) {
@@ -12662,7 +12672,7 @@ var author$project$Page$Taps$viewTaps = function (taps) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.af;
+						return $.ag;
 					},
 					elm$html$Html$text)),
 				_Utils_Tuple2(
@@ -12670,7 +12680,7 @@ var author$project$Page$Taps$viewTaps = function (taps) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.aa;
+						return $.ab;
 					},
 					author$project$Page$Taps$viewBrew)),
 				_Utils_Tuple2(
@@ -12678,7 +12688,7 @@ var author$project$Page$Taps$viewTaps = function (taps) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.aq;
+						return $.ar;
 					},
 					author$project$Page$Taps$viewWeight)),
 				_Utils_Tuple2(
@@ -12686,7 +12696,7 @@ var author$project$Page$Taps$viewTaps = function (taps) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.aA;
+						return $.aB;
 					},
 					author$project$Page$Taps$viewIsFavorite)),
 				_Utils_Tuple2(
@@ -12694,7 +12704,7 @@ var author$project$Page$Taps$viewTaps = function (taps) {
 				A2(
 					elm$core$Basics$composeR,
 					function ($) {
-						return $.bd;
+						return $.be;
 					},
 					author$project$Page$Taps$viewEditLink))
 			]),
@@ -12726,12 +12736,80 @@ var author$project$Page$Taps$view = function (model) {
 			}()
 			]));
 };
+var author$project$Page$WeightHub$CalibrateRequest = F2(
+	function (a, b) {
+		return {$: 4, a: a, b: b};
+	});
+var author$project$Page$WeightHub$CancelRequest = {$: 3};
+var author$project$Page$WeightHub$viewConfirm = function (_n0) {
+	var target = _n0.a;
+	var id = _n0.b;
+	var targetName = function () {
+		switch (target) {
+			case 0:
+				return 'Nothing';
+			case 1:
+				return 'Empty Keg';
+			default:
+				return 'Full Keg';
+		}
+	}();
+	return A2(
+		author$project$Component$Modal$view,
+		author$project$Page$WeightHub$CancelRequest,
+		A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('confirm-modal')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Confirm calibration')
+						])),
+					A2(
+					elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							'Are you sure you wish to (irreversibly) calibrate the \'' + (targetName + ('\' setting of weight \'' + (author$project$Type$WeightID$toString(id) + '\'?'))))
+						])),
+					A2(
+					elm$html$Html$i,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('(Note that calibration uses longer smoothening than the current value and will not be equal)')
+						])),
+					A2(
+					author$project$Component$Button$view,
+					A2(author$project$Page$WeightHub$CalibrateRequest, target, id),
+					'OK')
+				])));
+};
 var author$project$Page$WeightHub$viewCurrent = function (_n0) {
-	var current = _n0.a2;
-	var percent = _n0.aI;
+	var current = _n0.a3;
+	var percent = _n0.aJ;
 	return elm$html$Html$text(
 		elm$core$String$fromInt(percent) + ('% (' + (elm$core$String$fromInt(current) + ')')));
 };
+var author$project$Page$WeightHub$targetValue = F2(
+	function (weight, target) {
+		switch (target) {
+			case 0:
+				return weight.bH;
+			case 1:
+				return weight.a6;
+			default:
+				return weight.bb;
+		}
+	});
 var author$project$Component$Button$withIcon = F2(
 	function (msg, iconType) {
 		return A2(
@@ -12740,115 +12818,92 @@ var author$project$Component$Button$withIcon = F2(
 			author$project$Component$Icon$icon(iconType));
 	});
 var author$project$Component$Icon$Refresh = 3;
-var author$project$Page$WeightHub$RequestSetEmptyKeg = function (a) {
-	return {$: 2, a: a};
-};
-var author$project$Page$WeightHub$viewEmpty = function (_n0) {
-	var id = _n0.bd;
-	var empty = _n0.a5;
-	var str = elm$html$Html$text(
-		A2(
-			elm$core$Maybe$withDefault,
-			'_',
-			A2(elm$core$Maybe$map, elm$core$String$fromInt, empty)));
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('red-button-text')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[str])),
-				A2(
-				author$project$Component$Button$withIcon,
-				author$project$Page$WeightHub$RequestSetEmptyKeg(id),
-				3)
-			]));
-};
-var author$project$Page$WeightHub$RequestSetFullKeg = function (a) {
-	return {$: 3, a: a};
-};
-var author$project$Page$WeightHub$viewFull = function (_n0) {
-	var id = _n0.bd;
-	var full = _n0.ba;
-	var str = elm$html$Html$text(
-		A2(
-			elm$core$Maybe$withDefault,
-			'_',
-			A2(elm$core$Maybe$map, elm$core$String$fromInt, full)));
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('red-button-text')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[str])),
-				A2(
-				author$project$Component$Button$withIcon,
-				author$project$Page$WeightHub$RequestSetFullKeg(id),
-				3)
-			]));
-};
-var author$project$Page$WeightHub$RequestSetZero = function (a) {
-	return {$: 1, a: a};
-};
-var author$project$Page$WeightHub$viewNothing = function (_n0) {
-	var id = _n0.bd;
-	var zero = _n0.bF;
-	var str = elm$html$Html$text(
-		A2(
-			elm$core$Maybe$withDefault,
-			'_',
-			A2(elm$core$Maybe$map, elm$core$String$fromInt, zero)));
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('red-button-text')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[str])),
-				A2(
-				author$project$Component$Button$withIcon,
-				author$project$Page$WeightHub$RequestSetZero(id),
-				3)
-			]));
-};
+var author$project$Page$WeightHub$ConfirmRequest = F2(
+	function (a, b) {
+		return {$: 2, a: a, b: b};
+	});
+var author$project$Page$WeightHub$viewRequestButton = F2(
+	function (msg, id) {
+		return A2(
+			author$project$Component$Button$withIcon,
+			A2(author$project$Page$WeightHub$ConfirmRequest, msg, id),
+			3);
+	});
+var author$project$Page$WeightHub$viewTarget = F2(
+	function (target, weight) {
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('red-button-text')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							A2(
+								elm$core$Maybe$withDefault,
+								'_',
+								A2(
+									elm$core$Maybe$map,
+									elm$core$String$fromInt,
+									A2(author$project$Page$WeightHub$targetValue, weight, target))))
+						])),
+					A2(author$project$Page$WeightHub$viewRequestButton, target, weight.be)
+				]));
+	});
+var author$project$WeightyBeer$Enum$CalibrationTarget$Empty = 1;
+var author$project$WeightyBeer$Enum$CalibrationTarget$Full = 2;
+var author$project$WeightyBeer$Enum$CalibrationTarget$Zero = 0;
 var author$project$Page$WeightHub$view = function (model) {
+	var confirmModal = function () {
+		var _n0 = model.V;
+		if (!_n0.$) {
+			var confirm = _n0.a;
+			return _List_fromArray(
+				[
+					author$project$Page$WeightHub$viewConfirm(confirm)
+				]);
+		} else {
+			return _List_Nil;
+		}
+	}();
 	return A2(
-		author$project$Component$Table$viewTable,
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'ID',
-				A2(
-					elm$core$Basics$composeR,
-					function ($) {
-						return $.bd;
-					},
-					A2(elm$core$Basics$composeR, author$project$Type$WeightID$toString, elm$html$Html$text))),
-				_Utils_Tuple2('Current', author$project$Page$WeightHub$viewCurrent),
-				_Utils_Tuple2('Nothing', author$project$Page$WeightHub$viewNothing),
-				_Utils_Tuple2('Empty Keg', author$project$Page$WeightHub$viewEmpty),
-				_Utils_Tuple2('Full Keg', author$project$Page$WeightHub$viewFull)
-			]),
-		model.s);
+		elm$html$Html$div,
+		_List_Nil,
+		_Utils_ap(
+			_List_fromArray(
+				[
+					A2(
+					author$project$Component$Table$viewTable,
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'ID',
+							A2(
+								elm$core$Basics$composeR,
+								function ($) {
+									return $.be;
+								},
+								A2(elm$core$Basics$composeR, author$project$Type$WeightID$toString, elm$html$Html$text))),
+							_Utils_Tuple2('Current', author$project$Page$WeightHub$viewCurrent),
+							_Utils_Tuple2(
+							'Nothing',
+							author$project$Page$WeightHub$viewTarget(0)),
+							_Utils_Tuple2(
+							'Empty Keg',
+							author$project$Page$WeightHub$viewTarget(1)),
+							_Utils_Tuple2(
+							'Full Keg',
+							author$project$Page$WeightHub$viewTarget(2))
+						]),
+					model.s)
+				]),
+			confirmModal));
 };
 var author$project$Main$viewPage = function (page) {
 	return A2(
@@ -12952,18 +13007,18 @@ var author$project$Main$view = function (model) {
 var elm$browser$Browser$application = _Browser_application;
 var author$project$Main$main = elm$browser$Browser$application(
 	{
-		bh: author$project$Main$init,
-		bm: author$project$Main$ChangedUrl,
-		bn: author$project$Main$ClickedLink,
-		by: author$project$Main$subscriptions,
-		bB: author$project$Main$update,
-		bD: function (model) {
+		bi: author$project$Main$init,
+		bn: author$project$Main$ChangedUrl,
+		bo: author$project$Main$ClickedLink,
+		bz: author$project$Main$subscriptions,
+		bD: author$project$Main$update,
+		bF: function (model) {
 			return {
-				a$: _List_fromArray(
+				a0: _List_fromArray(
 					[
 						author$project$Main$view(model)
 					]),
-				bz: 'WeightyBeer'
+				bB: 'WeightyBeer'
 			};
 		}
 	});

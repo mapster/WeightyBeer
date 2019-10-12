@@ -9,8 +9,9 @@ import Component.Table exposing (viewTable)
 import Graphql.Http
 import Html exposing (Html, div, h2, i, p, span, text)
 import Html.Attributes exposing (class)
-import Type.Weight exposing (CalibrationTarget(..), Weight, calibrateRequest, makeCalibrateRequest, requestWeights)
+import Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights)
 import Type.WeightID as WeightID exposing (WeightID)
+import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget(..))
 
 
 type Msg

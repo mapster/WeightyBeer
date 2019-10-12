@@ -11,6 +11,7 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import WeightyBeer.Enum.CalibrationTarget
 import WeightyBeer.InputObject
 import WeightyBeer.Interface
 import WeightyBeer.Object
@@ -21,22 +22,22 @@ import WeightyBeer.Union
 
 type alias CalibrateRequiredArguments =
     { id : String
-    , target : String
+    , target : WeightyBeer.Enum.CalibrationTarget.CalibrationTarget
     }
 
 
 calibrate : CalibrateRequiredArguments -> SelectionSet String WeightyBeer.Object.WeightMutation
 calibrate requiredArgs =
-    Object.selectionForField "String" "calibrate" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "target" requiredArgs.target Encode.string ] Decode.string
+    Object.selectionForField "String" "calibrate" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "target" requiredArgs.target (Encode.enum WeightyBeer.Enum.CalibrationTarget.toString) ] Decode.string
 
 
 type alias CustomCalibrationRequiredArguments =
     { id : String
-    , target : String
-    , value : Float
+    , target : WeightyBeer.Enum.CalibrationTarget.CalibrationTarget
+    , value : Int
     }
 
 
 customCalibration : CustomCalibrationRequiredArguments -> SelectionSet String WeightyBeer.Object.WeightMutation
 customCalibration requiredArgs =
-    Object.selectionForField "String" "customCalibration" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "target" requiredArgs.target Encode.string, Argument.required "value" requiredArgs.value Encode.float ] Decode.string
+    Object.selectionForField "String" "customCalibration" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "target" requiredArgs.target (Encode.enum WeightyBeer.Enum.CalibrationTarget.toString), Argument.required "value" requiredArgs.value Encode.int ] Decode.string

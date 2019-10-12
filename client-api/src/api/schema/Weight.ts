@@ -1,5 +1,5 @@
-import { Field, ObjectType, Context, registerEnum } from "typegql";
-import { GraphQLInt, GraphQLString } from "graphql";
+import { Field, ObjectType, Context, registerEnum, Int, Arg } from "typegql";
+import { GraphQLString } from "graphql";
 import { DaoContext } from "../../DaoContext";
 
 export enum CalibrationTarget {
@@ -12,11 +12,11 @@ registerEnum(CalibrationTarget, {name: 'CalibrationTarget'});
 @ObjectType()
 export class Weight {
     @Field({ isNullable: false }) id: string;
-    @Field({ isNullable: true, type: GraphQLInt }) zero?: number;
-    @Field({ isNullable: true, type: GraphQLInt }) empty?: number;
-    @Field({ isNullable: true, type: GraphQLInt }) full?: number;
-    @Field({ isNullable: false, type: GraphQLInt }) current: number;
-    @Field({ isNullable: false, type: GraphQLInt }) percent: number;
+    @Field({ isNullable: true, type: Int }) zero?: number;
+    @Field({ isNullable: true, type: Int }) empty?: number;
+    @Field({ isNullable: true, type: Int }) full?: number;
+    @Field({ isNullable: false, type: Int }) current: number;
+    @Field({ isNullable: false, type: Int }) percent: number;
 
     constructor(
         id: string,
@@ -54,7 +54,7 @@ export class WeightMutation {
     async calibrate(
         @Context context: DaoContext,
         id: string,
-        target: CalibrationTarget
+        @Arg({ type: CalibrationTarget }) target: CalibrationTarget
     ) : Promise<string> {
         await context.actionPublisher.sendAction({id, type: 'calibrate', target});
         return id;
@@ -64,8 +64,8 @@ export class WeightMutation {
     async customCalibration(
         @Context context: DaoContext,
         id: string,
-        target: CalibrationTarget,
-        value: number
+        @Arg({ type: CalibrationTarget }) target: CalibrationTarget,
+        @Arg({ isNullable: false, type: Int }) value: number
     ) : Promise<string> {
         await context.actionPublisher.sendAction({id, type: 'customCalibration', target, value});
         return id;
