@@ -11,7 +11,7 @@ import { ActionPublisher } from './dao/ActionPublisher';
 import router from './router';
 
 const PORT = 3000;
-const REDIS_HOST = process.env.WEIGHTYBEER_REDIS || 'localhost';
+export const REDIS_HOST = process.env.WEIGHTYBEER_REDIS || 'localhost';
 const BREW_IMAGE_PATH = process.env.WEIGHTYBEER_BREW_IMAGE_PATH || '/tmp/brew-images/';
 const ACTION_CHANNEL = process.env.WEIGHTYBEER_ACTION_CHANNEL || 'actions';
 

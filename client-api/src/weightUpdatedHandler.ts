@@ -2,6 +2,7 @@ import Redis from "ioredis";
 import { PubSub } from "apollo-server";
 import { WEIGHT_UPDATED_EVENT } from "./api/schema/Subscriptions";
 import { WeightRepository } from "./dao/WeightRepository";
+import { REDIS_HOST } from "./server";
 
 async function handleMessage(pubsub: PubSub, weightDao: WeightRepository, channel: string, message: string): Promise<void> {
     if (channel === WEIGHT_UPDATED_EVENT) {
@@ -17,7 +18,7 @@ function handleSubscribeError(err: any) {
 }
 
 export function weightUpdatedHandler(pubsub: PubSub, weightRepository: WeightRepository) {
-    const redis = new Redis();
+    const redis = new Redis({ host: REDIS_HOST });
     redis.subscribe(WEIGHT_UPDATED_EVENT, handleSubscribeError);
     redis.on("message", handleMessage.bind(null, pubsub, weightRepository));
 }
