@@ -17,8 +17,13 @@ module.exports = {
         contentBase: path.join(__dirname, 'dist'),
         port: 8000,
         proxy: {
-            '/api': 'http://localhost:3000'
+            '/api': 'http://localhost:3000',
+            '/graphql': {
+                target: 'ws://localhost:3000',
+                ws: true
+            }
         },
+        historyApiFallback: true,
         hot: true,
     },
     module: {

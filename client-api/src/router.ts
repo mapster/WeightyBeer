@@ -8,7 +8,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { createSchema } from './api/schema/WeightyBeerSchema';
 import { weightUpdatedHandler } from './weightUpdatedHandler';
 
-export default function(context: DaoContext, httpServer: http.Server): Router.Router {
+export default function (context: DaoContext, httpServer: http.Server): Router.Router {
     const router = Router();
 
     const pubsub = new PubSub();
@@ -20,7 +20,7 @@ export default function(context: DaoContext, httpServer: http.Server): Router.Ro
     });
     apollo.applyMiddleware({ app: router });
     apollo.installSubscriptionHandlers(httpServer);
-    
+
 
     const brewImageController = new BrewImageController(context.imageRepo);
     router.use('/upload', fileUpload({
@@ -29,8 +29,8 @@ export default function(context: DaoContext, httpServer: http.Server): Router.Ro
     }));
     router.post('/upload/image', (req, res) => brewImageController.postImage(req, res));
     router.get('/images/:filename', (req, res) => brewImageController.getImage(req, res));
-    
-    return router; 
+
+    return router;
 }
 
 

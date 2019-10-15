@@ -29,7 +29,7 @@ const context: DaoContext = {
 const httpServer = http.createServer(app);
 
 app.use(cors());
-app.use('/api', router(context, httpServer, redis));
+app.use('/api', router(context, httpServer));
 
 httpServer.listen(PORT, () => {
     console.log(`WeightyBeer GraphQL API at http://localhost:${PORT}/api/graphql}`);
