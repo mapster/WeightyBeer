@@ -6,7 +6,6 @@ import fileUpload from 'express-fileupload';
 import { PubSub } from 'apollo-server';
 import { ApolloServer } from 'apollo-server-express';
 import { createSchema } from './api/schema/WeightyBeerSchema';
-import IORedis from 'ioredis';
 import { weightUpdatedHandler } from './weightUpdatedHandler';
 
 export default function(context: DaoContext, httpServer: http.Server): Router.Router {
