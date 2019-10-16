@@ -26,7 +26,6 @@
         "webpack-dev-server": "^3.8.2"
     },
     "dependencies": {
-        "@absinthe/socket": "^0.2.1",
-        "phoenix": "^1.4.10"
+        "subscriptions-transport-ws": "^0.9.16"
     }
 }
