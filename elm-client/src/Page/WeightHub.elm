@@ -9,8 +9,10 @@ import Component.Table exposing (viewTable)
 import Graphql.Http
 import Html exposing (Html, div, h2, i, p, span, text)
 import Html.Attributes exposing (class)
-import Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights)
+import Subscription
+import Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
+import Utils
 import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget(..))
 
 
@@ -20,6 +22,7 @@ type Msg
     | ConfirmRequest CalibrationTarget WeightID
     | CancelRequest
     | CalibrateRequest CalibrationTarget WeightID
+    | GotSubscriptionData (Result ErrorDetails Weight)
 
 
 type alias Model =
@@ -39,13 +42,13 @@ type alias WeightsResponse =
 
 
 getError : Model -> Maybe ErrorDetails
-getError _ =
-    Nothing
+getError =
+    .error
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Subscription.receive weightUpdatedSubscription GotSubscriptionData
 
 
 emptyModel : Nav.Key -> Model
@@ -55,7 +58,7 @@ emptyModel navKey =
 
 init : Nav.Key -> ( Model, Cmd Msg )
 init navKey =
-    ( emptyModel navKey, requestWeights GotWeightsResponse )
+    ( emptyModel navKey, Cmd.batch [ requestWeights GotWeightsResponse, Subscription.create Subscription.WeightHub weightUpdatedSubscription ] )
 
 
 view : Model -> Html Msg
@@ -163,6 +166,14 @@ update msg model =
 
         CalibrateRequest target id ->
             ( model, calibrateRequest id target |> makeCalibrateRequest GotUpdateResponse )
+
+        GotSubscriptionData result ->
+            case result of
+                Ok weight ->
+                    ( { model | weights = Utils.updateInList weight model.weights }, Cmd.none )
+
+                Err e ->
+                    ( { model | error = Just e }, Cmd.none )
 
 
 updateFromWeightsResponse : Model -> WeightsResponse -> Model

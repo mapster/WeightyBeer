@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget(..), decoder, fromString, list, toString)
+module WeightyBeer.Enum.CalibrationTarget exposing (..)
 
 import Json.Decode as Decode exposing (Decoder)
 

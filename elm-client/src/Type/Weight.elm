@@ -1,7 +1,8 @@
-module Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection)
+module Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection, weightUpdatedSubscription)
 
 import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
+import Graphql.Operation exposing (RootSubscription)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget)
@@ -10,6 +11,7 @@ import WeightyBeer.Object
 import WeightyBeer.Object.Weight
 import WeightyBeer.Object.WeightMutation
 import WeightyBeer.Query as Query
+import WeightyBeer.Subscription
 
 
 type alias Weight =
@@ -31,6 +33,11 @@ weightSelection =
         WeightyBeer.Object.Weight.full
         WeightyBeer.Object.Weight.current
         WeightyBeer.Object.Weight.percent
+
+
+weightUpdatedSubscription : SelectionSet Weight RootSubscription
+weightUpdatedSubscription =
+    WeightyBeer.Subscription.weightUpdated weightSelection
 
 
 requestWeights : (Result (Graphql.Http.Error ()) (List Weight) -> msg) -> Cmd msg

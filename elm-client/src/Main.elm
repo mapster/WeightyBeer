@@ -14,6 +14,7 @@ import Page.NewTap as NewTap
 import Page.Taps as Taps
 import Page.WeightHub as WeightHub
 import Route exposing (Route, href)
+import Subscription
 import Url exposing (Url)
 import Utils exposing (textEl)
 
@@ -70,6 +71,11 @@ type Page
 setPage : Model -> Page -> Model
 setPage model page =
     { model | page = page }
+
+
+setRoute : Model -> Maybe Route -> Model
+setRoute model route =
+    { model | route = route }
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -140,14 +146,33 @@ update msg model =
                     ( model, Nav.load href )
 
         ChangedUrl url ->
-            changeRouteTo model.navKey (Route.fromUrl url)
-                |> updateWith (setPage model) ToPage
+            let
+                route =
+                    Route.fromUrl url
+            in
+            if route /= model.route then
+                changeRouteTo model.navKey route
+                    |> updateWith (setPage { model | route = route }) ToPage
+                    |> cancelPageSubscriptions model.page
+
+            else
+                ( model, Cmd.none )
 
         ToPage pageMsg ->
             updatePage pageMsg model
 
         ShowErrorDetails ->
             ( { model | showErrorDetails = not model.showErrorDetails }, Cmd.none )
+
+
+cancelPageSubscriptions : Page -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+cancelPageSubscriptions page ( model, cmd ) =
+    case page of
+        WeightHub _ ->
+            ( model, Cmd.batch [ cmd, Subscription.cancel Subscription.WeightHub ] )
+
+        _ ->
+            ( model, cmd )
 
 
 updatePage : PageMsg -> Model -> ( Model, Cmd Msg )

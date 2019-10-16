@@ -1,4 +1,4 @@
-import { GraphQLSchema, GraphQLSchemaConfig, GraphQLObjectType, GraphQLFieldConfig, GraphQLNamedType } from "graphql";
+import { GraphQLSchema, GraphQLSchemaConfig, GraphQLObjectType, GraphQLFieldConfig, GraphQLNamedType, GraphQLNonNull } from "graphql";
 import { PubSub } from "graphql-subscriptions";
 
 export const WEIGHT_UPDATED_EVENT = "weightUpdated";
@@ -12,7 +12,7 @@ export const WEIGHT_UPDATED_EVENT = "weightUpdated";
 
 export function addSubscriptions(pubsub: PubSub, schema: GraphQLSchema): GraphQLSchema {
     const config: GraphQLSchemaConfig = schema.toConfig();
-    
+
     return new GraphQLSchema({
         ...config,
         subscription: createSubscription(pubsub, config)
@@ -23,9 +23,12 @@ function createSubscription(pubsub: PubSub, config: GraphQLSchemaConfig): GraphQ
     const weightType = (config.types as GraphQLNamedType[]).find(x => x.name === "Weight") as GraphQLObjectType;
 
     const allRootFields: { [key: string]: GraphQLFieldConfig<any, any> } = {};
-    allRootFields.weightUpdated = {type: weightType, subscribe: () => {
-        return pubsub.asyncIterator(WEIGHT_UPDATED_EVENT);
-    }};
+    allRootFields.weightUpdated = {
+        type: new GraphQLNonNull(weightType),
+        subscribe: () => {
+            return pubsub.asyncIterator(WEIGHT_UPDATED_EVENT);
+        }
+    };
 
     return new GraphQLObjectType({
         name: 'Subscription',

@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.ScalarCodecs exposing (placeholder)
+module WeightyBeer.ScalarCodecs exposing (..)
 
 
 placeholder : String

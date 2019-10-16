@@ -2,27 +2,31 @@ import { Elm } from './src/Main.elm';
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import './style/style.css';
 
-const gql = `
-subscription {
-  weightUpdated {
-    id
-    zero
-    current
-    percent
-  }
-}
-`;
-
 document.addEventListener('DOMContentLoaded', function () {
-    const client = new SubscriptionClient('ws://localhost:8000/graphql', {reconnect: true});
+  const client = new SubscriptionClient(`ws://${window.location.host}/graphql`, { reconnect: true });
 
-    client.request({query: gql}).subscribe({
-        next: (value) => console.log('received data: ', value),
-        error: console.log,
-        complete: console.log
-    });
+  const app = Elm.Main.init({
+    node: document.getElementById('elm')
+  });
 
-    const app = Elm.Main.init({
-        node: document.getElementById('elm')
-    });
+  const subscriptions = {};
+
+  app.ports.createSubscription.subscribe(subscription => {
+    console.log(`Subscription created: ${subscription.id}`);
+
+    subscriptions[subscription.id] = client.request({ query: subscription.subscription }).subscribe({
+      next: data => app.ports.receiveSubscriptionData.send(data),
+      error: console.error,
+      complete: console.log
+    })
+  });
+
+  app.ports.cancelSubscription.subscribe(id => {
+    console.log(`Subscription cancelled: ${id}`)
+
+    if (subscriptions[id]) {
+      subscriptions[id].unsubscribe();
+      delete subscriptions[id];
+    }
+  })
 });

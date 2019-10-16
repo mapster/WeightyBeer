@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Object.TapMutation exposing (CreateOptionalArguments, CreateRequiredArguments, RemoveRequiredArguments, UpdateOptionalArguments, UpdateRequiredArguments, create, remove, update)
+module WeightyBeer.Object.TapMutation exposing (..)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object

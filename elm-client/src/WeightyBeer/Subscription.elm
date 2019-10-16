@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Subscription exposing (weightUpdated)
+module WeightyBeer.Subscription exposing (..)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -19,6 +19,6 @@ import WeightyBeer.ScalarCodecs
 import WeightyBeer.Union
 
 
-weightUpdated : SelectionSet decodesTo WeightyBeer.Object.Weight -> SelectionSet (Maybe decodesTo) RootSubscription
+weightUpdated : SelectionSet decodesTo WeightyBeer.Object.Weight -> SelectionSet decodesTo RootSubscription
 weightUpdated object_ =
-    Object.selectionForCompositeField "weightUpdated" [] object_ (identity >> Decode.nullable)
+    Object.selectionForCompositeField "weightUpdated" [] object_ identity

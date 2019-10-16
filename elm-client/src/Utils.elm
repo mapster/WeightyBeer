@@ -1,4 +1,4 @@
-module Utils exposing (and, emptyAsNothing, fillInOptional, textClass, textEl)
+module Utils exposing (and, emptyAsNothing, fillInOptional, textClass, textEl, updateInList)
 
 import Graphql.OptionalArgument as OptionalArgument exposing (OptionalArgument)
 import Html exposing (Html, span, text)
@@ -33,3 +33,25 @@ emptyAsNothing str =
 fillInOptional : Maybe a -> (a -> b) -> OptionalArgument b
 fillInOptional arg getter =
     (OptionalArgument.fromMaybe >> OptionalArgument.map getter) arg
+
+
+updateInList : { item | id : id } -> List { item | id : id } -> List { item | id : id }
+updateInList item list =
+    let
+        updated =
+            List.map (replaceById item) list
+    in
+    if List.member item updated then
+        updated
+
+    else
+        item :: list
+
+
+replaceById : { a | id : id } -> { a | id : id } -> { a | id : id }
+replaceById new orig =
+    if new.id == orig.id then
+        new
+
+    else
+        orig

@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.InputObject exposing (placeholder)
+module WeightyBeer.InputObject exposing (..)
 
 
 placeholder : String
