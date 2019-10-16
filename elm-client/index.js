@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
   app.ports.createSubscription.subscribe(subscription => {
     console.log(`Subscription created: ${subscription.id}`);
 
+    if (subscriptions[subscription.id]) {
+      subscriptions[subscription.id].unsubscribe();
+    }
+
     subscriptions[subscription.id] = client.request({ query: subscription.subscription }).subscribe({
       next: data => app.ports.receiveSubscriptionData.send(data),
       error: console.error,

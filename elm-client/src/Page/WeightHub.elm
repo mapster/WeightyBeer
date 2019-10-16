@@ -10,7 +10,7 @@ import Graphql.Http
 import Html exposing (Html, div, h2, i, p, span, text)
 import Html.Attributes exposing (class)
 import Subscription
-import Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightUpdatedSubscription)
+import Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection, weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
 import Utils
 import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget(..))
@@ -48,7 +48,7 @@ getError =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Subscription.receive weightUpdatedSubscription GotSubscriptionData
+    Subscription.receive (weightUpdatedSubscription weightSelection) GotSubscriptionData
 
 
 emptyModel : Nav.Key -> Model
@@ -58,7 +58,7 @@ emptyModel navKey =
 
 init : Nav.Key -> ( Model, Cmd Msg )
 init navKey =
-    ( emptyModel navKey, Cmd.batch [ requestWeights GotWeightsResponse, Subscription.create Subscription.WeightHub weightUpdatedSubscription ] )
+    ( emptyModel navKey, Cmd.batch [ requestWeights GotWeightsResponse, Subscription.create Subscription.WeightHub (weightUpdatedSubscription weightSelection) ] )
 
 
 view : Model -> Html Msg

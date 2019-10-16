@@ -10,6 +10,7 @@ import Json.Encode as Encode
 
 type SubscriptionID
     = WeightHub
+    | Home
 
 
 idToString : SubscriptionID -> String
@@ -17,6 +18,9 @@ idToString id =
     case id of
         WeightHub ->
             "WeightHub"
+
+        Home ->
+            "Home"
 
 
 create : SubscriptionID -> SelectionSet a RootSubscription -> Cmd msg
@@ -37,10 +41,18 @@ subscriptionWithId id subscription =
 port createSubscription : Encode.Value -> Cmd msg
 
 
+
+-- TODO: Must filter by SubscriptionID
+
+
 receive : SelectionSet a RootSubscription -> (Result ErrorDetails a -> msg) -> Sub msg
 receive selection msg =
     receiveSubscriptionData
         (Decode.decodeValue (selection |> Graphql.Document.decoder) >> Result.mapError ErrorDetails.fromJsonDecode >> msg)
+
+
+
+--decodeSubscription : Decode.Decoder (S)
 
 
 port receiveSubscriptionData : (Decode.Value -> msg) -> Sub msg

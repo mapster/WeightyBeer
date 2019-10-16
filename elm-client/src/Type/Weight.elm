@@ -35,9 +35,9 @@ weightSelection =
         WeightyBeer.Object.Weight.percent
 
 
-weightUpdatedSubscription : SelectionSet Weight RootSubscription
-weightUpdatedSubscription =
-    WeightyBeer.Subscription.weightUpdated weightSelection
+weightUpdatedSubscription : SelectionSet a WeightyBeer.Object.Weight -> SelectionSet a RootSubscription
+weightUpdatedSubscription selection =
+    WeightyBeer.Subscription.weightUpdated selection
 
 
 requestWeights : (Result (Graphql.Http.Error ()) (List Weight) -> msg) -> Cmd msg
