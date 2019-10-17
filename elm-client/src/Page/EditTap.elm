@@ -11,9 +11,15 @@ import Html.Attributes exposing (class)
 import Maybe exposing (Maybe)
 import Route
 import Type.Brew exposing (Brew, brewSelection)
+import Type.Page exposing (Page)
 import Type.Tap as Tap exposing (ExistingTap, PartialTap, Weight, tapSelection, toExistingTap, toPartial, updateOriginals, weightSelection)
 import Type.TapID as TapID exposing (TapID)
 import WeightyBeer.Query as Query
+
+
+page : Page Model Msg TapID
+page =
+    Page init view update subscriptions getError
 
 
 type alias Model =

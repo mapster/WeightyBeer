@@ -10,10 +10,16 @@ import Graphql.Http
 import Html exposing (Html, div, h2, i, p, span, text)
 import Html.Attributes exposing (class)
 import Subscription
+import Type.Page exposing (Page)
 import Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection, weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
 import Utils
 import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget(..))
+
+
+page : Page Model Msg ()
+page =
+    Page init view update subscriptions getError
 
 
 type Msg
@@ -56,8 +62,8 @@ emptyModel navKey =
     Model navKey [] Nothing Nothing
 
 
-init : Nav.Key -> ( Model, Cmd Msg )
-init navKey =
+init : Nav.Key -> () -> ( Model, Cmd Msg )
+init navKey _ =
     ( emptyModel navKey, Cmd.batch [ requestWeights GotWeightsResponse, Subscription.create Subscription.WeightHub (weightUpdatedSubscription weightSelection) ] )
 
 

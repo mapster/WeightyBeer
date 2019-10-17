@@ -10,7 +10,13 @@ import Html.Attributes exposing (class)
 import Maybe.Extra
 import Type.Brew as Brew exposing (Brew, brewSelection, emptyPartial, toBrew, toPartial)
 import Type.BrewID as BrewID exposing (BrewID)
+import Type.Page exposing (Page)
 import WeightyBeer.Query as Query
+
+
+page : Page Model Msg BrewID
+page =
+    Page init view update subscriptions getError
 
 
 type Msg

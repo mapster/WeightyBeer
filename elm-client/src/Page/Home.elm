@@ -1,5 +1,6 @@
 module Page.Home exposing (Model, Msg, init, subscriptions, update, view)
 
+import Browser.Navigation as Nav
 import Component.ErrorDetails exposing (ErrorDetails)
 import Component.TapCard as TapCard
 import Constants exposing (weightyBeerGraphql)
@@ -10,10 +11,16 @@ import Html.Attributes exposing (..)
 import Maybe.Extra
 import RemoteData exposing (RemoteData)
 import Subscription
+import Type.Page exposing (Page)
 import Type.Tap exposing (ExistingTap(..), Weight, tapSelection, toPartial, weightSelection)
 import Type.Weight exposing (weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Query as Query
+
+
+page : Page Model Msg ()
+page =
+    Page init view update subscriptions (\_ -> Nothing)
 
 
 type Msg
@@ -40,20 +47,13 @@ subscriptions _ =
     Subscription.receive Subscription.Home (weightUpdatedSubscription weightSelection) GotWeightsResponse
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Nav.Key -> () -> ( Model, Cmd Msg )
+init _ _ =
     let
         model =
             Model RemoteData.Loading Dict.empty
     in
     ( model, Cmd.batch [ requestTaps, Subscription.create Subscription.Home (weightUpdatedSubscription weightSelection) ] )
-
-
-
---
--- GraphQL
---
---
 
 
 requestTaps : Cmd Msg

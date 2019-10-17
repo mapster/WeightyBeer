@@ -10,8 +10,14 @@ import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Route
 import Type.Brew exposing (Brew, brewSelection)
+import Type.Page exposing (Page)
 import Type.Tap as Tap exposing (ExistingTap, PartialTap, Weight, emptyPartial, toExistingTap, toPartial, toTap, weightSelection)
 import WeightyBeer.Query as Query
+
+
+page : Page Model Msg ()
+page =
+    Page init view update subscriptions getError
 
 
 type alias Model =
@@ -64,8 +70,8 @@ makeSaveRequest model =
             ( { model | error = Just (ErrorDetails "Cannot save: incomplete tap" Nothing) }, Cmd.none )
 
 
-init : Nav.Key -> ( Model, Cmd Msg )
-init navKey =
+init : Nav.Key -> () -> ( Model, Cmd Msg )
+init navKey _ =
     ( Model navKey emptyPartial [] [] Nothing, requestBrewsWeights )
 
 

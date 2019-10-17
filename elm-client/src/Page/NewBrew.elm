@@ -9,6 +9,12 @@ import Html.Attributes exposing (class)
 import Maybe.Extra
 import Route
 import Type.Brew as Brew exposing (Brew, Image, PartialBrew, emptyPartial, toNewBrew, toPartial)
+import Type.Page exposing (Page)
+
+
+page : Page Model Msg ()
+page =
+    Page init view update subscriptions getError
 
 
 type alias Model =
@@ -39,8 +45,8 @@ subscriptions _ =
     Sub.none
 
 
-init : Nav.Key -> ( Model, Cmd Msg )
-init navKey =
+init : Nav.Key -> () -> ( Model, Cmd Msg )
+init navKey _ =
     let
         ( editModel, editCmd ) =
             Component.EditBrew.init emptyPartial

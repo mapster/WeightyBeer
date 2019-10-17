@@ -1,5 +1,6 @@
 module Page.Taps exposing (Model, Msg, init, subscriptions, update, view)
 
+import Browser.Navigation as Nav
 import Component.AddButton as AddButton
 import Component.Table exposing (viewTable)
 import Constants exposing (weightyBeerGraphql)
@@ -11,12 +12,18 @@ import Html.Attributes exposing (class)
 import RemoteData exposing (RemoteData)
 import Route exposing (href)
 import String exposing (fromInt)
+import Type.Page exposing (Page)
 import Type.TapID as TapID exposing (TapID)
 import WeightyBeer.Object
 import WeightyBeer.Object.Brew
 import WeightyBeer.Object.Tap
 import WeightyBeer.Object.Weight
 import WeightyBeer.Query as Query
+
+
+page : Page Model Msg ()
+page =
+    Page init view update subscriptions (\_ -> Nothing)
 
 
 type Msg
@@ -89,8 +96,8 @@ subscriptions _ =
     Sub.none
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Nav.Key -> () -> ( Model, Cmd Msg )
+init _ _ =
     ( RemoteData.Loading, requestTaps )
 
 

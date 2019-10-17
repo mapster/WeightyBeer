@@ -14,6 +14,7 @@ import Page.NewTap as NewTap
 import Page.Taps as Taps
 import Page.WeightHub as WeightHub
 import Route exposing (Route, href)
+import Type.Page
 import Url exposing (Url)
 import Utils exposing (textEl)
 
@@ -91,15 +92,15 @@ changeRouteTo navKey maybeRoute =
             ( NotFound, Cmd.none )
 
         Just Route.Home ->
-            Home.init
+            Home.init navKey ()
                 |> updateWith Home HomeMsg
 
         Just Route.Taps ->
-            Taps.init
+            Taps.init navKey ()
                 |> updateWith Taps TapsMsg
 
         Just Route.NewTap ->
-            NewTap.init navKey
+            NewTap.init navKey ()
                 |> updateWith NewTap NewTapMsg
 
         Just (Route.EditTap id) ->
@@ -107,7 +108,7 @@ changeRouteTo navKey maybeRoute =
                 |> updateWith EditTap EditTapMsg
 
         Just Route.Brews ->
-            Brews.init
+            Brews.init navKey ()
                 |> updateWith Brews BrewsMsg
 
         Just (Route.EditBrew id) ->
@@ -115,11 +116,11 @@ changeRouteTo navKey maybeRoute =
                 |> updateWith EditBrew EditBrewMsg
 
         Just Route.NewBrew ->
-            NewBrew.init navKey
+            NewBrew.init navKey ()
                 |> updateWith NewBrew NewBrewMsg
 
         Just Route.WeightHub ->
-            WeightHub.init navKey
+            WeightHub.init navKey ()
                 |> updateWith WeightHub WeightHubMsg
 
 
