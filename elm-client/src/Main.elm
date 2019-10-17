@@ -14,7 +14,6 @@ import Page.NewTap as NewTap
 import Page.Taps as Taps
 import Page.WeightHub as WeightHub
 import Route exposing (Route, href)
-import Subscription
 import Url exposing (Url)
 import Utils exposing (textEl)
 

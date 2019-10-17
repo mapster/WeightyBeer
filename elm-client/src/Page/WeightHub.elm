@@ -22,7 +22,7 @@ type Msg
     | ConfirmRequest CalibrationTarget WeightID
     | CancelRequest
     | CalibrateRequest CalibrationTarget WeightID
-    | GotSubscriptionData (Result ErrorDetails Weight)
+    | GotSubscriptionData (Result ErrorDetails (Maybe Weight))
 
 
 type alias Model =
@@ -48,7 +48,7 @@ getError =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Subscription.receive (weightUpdatedSubscription weightSelection) GotSubscriptionData
+    Subscription.receive Subscription.WeightHub (weightUpdatedSubscription weightSelection) GotSubscriptionData
 
 
 emptyModel : Nav.Key -> Model
@@ -169,8 +169,11 @@ update msg model =
 
         GotSubscriptionData result ->
             case result of
-                Ok weight ->
+                Ok (Just weight) ->
                     ( { model | weights = Utils.updateInList weight model.weights }, Cmd.none )
+
+                Ok Nothing ->
+                    ( model, Cmd.none )
 
                 Err e ->
                     ( { model | error = Just e }, Cmd.none )

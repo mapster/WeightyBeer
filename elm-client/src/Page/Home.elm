@@ -10,7 +10,6 @@ import Html.Attributes exposing (..)
 import Maybe.Extra
 import RemoteData exposing (RemoteData)
 import Subscription
-import Time
 import Type.Tap exposing (ExistingTap(..), Weight, tapSelection, toPartial, weightSelection)
 import Type.Weight exposing (weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
@@ -19,7 +18,7 @@ import WeightyBeer.Query as Query
 
 type Msg
     = GotTapsResponse (RemoteData (Graphql.Http.Error Taps) Taps)
-    | GotWeightsResponse (Result ErrorDetails Weight)
+    | GotWeightsResponse (Result ErrorDetails (Maybe Weight))
 
 
 type alias Model =
@@ -38,7 +37,7 @@ type alias Weights =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Subscription.receive (weightUpdatedSubscription weightSelection) GotWeightsResponse
+    Subscription.receive Subscription.Home (weightUpdatedSubscription weightSelection) GotWeightsResponse
 
 
 init : ( Model, Cmd Msg )
@@ -81,11 +80,14 @@ update msg model =
             ( { model | weights = updateWeights model.weights response }, Cmd.none )
 
 
-updateWeights : Dict String Weight -> Result ErrorDetails Weight -> Dict String Weight
+updateWeights : Dict String Weight -> Result ErrorDetails (Maybe Weight) -> Dict String Weight
 updateWeights weights result =
     case result of
-        Ok weight ->
+        Ok (Just weight) ->
             Dict.insert (WeightID.toString weight.id) weight weights
+
+        Ok Nothing ->
+            weights
 
         Err error ->
             weights

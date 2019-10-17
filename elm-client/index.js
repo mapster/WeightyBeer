@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     subscriptions[subscription.id] = client.request({ query: subscription.subscription }).subscribe({
-      next: data => app.ports.receiveSubscriptionData.send(data),
+      next: data => app.ports.receiveSubscriptionData.send({ id: subscription.id, subscription: data }),
       error: console.error,
       complete: console.log
     })

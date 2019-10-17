@@ -41,18 +41,29 @@ subscriptionWithId id subscription =
 port createSubscription : Encode.Value -> Cmd msg
 
 
-
--- TODO: Must filter by SubscriptionID
-
-
-receive : SelectionSet a RootSubscription -> (Result ErrorDetails a -> msg) -> Sub msg
-receive selection msg =
-    receiveSubscriptionData
-        (Decode.decodeValue (selection |> Graphql.Document.decoder) >> Result.mapError ErrorDetails.fromJsonDecode >> msg)
+receive : SubscriptionID -> SelectionSet a RootSubscription -> (Result ErrorDetails (Maybe a) -> msg) -> Sub msg
+receive id selection msg =
+    Decode.decodeValue (subscriptionDecoder id selection)
+        >> Result.mapError ErrorDetails.fromJsonDecode
+        >> msg
+        |> receiveSubscriptionData
 
 
+subscriptionDecoder : SubscriptionID -> SelectionSet a RootSubscription -> Decode.Decoder (Maybe a)
+subscriptionDecoder id selection =
+    Decode.field "id" Decode.string
+        |> Decode.andThen (verifyId id selection)
 
---decodeSubscription : Decode.Decoder (S)
+
+verifyId : SubscriptionID -> SelectionSet a RootSubscription -> String -> Decode.Decoder (Maybe a)
+verifyId id selection receivedId =
+    if idToString id == receivedId then
+        Graphql.Document.decoder selection
+            |> Decode.field "subscription"
+            |> Decode.map Just
+
+    else
+        Decode.succeed Nothing
 
 
 port receiveSubscriptionData : (Decode.Value -> msg) -> Sub msg
