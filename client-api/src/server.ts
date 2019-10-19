@@ -1,3 +1,4 @@
+import * as http from 'http';
 import express from 'express';
 import Redis from 'ioredis';
 import cors from 'cors';
@@ -9,7 +10,8 @@ import { WeightRepository } from './dao/WeightRepository';
 import { ActionPublisher } from './dao/ActionPublisher';
 import router from './router';
 
-const REDIS_HOST = process.env.WEIGHTYBEER_REDIS || 'localhost';
+const PORT = 3000;
+export const REDIS_HOST = process.env.WEIGHTYBEER_REDIS || 'localhost';
 const BREW_IMAGE_PATH = process.env.WEIGHTYBEER_BREW_IMAGE_PATH || '/tmp/brew-images/';
 const ACTION_CHANNEL = process.env.WEIGHTYBEER_ACTION_CHANNEL || 'actions';
 
@@ -24,7 +26,11 @@ const context: DaoContext = {
     actionPublisher: new ActionPublisher(redis, ACTION_CHANNEL),
 }
 
-app.use(cors());
-app.use('/api', router(context));
-app.listen(3000, () => console.log('WeightyBeer GraphQL API running on port 3000'));
+const httpServer = http.createServer(app);
 
+app.use(cors());
+app.use('/api', router(context, httpServer));
+
+httpServer.listen(PORT, () => {
+    console.log(`WeightyBeer GraphQL API at http://localhost:${PORT}/api/graphql}`);
+});

@@ -2,13 +2,12 @@ import { ObjectType, Field, Context, Arg, Int } from "typegql";
 import { DaoContext } from "../../DaoContext";
 import { Brew } from "./Brew";
 import { Weight } from "./Weight";
-import { GraphQLInt } from "graphql";
 
 @ObjectType()
 export class Tap {
     @Field({ isNullable: false }) id: string;
     @Field({ isNullable: false }) name: string;
-    @Field({ isNullable: false, type: GraphQLInt }) order: number;
+    @Field({ isNullable: false, type: Int }) order: number;
     @Field({ isNullable: false }) volume: number;
     @Field({ isNullable: false }) isActive: boolean;
     private _weight: string;
@@ -60,7 +59,7 @@ export class TapMutation {
     async create(
         @Context context: DaoContext,
         name: string,
-        @Arg({ type: GraphQLInt }) order: number,
+        @Arg({ type: Int }) order: number,
         volume: number,
         isActive: boolean,
         @Arg({ isNullable: true }) weight: string,
@@ -74,7 +73,7 @@ export class TapMutation {
         @Context context: DaoContext,
         id: string,
         name: string,
-        @Arg({ type: GraphQLInt }) order: number,
+        @Arg({ type: Int }) order: number,
         volume: number,
         isActive: boolean,
         @Arg({ isNullable: true }) weight: string,

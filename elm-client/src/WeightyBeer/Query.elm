@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Query exposing (BrewRequiredArguments, ImageRequiredArguments, TapRequiredArguments, WeightRequiredArguments, brew, brews, image, images, tap, taps, weight, weights)
+module WeightyBeer.Query exposing (..)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object

@@ -1,4 +1,4 @@
-module Component.ErrorDetails exposing (ErrorDetails, errorDetails, view)
+module Component.ErrorDetails exposing (ErrorDetails, errorDetails, fromJsonDecode, view)
 
 import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
@@ -19,6 +19,11 @@ type alias ErrorDetails =
 errorDetails : String -> Graphql.Http.Error () -> ErrorDetails
 errorDetails message error =
     ErrorDetails message (Just error)
+
+
+fromJsonDecode : Json.Decode.Error -> ErrorDetails
+fromJsonDecode error =
+    ErrorDetails (Json.Decode.errorToString error) Nothing
 
 
 view : viewDetailsMsg -> Bool -> ErrorDetails -> Html viewDetailsMsg

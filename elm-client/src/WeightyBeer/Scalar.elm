@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Scalar exposing (placeholder)
+module WeightyBeer.Scalar exposing (..)
 
 
 placeholder : String

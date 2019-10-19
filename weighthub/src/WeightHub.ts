@@ -20,8 +20,9 @@ export interface SensorReading {
 export type ActionTarget = 'zero' | 'full' | 'empty';
 export interface Action {
     id: string;
-    type: 'calibrate';
+    type: 'calibrate' | 'customCalibration';
     target: ActionTarget;
+    value?: number
 }
 
 interface SensorData {
@@ -38,7 +39,7 @@ const TARGET_WINDOW = 100;
 const TARGET_CALIBRATE_WINDOW = 2000;
 
 export class WeightHub {
-    private data: {[key: string]: SensorData} = {};
+    private data: { [key: string]: SensorData } = {};
 
     constructor(
         private sensorSource: SensorSource,
@@ -49,7 +50,7 @@ export class WeightHub {
     run() {
         this.sensorSource.start(this);
         this.actionSource.start(this);
-        
+
         console.log("Weighthub successfully started");
     }
 
@@ -65,38 +66,53 @@ export class WeightHub {
                 sum: quantized
             }
         }
-        
+
         console.log(`Registered sensor: ${reading.id}`)
     }
 
     async updateSensor(reading: SensorReading): Promise<void> {
-        const avg = this.addReadingAndCalculateMean(reading);
-        const data = this.data[reading.id];
-        
+        this.addReading(reading);
+        const newCurrentAverage = this.calculateCurrentMean(reading.id);
+        await this.updateWeight(reading.id, newCurrentAverage);
+    }
+
+    private async updateWeight(id: string, newCurrentAverage?: number): Promise<void> {
+        const data = this.data[id];
+
         const updatedWeight = {
-            ...data.weight, 
-            current: avg,
-            percent: this.calculatePercent(data.weight.full, data.weight.empty, avg),
+            ...data.weight,
+            percent: this.calculatePercent(data.weight, newCurrentAverage),
         };
+        if (newCurrentAverage !== undefined) {
+            updatedWeight.current = newCurrentAverage;
+        }
+
+        const notify = data.weight.percent !== updatedWeight.percent;
         data.weight = updatedWeight;
 
-        const success = await this.weightHubPublisher.updateWeight(reading.id, updatedWeight.current, updatedWeight.percent);
+        const success = await this.weightHubPublisher.updateWeight(id, updatedWeight.current, updatedWeight.percent, notify);
         if (!success) {
-            console.error(`Failed to update weight data: ${reading.id}`);
+            console.error(`Failed to update weight data: ${id}`);
         }
     }
 
-    private calculatePercent(full: number, empty: number, current: number): number {
+    private calculateCurrentMean(id: string): number {
+        const data = this.data[id];
+        return Math.floor(data.sum / data.readings.length);
+    }
+
+    private calculatePercent({ full, empty, current }: Weight, newCurrent?: number): number {
+        const avg = newCurrent !== undefined ? newCurrent : current;
         const one = full - empty;
-        const part = current - empty || 1;
+        const part = avg - empty || 1;
         const percent = Math.min(100, Math.floor((part / one) * 100));
-        
+
         return percent;
     }
 
-    private addReadingAndCalculateMean(reading: SensorReading): number {
+    private addReading(reading: SensorReading) {
         const data = this.data[reading.id];
-        
+
         // TODO: Concider some action if length > TARGET_WINDOW
         if (data.readings.length >= TARGET_WINDOW) {
             const removed = data.readings.shift() as number;
@@ -109,20 +125,26 @@ export class WeightHub {
         }
 
         const quantized = quantize(reading.value);
-        
+
         data.readings.push(quantized);
         data.sum += quantized;
 
         data.calibrate.readings.push(quantized);
         data.calibrate.sum += quantized;
-
-        return Math.floor(data.sum / data.readings.length);
     }
 
     async doAction(action: Action): Promise<void> {
+        if (!this.data[action.id]) {
+            console.log(`Cannot perform action for weight '${action.id}: Not registered'`)
+            return;
+        }
+
         switch (action.type) {
             case 'calibrate':
                 await this.calibrate(action);
+                break;
+            case 'customCalibration':
+                await this.customCalibration(action);
                 break;
             default:
                 console.error(`Unknown action.type requested: '${action.type}'`);
@@ -135,7 +157,7 @@ export class WeightHub {
         if (!weight) {
             await this.weightHubPublisher.createWeight(reading.id, quantize(reading.value));
             return {
-                id: reading.id, 
+                id: reading.id,
                 zero: 0,
                 empty: 0,
                 full: 0,
@@ -147,14 +169,40 @@ export class WeightHub {
         return weight;
     }
 
+    private async customCalibration({ id, target, value }: Action): Promise<void> {
+        if (!id) {
+            console.error(`Invalid/missing action.id: ${id}`);
+            return;
+        }
+        if (!value) {
+            console.error(`Invalid/missing value for customCalibration of ${id}: ${target}`);
+            return;
+        }
+
+        const { weight } = this.data[id];
+
+        if (['zero', 'empty', 'full'].includes(target)) {
+            weight[target] = value as number;
+            console.log(`Setting '${target}' of '${id}' to: ${value}`);
+
+            const success = await this.weightHubPublisher.set(id, target, value);
+            if (success) {
+                await this.updateWeight(id);
+            } else {
+                console.error(`Failed to set '${target}' of '${id}' to: ${value}`);
+            }
+        } else {
+            console.error(`Unknown customCalibration target: '${target}'`);
+        }
+    }
+
     private async calibrate({ id, target }: Action): Promise<void> {
         if (!id) {
             console.error(`Invalid/missing action.id: ${id}`);
             return;
         }
 
-        const weight = this.data[id].weight;
-        const calibrate = this.data[id].calibrate;
+        const { weight, calibrate } = this.data[id];
 
         if (['zero', 'empty', 'full'].includes(target)) {
             const average = Math.floor(calibrate.sum / calibrate.readings.length);
@@ -163,7 +211,9 @@ export class WeightHub {
             console.log(`Calibrating '${target}' of '${id}' to: ${average}`);
 
             const success = await this.weightHubPublisher.set(id, target, average);
-            if (!success) {
+            if (success) {
+                await this.updateWeight(id);
+            } else {
                 console.error(`Failed to calibrate '${target}' of '${id}' to: ${average}`);
             }
         } else {

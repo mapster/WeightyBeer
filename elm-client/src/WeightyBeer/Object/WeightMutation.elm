@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Object.WeightMutation exposing (UpdateEmptyRequiredArguments, UpdateFullRequiredArguments, UpdateZeroRequiredArguments, updateEmpty, updateFull, updateZero)
+module WeightyBeer.Object.WeightMutation exposing (..)
 
 import Graphql.Internal.Builder.Argument as Argument exposing (Argument)
 import Graphql.Internal.Builder.Object as Object
@@ -11,6 +11,7 @@ import Graphql.Operation exposing (RootMutation, RootQuery, RootSubscription)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
+import WeightyBeer.Enum.CalibrationTarget
 import WeightyBeer.InputObject
 import WeightyBeer.Interface
 import WeightyBeer.Object
@@ -19,28 +20,24 @@ import WeightyBeer.ScalarCodecs
 import WeightyBeer.Union
 
 
-type alias UpdateZeroRequiredArguments =
-    { id : String }
+type alias CalibrateRequiredArguments =
+    { id : String
+    , target : WeightyBeer.Enum.CalibrationTarget.CalibrationTarget
+    }
 
 
-updateZero : UpdateZeroRequiredArguments -> SelectionSet String WeightyBeer.Object.WeightMutation
-updateZero requiredArgs =
-    Object.selectionForField "String" "updateZero" [ Argument.required "id" requiredArgs.id Encode.string ] Decode.string
+calibrate : CalibrateRequiredArguments -> SelectionSet String WeightyBeer.Object.WeightMutation
+calibrate requiredArgs =
+    Object.selectionForField "String" "calibrate" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "target" requiredArgs.target (Encode.enum WeightyBeer.Enum.CalibrationTarget.toString) ] Decode.string
 
 
-type alias UpdateEmptyRequiredArguments =
-    { id : String }
+type alias CustomCalibrationRequiredArguments =
+    { id : String
+    , target : WeightyBeer.Enum.CalibrationTarget.CalibrationTarget
+    , value : Int
+    }
 
 
-updateEmpty : UpdateEmptyRequiredArguments -> SelectionSet String WeightyBeer.Object.WeightMutation
-updateEmpty requiredArgs =
-    Object.selectionForField "String" "updateEmpty" [ Argument.required "id" requiredArgs.id Encode.string ] Decode.string
-
-
-type alias UpdateFullRequiredArguments =
-    { id : String }
-
-
-updateFull : UpdateFullRequiredArguments -> SelectionSet String WeightyBeer.Object.WeightMutation
-updateFull requiredArgs =
-    Object.selectionForField "String" "updateFull" [ Argument.required "id" requiredArgs.id Encode.string ] Decode.string
+customCalibration : CustomCalibrationRequiredArguments -> SelectionSet String WeightyBeer.Object.WeightMutation
+customCalibration requiredArgs =
+    Object.selectionForField "String" "customCalibration" [ Argument.required "id" requiredArgs.id Encode.string, Argument.required "target" requiredArgs.target (Encode.enum WeightyBeer.Enum.CalibrationTarget.toString), Argument.required "value" requiredArgs.value Encode.int ] Decode.string

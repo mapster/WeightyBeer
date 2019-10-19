@@ -1,22 +1,24 @@
 module Page.Home exposing (Model, Msg, init, subscriptions, update, view)
 
+import Component.ErrorDetails exposing (ErrorDetails)
 import Component.TapCard as TapCard
 import Constants exposing (weightyBeerGraphql)
 import Dict exposing (Dict)
 import Graphql.Http
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Maybe.Extra
 import RemoteData exposing (RemoteData)
-import Time
+import Subscription
 import Type.Tap exposing (ExistingTap(..), Weight, tapSelection, toPartial, weightSelection)
+import Type.Weight exposing (weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Query as Query
 
 
 type Msg
     = GotTapsResponse (RemoteData (Graphql.Http.Error Taps) Taps)
-    | GotWeightsResponse (RemoteData (Graphql.Http.Error Weights) Weights)
-    | FetchWeights
+    | GotWeightsResponse (Result ErrorDetails (Maybe Weight))
 
 
 type alias Model =
@@ -35,7 +37,7 @@ type alias Weights =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Time.every 1000 (\_ -> FetchWeights)
+    Subscription.receive Subscription.Home (weightUpdatedSubscription weightSelection) GotWeightsResponse
 
 
 init : ( Model, Cmd Msg )
@@ -44,7 +46,7 @@ init =
         model =
             Model RemoteData.Loading Dict.empty
     in
-    ( model, requestTaps )
+    ( model, Cmd.batch [ requestTaps, Subscription.create Subscription.Home (weightUpdatedSubscription weightSelection) ] )
 
 
 
@@ -61,13 +63,6 @@ requestTaps =
         |> Graphql.Http.send (RemoteData.fromResult >> GotTapsResponse)
 
 
-requestWeights : Cmd Msg
-requestWeights =
-    Query.weights weightSelection
-        |> Graphql.Http.queryRequest weightyBeerGraphql
-        |> Graphql.Http.send (RemoteData.fromResult >> GotWeightsResponse)
-
-
 
 --
 -- Update
@@ -82,21 +77,20 @@ update msg model =
             ( { model | receivedTaps = response }, Cmd.none )
 
         GotWeightsResponse response ->
-            ( { model | weights = updateWeights response }, Cmd.none )
-
-        FetchWeights ->
-            ( model, requestWeights )
+            ( { model | weights = updateWeights model.weights response }, Cmd.none )
 
 
-updateWeights : RemoteData (Graphql.Http.Error Weights) Weights -> Dict String Weight
-updateWeights response =
-    case response of
-        RemoteData.Success weights ->
-            List.map (\w -> ( WeightID.toString w.id, w )) weights
-                |> Dict.fromList
+updateWeights : Dict String Weight -> Result ErrorDetails (Maybe Weight) -> Dict String Weight
+updateWeights weights result =
+    case result of
+        Ok (Just weight) ->
+            Dict.insert (WeightID.toString weight.id) weight weights
 
-        _ ->
-            Dict.empty
+        Ok Nothing ->
+            weights
+
+        Err error ->
+            weights
 
 
 
@@ -125,13 +119,12 @@ view model =
 tapWithWeight : Dict String Weight -> ExistingTap -> ExistingTap
 tapWithWeight weights (ExistingTap tapId tap) =
     let
-        weight =
+        subscribedWeight =
             Maybe.map .id tap.weight
                 |> Maybe.map WeightID.toString
-                |> Maybe.map (\id -> Dict.get id weights)
-                |> Maybe.withDefault tap.weight
+                |> Maybe.andThen (\id -> Dict.get id weights)
     in
-    ExistingTap tapId { tap | weight = weight }
+    ExistingTap tapId { tap | weight = Maybe.Extra.or subscribedWeight tap.weight }
 
 
 viewTaps : Dict String Weight -> Taps -> Html Msg

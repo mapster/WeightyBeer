@@ -140,8 +140,16 @@ update msg model =
                     ( model, Nav.load href )
 
         ChangedUrl url ->
-            changeRouteTo model.navKey (Route.fromUrl url)
-                |> updateWith (setPage model) ToPage
+            let
+                route =
+                    Route.fromUrl url
+            in
+            if route /= model.route then
+                changeRouteTo model.navKey route
+                    |> updateWith (setPage { model | route = route }) ToPage
+
+            else
+                ( model, Cmd.none )
 
         ToPage pageMsg ->
             updatePage pageMsg model

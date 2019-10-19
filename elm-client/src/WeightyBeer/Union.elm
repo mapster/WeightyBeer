@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module WeightyBeer.Union exposing (placeholder)
+module WeightyBeer.Union exposing (..)
 
 
 placeholder : String

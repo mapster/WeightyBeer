@@ -1,14 +1,17 @@
-module Type.Weight exposing (Weight, makeUpdateRequest, requestWeights, updateEmptyRequest, updateFullRequest, updateZeroRequest, weightSelection)
+module Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection, weightUpdatedSubscription)
 
 import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
+import Graphql.Operation exposing (RootSubscription)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Type.WeightID as WeightID exposing (WeightID)
+import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget)
 import WeightyBeer.Mutation as Mutation
 import WeightyBeer.Object
 import WeightyBeer.Object.Weight
 import WeightyBeer.Object.WeightMutation
 import WeightyBeer.Query as Query
+import WeightyBeer.Subscription
 
 
 type alias Weight =
@@ -32,6 +35,11 @@ weightSelection =
         WeightyBeer.Object.Weight.percent
 
 
+weightUpdatedSubscription : SelectionSet a WeightyBeer.Object.Weight -> SelectionSet a RootSubscription
+weightUpdatedSubscription selection =
+    WeightyBeer.Subscription.weightUpdated selection
+
+
 requestWeights : (Result (Graphql.Http.Error ()) (List Weight) -> msg) -> Cmd msg
 requestWeights msg =
     Query.weights weightSelection
@@ -43,26 +51,14 @@ type alias MutationRequest =
     SelectionSet WeightID WeightyBeer.Object.WeightMutation
 
 
-updateZeroRequest : WeightID -> MutationRequest
-updateZeroRequest id =
-    WeightyBeer.Object.WeightMutation.updateZero { id = WeightID.toString id }
+calibrateRequest : WeightID -> CalibrationTarget -> MutationRequest
+calibrateRequest id target =
+    WeightyBeer.Object.WeightMutation.calibrate { id = WeightID.toString id, target = target }
         |> WeightID.stringSelection
 
 
-updateEmptyRequest : WeightID -> MutationRequest
-updateEmptyRequest id =
-    WeightyBeer.Object.WeightMutation.updateEmpty { id = WeightID.toString id }
-        |> WeightID.stringSelection
-
-
-updateFullRequest : WeightID -> MutationRequest
-updateFullRequest id =
-    WeightyBeer.Object.WeightMutation.updateFull { id = WeightID.toString id }
-        |> WeightID.stringSelection
-
-
-makeUpdateRequest : (Result (Graphql.Http.Error ()) WeightID -> msg) -> MutationRequest -> Cmd msg
-makeUpdateRequest msg request =
+makeCalibrateRequest : (Result (Graphql.Http.Error ()) WeightID -> msg) -> MutationRequest -> Cmd msg
+makeCalibrateRequest msg request =
     Mutation.weight request
         |> Graphql.Http.mutationRequest weightyBeerGraphql
         |> Graphql.Http.send (Graphql.Http.discardParsedErrorData >> msg)

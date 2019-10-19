@@ -3,36 +3,33 @@ module Page.WeightHub exposing (Model, Msg, getError, init, subscriptions, updat
 import Browser.Navigation as Nav
 import Component.Button as Button
 import Component.ErrorDetails exposing (ErrorDetails, errorDetails)
-import Component.Icon exposing (Icon(..), icon)
+import Component.Icon exposing (Icon(..))
 import Component.Modal as Modal
 import Component.Table exposing (viewTable)
 import Graphql.Http
 import Html exposing (Html, div, h2, i, p, span, text)
 import Html.Attributes exposing (class)
-import Type.ModifiableValue exposing (Value)
-import Type.Weight exposing (Weight, makeUpdateRequest, requestWeights, updateEmptyRequest, updateFullRequest, updateZeroRequest)
+import Subscription
+import Type.Weight exposing (Weight, calibrateRequest, makeCalibrateRequest, requestWeights, weightSelection, weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
+import Utils
+import WeightyBeer.Enum.CalibrationTarget exposing (CalibrationTarget(..))
 
 
 type Msg
     = GotWeightsResponse WeightsResponse
     | GotUpdateResponse UpdateResponse
-    | ConfirmRequest Calibrate WeightID
+    | ConfirmRequest CalibrationTarget WeightID
     | CancelRequest
-    | CalibrateRequest Calibrate WeightID
-
-
-type Calibrate
-    = Zero
-    | EmptyKeg
-    | FullKeg
+    | CalibrateRequest CalibrationTarget WeightID
+    | GotSubscriptionData (Result ErrorDetails (Maybe Weight))
 
 
 type alias Model =
     { navKey : Nav.Key
     , weights : List Weight
     , error : Maybe ErrorDetails
-    , confirm : Maybe ( Calibrate, WeightID )
+    , confirm : Maybe ( CalibrationTarget, WeightID )
     }
 
 
@@ -45,13 +42,13 @@ type alias WeightsResponse =
 
 
 getError : Model -> Maybe ErrorDetails
-getError _ =
-    Nothing
+getError =
+    .error
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Subscription.receive Subscription.WeightHub (weightUpdatedSubscription weightSelection) GotSubscriptionData
 
 
 emptyModel : Nav.Key -> Model
@@ -61,7 +58,7 @@ emptyModel navKey =
 
 init : Nav.Key -> ( Model, Cmd Msg )
 init navKey =
-    ( emptyModel navKey, requestWeights GotWeightsResponse )
+    ( emptyModel navKey, Cmd.batch [ requestWeights GotWeightsResponse, Subscription.create Subscription.WeightHub (weightUpdatedSubscription weightSelection) ] )
 
 
 view : Model -> Html Msg
@@ -79,9 +76,9 @@ view model =
         ([ viewTable
             [ ( "ID", .id >> WeightID.toString >> text )
             , ( "Current", viewCurrent )
-            , ( "Nothing", viewNothing )
-            , ( "Empty Keg", viewEmpty )
-            , ( "Full Keg", viewFull )
+            , ( "Nothing", viewTarget Zero )
+            , ( "Empty Keg", viewTarget Empty )
+            , ( "Full Keg", viewTarget Full )
             ]
             model.weights
          ]
@@ -89,7 +86,7 @@ view model =
         )
 
 
-viewConfirm : ( Calibrate, WeightID ) -> Html Msg
+viewConfirm : ( CalibrationTarget, WeightID ) -> Html Msg
 viewConfirm ( target, id ) =
     let
         targetName =
@@ -97,10 +94,10 @@ viewConfirm ( target, id ) =
                 Zero ->
                     "Nothing"
 
-                EmptyKeg ->
+                Empty ->
                     "Empty Keg"
 
-                FullKeg ->
+                Full ->
                     "Full Keg"
     in
     Modal.view CancelRequest <|
@@ -112,50 +109,33 @@ viewConfirm ( target, id ) =
             ]
 
 
-viewRequestButton : Calibrate -> WeightID -> Html Msg
+viewRequestButton : CalibrationTarget -> WeightID -> Html Msg
 viewRequestButton msg id =
     Button.withIcon (ConfirmRequest msg id) Refresh
 
 
-viewFull : Weight -> Html Msg
-viewFull { id, full } =
-    let
-        str =
-            Maybe.map String.fromInt full
+targetValue : Weight -> CalibrationTarget -> Maybe Int
+targetValue weight target =
+    case target of
+        Zero ->
+            weight.zero
+
+        Empty ->
+            weight.empty
+
+        Full ->
+            weight.full
+
+
+viewTarget : CalibrationTarget -> Weight -> Html Msg
+viewTarget target weight =
+    div [ class "red-button-text" ]
+        [ span []
+            [ Maybe.map String.fromInt (targetValue weight target)
                 |> Maybe.withDefault "_"
                 |> text
-    in
-    div [ class "red-button-text" ]
-        [ span [] [ str ]
-        , viewRequestButton FullKeg id
-        ]
-
-
-viewEmpty : Weight -> Html Msg
-viewEmpty { id, empty } =
-    let
-        str =
-            Maybe.map String.fromInt empty
-                |> Maybe.withDefault "_"
-                |> text
-    in
-    div [ class "red-button-text" ]
-        [ span [] [ str ]
-        , viewRequestButton EmptyKeg id
-        ]
-
-
-viewNothing : Weight -> Html Msg
-viewNothing { id, zero } =
-    let
-        str =
-            Maybe.map String.fromInt zero
-                |> Maybe.withDefault "_"
-                |> text
-    in
-    div [ class "red-button-text" ]
-        [ span [] [ str ]
-        , viewRequestButton Zero id
+            ]
+        , viewRequestButton target weight.id
         ]
 
 
@@ -184,20 +164,19 @@ update msg model =
         GotUpdateResponse updateResponse ->
             ( model, requestWeights GotWeightsResponse )
 
-        CalibrateRequest calibrate id ->
-            let
-                request =
-                    case calibrate of
-                        Zero ->
-                            updateZeroRequest id
+        CalibrateRequest target id ->
+            ( model, calibrateRequest id target |> makeCalibrateRequest GotUpdateResponse )
 
-                        EmptyKeg ->
-                            updateEmptyRequest id
+        GotSubscriptionData result ->
+            case result of
+                Ok (Just weight) ->
+                    ( { model | weights = Utils.updateInList weight model.weights }, Cmd.none )
 
-                        FullKeg ->
-                            updateFullRequest id
-            in
-            ( model, makeUpdateRequest GotUpdateResponse request )
+                Ok Nothing ->
+                    ( model, Cmd.none )
+
+                Err e ->
+                    ( { model | error = Just e }, Cmd.none )
 
 
 updateFromWeightsResponse : Model -> WeightsResponse -> Model
