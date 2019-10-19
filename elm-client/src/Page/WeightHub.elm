@@ -73,14 +73,14 @@ view model =
                     []
     in
     div []
-        ([ viewTable
-            [ ( "ID", .id >> WeightID.toString >> text )
-            , ( "Current", viewCurrent )
-            , ( "Nothing", viewTarget Zero )
-            , ( "Empty Keg", viewTarget Empty )
-            , ( "Full Keg", viewTarget Full )
-            ]
-            model.weights
+        ([ List.sortBy (.id >> WeightID.toString) model.weights
+            |> viewTable
+                [ ( "ID", .id >> WeightID.toString >> text )
+                , ( "Current", viewCurrent )
+                , ( "Nothing", viewTarget Zero )
+                , ( "Empty Keg", viewTarget Empty )
+                , ( "Full Keg", viewTarget Full )
+                ]
          ]
             ++ confirmModal
         )

@@ -96,7 +96,8 @@ view model =
                 text "Failed to fetch brews "
 
             RemoteData.Success brews ->
-                viewBrews brews
+                List.sortBy .brewNumber brews
+                    |> viewBrews
         ]
 
 

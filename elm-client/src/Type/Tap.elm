@@ -1,8 +1,8 @@
-module Type.Tap exposing (ExistingTap(..), PartialTap, Weight, createRequest, emptyPartial, isModified, makeMutationRequest, tapSelection, toExistingTap, toPartial, toTap, updateOriginals, updateRequest, weightSelection)
+module Type.Tap exposing (ExistingTap(..), PartialTap, Weight, createRequest, emptyPartial, getTap, isModified, makeMutationRequest, tapSelection, toExistingTap, toPartial, toTap, updateOriginals, updateRequest, weightSelection)
 
 import Constants exposing (weightyBeerGraphql)
 import Graphql.Http
-import Graphql.OptionalArgument as OptionalArgument exposing (OptionalArgument(..))
+import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Maybe
 import Maybe.Extra exposing (andMap)
@@ -30,6 +30,11 @@ type alias Tap =
 
 type ExistingTap
     = ExistingTap TapID Tap
+
+
+getTap : ExistingTap -> Tap
+getTap (ExistingTap _ tap) =
+    tap
 
 
 type alias PartialTap =

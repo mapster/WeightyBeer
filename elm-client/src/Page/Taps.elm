@@ -30,6 +30,7 @@ type alias Model =
 type alias Tap =
     { id : TapID
     , name : String
+    , order : Int
     , brew : Maybe Brew
     , weight : Maybe String
     , isActive : Bool
@@ -64,9 +65,10 @@ tapsQuery =
 
 tapSelection : SelectionSet Tap WeightyBeer.Object.Tap
 tapSelection =
-    SelectionSet.map5 Tap
+    SelectionSet.map6 Tap
         TapID.selection
         WeightyBeer.Object.Tap.name
+        WeightyBeer.Object.Tap.order
         (WeightyBeer.Object.Tap.brew brewSelection)
         (WeightyBeer.Object.Tap.weight weightSelection)
         WeightyBeer.Object.Tap.isActive
@@ -115,14 +117,16 @@ view model =
                 text "Failed to fetch taps: "
 
             RemoteData.Success taps ->
-                viewTaps taps
+                List.sortBy .order taps
+                    |> viewTaps
         ]
 
 
 viewTaps : Taps -> Html Msg
 viewTaps taps =
     viewTable
-        [ ( "Name", .name >> text )
+        [ ( "Order", .order >> String.fromInt >> text )
+        , ( "Name", .name >> text )
         , ( "Brew on tap", .brew >> viewBrew )
         , ( "Keg weight", .weight >> viewWeight )
         , ( "Favorite", .isActive >> viewIsFavorite )

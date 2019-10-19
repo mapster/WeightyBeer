@@ -10,7 +10,7 @@ import Html.Attributes exposing (..)
 import Maybe.Extra
 import RemoteData exposing (RemoteData)
 import Subscription
-import Type.Tap exposing (ExistingTap(..), Weight, tapSelection, toPartial, weightSelection)
+import Type.Tap as Tap exposing (ExistingTap(..), Weight, tapSelection, toPartial, weightSelection)
 import Type.Weight exposing (weightUpdatedSubscription)
 import Type.WeightID as WeightID exposing (WeightID)
 import WeightyBeer.Query as Query
@@ -113,7 +113,8 @@ view model =
             text "Failed to fetch taps: "
 
         RemoteData.Success taps ->
-            viewTaps model.weights taps
+            List.sortBy (Tap.getTap >> .order) taps
+                |> viewTaps model.weights
 
 
 tapWithWeight : Dict String Weight -> ExistingTap -> ExistingTap
