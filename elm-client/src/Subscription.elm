@@ -1,4 +1,4 @@
-port module Subscription exposing (SubscriptionID(..), cancel, create, receive)
+port module Subscription exposing (SubscriptionID(..), create, receive)
 
 import Component.ErrorDetails as ErrorDetails exposing (ErrorDetails)
 import Graphql.Document
@@ -68,10 +68,10 @@ verifyId id selection receivedId =
 
 port receiveSubscriptionData : (Decode.Value -> msg) -> Sub msg
 
-
-cancel : SubscriptionID -> Cmd msg
-cancel =
-    idToString >> cancelSubscription
-
-
-port cancelSubscription : String -> Cmd msg
+--
+--cancel : SubscriptionID -> Cmd msg
+--cancel =
+--    idToString >> cancelSubscription
+--
+--
+--port cancelSubscription : String -> Cmd msg

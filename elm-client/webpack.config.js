@@ -13,6 +13,9 @@ module.exports = {
         'index': './index.js',
         'elm': './src/Main.elm'
     },
+    output: {
+        publicPath: '/',
+    },
     devServer: isProd() ? undefined : {
         contentBase: path.join(__dirname, 'dist'),
         port: 8000,

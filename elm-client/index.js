@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
     })
   });
 
-  app.ports.cancelSubscription.subscribe(id => {
-    console.log(`Subscription cancelled: ${id}`)
-
-    if (subscriptions[id]) {
-      subscriptions[id].unsubscribe();
-      delete subscriptions[id];
-    }
-  })
+  // app.ports.cancelSubscription.subscribe(id => {
+  //   console.log(`Subscription cancelled: ${id}`)
+  //
+  //   if (subscriptions[id]) {
+  //     subscriptions[id].unsubscribe();
+  //     delete subscriptions[id];
+  //   }
+  // });
 });
