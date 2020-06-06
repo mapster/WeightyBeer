@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "apollo-server": "^2.9.5",
-    "apollo-server-express": "^2.9.5",
+    "apollo-server-express": "^2.14.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6-alpha.5",
