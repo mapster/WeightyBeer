@@ -9,7 +9,7 @@
     "start:prod": "node ./build/Main.js"
   },
   "dependencies": {
-    "firebase-admin": "^8.0.0",
+    "firebase-admin": "^11.4.1",
     "ioredis": "^4.9.5"
   },
   "repository": {
